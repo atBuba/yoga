@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбранные изображения</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            text-align: center;
+        }
+        .image-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        .image-row img {
+            max-width: 30%;
+            height: auto;
+            margin: 0 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+        #gallery-container {
+        display: flex;               /* Располагаем картинки в одну линию */
+        overflow-x: auto;            /* Добавляем горизонтальный скролл */
+        white-space: nowrap;         /* Предотвращаем перенос на новую строку */
+        width: 100%;                 /* Ширина контейнера */
+        padding: 10px;               /* Отступы внутри контейнера */
+        box-sizing: border-box;      /* Учитываем отступы в ширину контейнера */
+        /* justify-content: center; */
+    }
+
+    #gallery-container img {
+        max-height: 856px;           /* Ограничиваем высоту картинок */
+        margin-right: 10px;          /* Отступ между картинками */
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Выбранные изображения</h1>
+        <div id="gallery-container"></div>
+        <button onclick="generateVideo()">Сгенерировать видео</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedImages = JSON.parse(localStorage.getItem('selectedImages'));
+
+            const galleryContainer = document.getElementById('gallery-container');  
+
+            const selectedFont = localStorage.getItem('selectedFont');
+
+            if (selectedFont) {
+                console.log("Выбранный шрифт:", selectedFont);
+            }
+
+            if (selectedImages && selectedImages.length > 0) {
+                selectedImages.forEach(imageUrl => {
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    galleryContainer.appendChild(img);
+                });
+            } else {
+                galleryContainer.innerText = 'Изображения не выбраны.';
+            }
+        });
+
+
+
+        function generateVideo() {
+            const selectedImages = JSON.parse(localStorage.getItem('selectedImages'));
+            const addSubtitles = localStorage.getItem('addSubtitles'); 
+            const selectedFont = localStorage.getItem('selectedFont'); 
+            const selectedColor = localStorage.getItem('selectedColor'); 
+            
+
+
+            fetch('/show', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    images: selectedImages,
+                    subtitles: addSubtitles,
+                    font: selectedFont,
+                    color: selectedColor  // Передаем шрифт
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);  // Здесь вы можете обработать ответ от сервера
+            })
+            .catch(error => {
+                console.error("Ошибка при отправке данных:", error);
+            });
+        }
+
+    </script>
+</body>
+</html>

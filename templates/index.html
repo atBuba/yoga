@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор изображений</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            text-align: center;
+        }
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .text-input {
+            width: 70%;
+        }
+        .options-container {
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .image-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .image-row img {
+            max-width: 60%;
+            height: auto;
+            margin: 0 5px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        select {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        .add-buttons {
+            margin-bottom: 20px;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        /* Скрываем стандартный чекбокс */
+        input[type="checkbox"].hidden-checkbox {
+            display: none;
+        }
+
+        /* Стили для изображения, чтобы оно выглядело как выбранное при активации чекбокса */
+        .checkbox-image-container img {
+            cursor: pointer;
+            border: 15px solid transparent; /* Нет рамки по умолчанию */
+            transition: border-color 0.2s;
+        }
+
+        .checkbox-image-container img.selected {
+            border-color: #007BFF; /* Синий цвет рамки при выборе */
+        }
+        #song_context {
+            width: 100%; /* Ширина 100% от контейнера */
+            height: 50px; /* Фиксированная высота */
+            max-width: 500px; /* Максимальная ширина */
+        }
+        
+        .prompt-container {
+            display: flex;
+            justify-content: center; /* Центрирует содержимое контейнера по горизонтали */
+            align-items: center; /* Выравнивает элементы по вертикали */
+            margin-bottom: 10px;
+            gap: 10px; /* Расстояние между textarea и кнопкой */
+        }
+
+        .prompt-textarea {
+            width: 300px;
+            height: 60px;
+            padding: 5px;
+            resize: none;
+        }
+
+        .regenerate-button {
+            padding: 5px 15px;
+            background-color: rgba(255, 255, 255, 0.432);
+            color: black;
+            border: black;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .regenerate-button:hover {
+            background-color: rgba(255, 255, 255, 0.432);
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор изображений</h1>
+        <form id="image-form" method="POST">
+            <div class="form-container">
+                <div class="text-input">
+                    <div class="add-buttons">
+                        <button type="button" onclick="addVerse()">Добавить куплет</button>
+                        <button type="button" onclick="addChorus()">Добавить припев</button>
+                        <input type="file" id="ttml_file" accept=".ttml" />
+                        <input type="file" id="mp3_file" accept=".mp3" />
+                    </div>
+                    <div id="input-container">
+                        <!-- Динамически добавляемые поля ввода -->
+                    </div>
+                </div>
+                <div class="options-container">
+                    <label for="style_input">Выберите стиль:</label>
+                    <select id="style_input" name="style_input">
+                        <option value="comic">Комикс</option>
+                        <option value="anime">Аниме</option>
+                        <option value="realistic">Реалистичный</option>
+                    </select>
+                    
+                    <label for="mood_input">Выберите настроение:</label>
+                    <select id="mood_input" name="mood_input">
+                        <option value="cheerful">Бодрость, Энергичность, Оптимизм</option>
+                        <option value="playful">Дети, Веселье, Ирония</option>
+                        <option value="christmas">Рождество</option>
+                        <option value="focused">Фокусировка, Продуктивность, Размышления</option>
+                        <option value="joyful">Радость, Счастье, Вечеринка</option>
+                        <option value="mysterious">Загадочность, Экзотичность</option>
+                        <option value="nostalgic">Ностальгия, Ретро</option>
+                        <option value="patriotic">Патриотическая</option>
+                        <option value="relaxing">Отдых, Спокойствие, Расслабление</option>
+                        <option value="romantic">Романтика, Любовь, Чувственность</option>
+                        <option value="sad">Печаль, Грусть, Тревога</option>
+                        <option value="epic">Борьба, Преодоление, Эпичность</option>
+                    </select>
+                    
+                    <label for="palette_input">Выберите цветовую палитру:</label>
+                    <select id="palette_input" name="palette_input">
+                        <option value="warm">Теплая</option>
+                        <option value="cool">Холодная</option>
+                    </select>
+                
+                    <!-- Subtitle options (hidden initially) -->
+                    <div class="input-container">
+                        <input type="checkbox" id="add_subtitles" name="add_subtitles" onchange="toggleSubtitleOptions()">
+                        <label for="add_subtitles">Добавить субтитры</label>
+                    </div>
+                
+                    <div id="subtitle_options" style="display: none;">
+                        <label for="font_select">Выберите шрифт для субтитров:</label>
+                        <select id="font_select" name="font_select">
+                            <option value="Faberge-Regular">Faberge-Regular</option>
+                            <option value="BoldExtended">BoldExtended</option>
+                            <option value="Plup">Plup</option>
+                        </select>
+                
+                        <label for="font_color">Выберите цвет субтитров:</label>
+                        <select id="font_color" name="font_color">
+                            <option value="white">Белый</option>
+                            <option value="red">Красный</option>
+                            <option value="blue">Синий</option>
+                        </select>
+
+                    </div>
+
+                    <label for="song_context">Введите контекст песни:</label>
+                    <textarea id="song_context" name="song_context" placeholder="Опишите контекст или тему песни..."></textarea>
+                </div>
+            </div>
+            <button type="submit">Сгенерировать изображения</button>
+        </form>
+        
+        <!-- Изменение в image-row: добавляем чекбоксы -->
+        <div id="image-container">
+            
+            <!-- Динамически добавляемые изображения -->
+        </div>
+
+        <!-- Новая форма для отправки выбранных изображений на сервер -->
+        <form id="video-form" method="POST" action="/show">
+            <input type="hidden" id="selected-images" name="images">
+            <button type="button" onclick="submitImagesForVideo(true)">Сгенерировать видео</button>
+        </form>
+
+    </div>
+
+    <script>
+        let verseCount = 0;
+        let chorusCount = 0;
+        let lastChorusText = '';
+
+
+   
+    function toggleSubtitleOptions() {
+        const subtitleOptions = document.getElementById('subtitle_options');
+        subtitleOptions.style.display = subtitleOptions.style.display === 'none' ? 'block' : 'none';
+    }
+
+
+    
+
+    function addVerse() {
+        verseCount++;
+        const inputContainer = document.getElementById('input-container');
+        const newVerse = document.createElement('div');
+        newVerse.className = 'input-container';
+        newVerse.innerHTML = `
+            <label for="verse${verseCount}">Куплет ${verseCount}:</label>
+            <textarea id="verse${verseCount}" name="verse${verseCount}" rows="10" required></textarea>
+        `;
+        inputContainer.appendChild(newVerse);
+    }
+
+    function addChorus() {
+        chorusCount++;
+        const inputContainer = document.getElementById('input-container');
+        const newChorus = document.createElement('div');
+        newChorus.className = 'input-container';
+        if (chorusCount === 1) {
+            newChorus.innerHTML = `
+                <label for="chorus">Припев:</label>
+                <textarea id="chorus" name="chorus" rows="10" required></textarea>
+            `;
+        } else {
+            newChorus.innerHTML = `
+                <label for="chorus">Припев:</label>
+                <textarea id="chorus" name="chorus" rows="10" required>${lastChorusText}</textarea>
+            `;
+        }
+        inputContainer.appendChild(newChorus);
+        if (chorusCount === 1) {
+            document.getElementById('chorus').addEventListener('input', function() {
+                lastChorusText = this.value;
+            });
+        }
+    }
+
+
+    function submitImagesForVideo(openNewTab = false) {
+        const selectedImages = [];
+        const checkboxes = document.querySelectorAll('input[name="image-checkbox"]:checked');
+        const addSubtitles = document.getElementById('add_subtitles');
+        const fontSelect = document.getElementById('font_select');
+        const colorSelect = document.getElementById('font_color');
+
+        
+        checkboxes.forEach(checkbox => {
+            selectedImages.push(checkbox.value);  // Собираем URL выбранных изображений
+        });
+
+        if (selectedImages.length > 0) {
+            // Сохраняем выбранные изображения и шрифт в localStorage
+            localStorage.setItem('selectedImages', JSON.stringify(selectedImages));
+            localStorage.setItem('addSubtitles', addSubtitles.checked);
+            localStorage.setItem('selectedFont', fontSelect.value);
+            localStorage.setItem('selectedColor', colorSelect.value);
+            
+
+            if (openNewTab) {
+                window.open('/gallery', '_blank');
+            } else {
+                window.location.href = '/gallery';
+            }
+        } else {
+            alert('Выберите хотя бы одно изображение!');
+        }
+    }
+
+
+    // Функция для чтения текста из файла
+    async function readTtmlFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                resolve(event.target.result); // Возвращаем текст из файла
+            };
+            reader.onerror = (event) => {
+                reject(new Error('Ошибка чтения файла'));
+            };
+            reader.readAsText(file);
+        });
+    }
+
+    // Функция для парсинга TTML и извлечения текста
+    function parseTtml(ttmlText, allTexts) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(ttmlText, "text/xml");
+        let text = ''
+        const paragraphs = xmlDoc.getElementsByTagName("p");
+        for (let i = 0; i < paragraphs.length; i++) {
+            text +=  paragraphs[i].textContent + '\r\n';
+        }
+        allTexts.push(text)
+    }
+
+
+    document.getElementById('image-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const allTexts = [];
+
+        
+        const mp3FileInput = document.getElementById('mp3_file');
+        const ttmlFileInput = document.getElementById('ttml_file');
+
+        
+
+        
+
+
+        // Проверяем, загружен ли файл
+        if (ttmlFileInput.files.length > 0) {
+            const file = ttmlFileInput.files[0];
+            const text = await readTtmlFile(file);
+            parseTtml(text, allTexts); // Парсим текст из TTML файла
+        } else {
+            // Собираем тексты из textarea
+            const textAreas = document.querySelectorAll('#input-container textarea');
+            textAreas.forEach(textarea => {
+                allTexts.push(textarea.value);
+            });
+        }
+
+        const lyricsText = allTexts.join('\n');
+
+        // Создаем .txt файл из собранного текста
+        const lyricsFile = new File([lyricsText], "lyrics.txt", { type: "text/plain" });
+
+        const selectedStyle = document.getElementById('style_input').value;
+        const selectedMood = document.getElementById('mood_input').value;
+        const selectedPalette = document.getElementById('palette_input').value;
+        const addSubtitles = document.getElementById('add_subtitles').checked;
+        const fontSelect = document.getElementById('font_select').value;
+        const fontColor = document.getElementById('font_color').value;
+        const songContext = document.getElementById('song_context').value; 
+
+
+        const stylePrompt = {
+            "comic": ", comic book style , by Roy Lichtenstein, full body,artstation, highly detailed, sharp focus,",
+            "anime": ",anime style, full body, , artstation, highly detailed, sharp focus,",
+            "realistic": ",realistic style, highly detailed, sharp focus,"
+        }[selectedStyle];
+
+        const moodPrompt = {
+            "cheerful": "cheerful, energetic, optimistic,",
+            "playful": "playful, fun, ironic,",
+            "christmas": "christmas, festive, holiday,",
+            "focused": "focused, productive, reflective,",
+            "joyful": "joyful, happy, party,",
+            "mysterious": "mysterious, exotic, enigmatic,",
+            "nostalgic": "nostalgic, retro, reminiscent,",
+            "patriotic": "patriotic, nationalistic,",
+            "relaxing": "relaxing, calm, relaxed,",
+            "romantic": "romantic, love, sensual,",
+            "sad": "sad, melancholic, anxious,",
+            "epic": "epic, overcoming, struggle,"
+        }[selectedMood];
+
+        const palettePrompt = {
+            "warm": "bright light, bright colors",
+            "cool": "cool colors, serene,",
+        }[selectedPalette];
+
+        const imageContainer = document.getElementById('image-container');
+        imageContainer.innerHTML = ''; // Очищаем контейнер перед добавлением новых изображений
+
+        const containers = []; // Сохраняем ссылки на все контейнеры изображений
+
+        let verseIndex = 0;
+
+        // Функция для отображения всех текстов и добавления textarea с промтом
+        function displayAllTexts(texts) {
+            let combinedText = ''; // Переменная для комбинирования текстов
+
+            texts.forEach((text) => {
+                const lines = text.split('\n').filter(line => line.trim() !== ''); // Фильтруем пустые строки
+                const pairs = [];
+
+                // Разбиваем текст на двустишия
+                for (let i = 0; i < lines.length; i += 2) {
+                    const pair = lines.slice(i, i + 2).join('\n');
+                    if (pair.trim() !== '') { // Проверяем, что пара не пустая
+                        pairs.push(pair);
+                    }
+                }
+
+                pairs.forEach((pair) => {
+                    const wordCount = pair.split(' ').length; // Подсчитываем количество слов в двустишии
+
+                    if (combinedText) {
+                        // Если есть комбинированный текст, добавляем его к текущему паре
+                        combinedText += '\n' + pair; // Добавляем новую пару
+                    } else {
+                        combinedText = pair; // Если комбинированный текст пустой, просто присваиваем текущую пару
+                    }
+
+                    // Проверяем количество слов в комбинированном тексте
+                    if (combinedText.split(' ').length >= 6) {
+                        // Если 6 или больше слов, добавляем в контейнер
+                        const textElement = document.createElement('div');
+                        textElement.className = 'text-image-block';
+                        textElement.innerHTML = `<p>${combinedText.replace(/\n/g, '<br>')}</p>`;
+
+
+                        imageContainer.appendChild(textElement);
+
+                        // Создаем строку для картинок
+                        const imageRow = document.createElement('div');
+                        imageRow.className = 'image-row';
+                        textElement.appendChild(imageRow);
+
+                        // Сохраняем контейнер для картинок
+                        containers.push({ imageRow, pair: combinedText, verseIndex });
+                        combinedText = ''; // Очищаем комбинированный текст
+                        verseIndex++;  // Увеличиваем индекс двустрочия
+                    }
+                });
+            });
+
+            // Если остался комбинированный текст, добавляем его в контейнер
+            if (combinedText) {
+                const textElement = document.createElement('div');
+                textElement.className = 'text-image-block';
+                textElement.innerHTML = `<p>${combinedText.replace(/\n/g, '<br>')}</p>`;
+
+
+                imageContainer.appendChild(textElement);
+
+                // Создаем строку для картинок
+                const imageRow = document.createElement('div');
+                imageRow.className = 'image-row';
+                textElement.appendChild(imageRow);
+
+                // Сохраняем контейнер для картинок
+                containers.push({ imageRow, pair: combinedText });
+            }
+        }
+
+        // Функция для генерации изображений с чекбоксом и добавления промта в textarea
+        async function generateImagesForPair(pair, container, regenerate = false) {
+            if (regenerate) {
+                container.imageRow.innerHTML = ''; // Очищаем строку изображений
+            }
+
+            for (let i = 0; i < 1; i++) {
+                const formData = new FormData();
+
+                // Проверяем, если это перегенерация, используем текст только из textarea и отправляем пустые строки для остальных полей
+               
+                formData.append('add_subtitles', addSubtitles);
+                formData.append('font_select', fontSelect);
+                formData.append('font_color', fontColor);
+                formData.append('verse_index', container.verseIndex);
+                formData.append('image_index', i);
+                formData.append('mp3_file', mp3FileInput.files[0]);
+                formData.append('ttml_file', ttmlFileInput.files[0]);
+                formData.append('lyrics_file', lyricsFile);
+
+                if (regenerate) {
+                    console.log("какого хуя?")
+                    // Отправляем пустые строки при перегенерации
+                    const promptText = container.promptTextarea ? container.promptTextarea.value : pair;
+                    formData.append('text', promptText);
+                    formData.append('style_prompt', "");
+                    formData.append('mood_prompt', "");
+                    formData.append('palette_prompt', "");
+                    formData.append('song_context', "");
+                } else {
+                    // Отправляем обычные значения при первой генерации
+                    formData.append('text', pair);
+                    formData.append('style_prompt', stylePrompt);
+                    formData.append('mood_prompt', moodPrompt);
+                    formData.append('palette_prompt', palettePrompt);
+                    formData.append('song_context', songContext);
+                }
+
+
+                const response = await fetch('/generate_image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Проверяем, если промт не был вставлен
+                if (!container.promptTextarea) {
+                    // Создаем контейнер для textarea и кнопки
+                    const promptContainer = document.createElement('div');
+                    promptContainer.className = 'prompt-container';
+
+                    // Создаем textarea для отображения промта, если его еще нет
+                    const promptTextarea = document.createElement('textarea');
+                    promptTextarea.className = 'prompt-textarea';
+                    promptTextarea.style.width = '600px';
+                    promptTextarea.style.height = '60px';
+                    promptTextarea.value = data.prompt;
+
+                    // Создаем кнопку "Перегенерировать"
+                    const regenerateButton = document.createElement('button');
+                    regenerateButton.className = 'regenerate-button';
+                    regenerateButton.textContent = 'Перегенерировать';
+
+                    // Добавляем обработчик события для перегенерации
+                    regenerateButton.addEventListener('click', async () => {
+                        // Перегенерация изображений с текущим значением из textarea и флагом regenerate = true
+                        await generateImagesForPair(promptTextarea.value, container, true);
+                    });
+
+                    // Вставляем textarea и кнопку в контейнер
+                    promptContainer.appendChild(promptTextarea);
+                    promptContainer.appendChild(regenerateButton);
+
+                    // Вставляем контейнер с textarea и кнопкой перед строкой изображений
+                    container.imageRow.insertAdjacentElement('beforebegin', promptContainer);
+                    container.promptTextarea = promptTextarea;
+                    container.regenerateButton = regenerateButton;
+                }
+
+                // Создаем изображение
+                const img = document.createElement('img');
+                img.src = data.image_url;
+                img.alt = `Сгенерированное изображение ${i + 1}`;
+
+                // Создаем контейнер для изображения и чекбокса
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'checkbox-image-container';
+
+                // Создаем невидимый чекбокс
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'image-checkbox';
+                checkbox.value = data.image_url;
+                checkbox.className = 'hidden-checkbox';
+
+                // Добавляем событие клика по изображению
+                img.addEventListener('click', function () {
+                    const checkboxesInRow = container.imageRow.querySelectorAll('input[type="checkbox"]');
+                    let currentCheckboxChecked = checkbox.checked;
+
+                    // Снимаем отметку со всех чекбоксов в текущей строке
+                    checkboxesInRow.forEach(cb => {
+                        cb.checked = false;
+                        const imgElement = cb.nextElementSibling;
+                        imgElement.classList.remove('selected');
+                    });
+
+                    if (currentCheckboxChecked) {
+                        checkbox.checked = false;
+                        img.classList.remove('selected');
+                    } else {
+                        checkbox.checked = true;
+                        img.classList.add('selected');
+                    }
+                });
+
+                // Добавляем чекбокс и изображение в контейнер
+                imageContainer.appendChild(checkbox);
+                imageContainer.appendChild(img);
+
+                // Вставляем контейнер с изображением и чекбоксом в строку изображений
+                container.imageRow.appendChild(imageContainer);
+            }
+        }
+
+
+
+
+
+        // Функция для запуска с ограничением в 3 параллельных процесса
+        async function processInBatches(containers, batchSize) {
+            let index = 0;
+
+            async function runBatch() {
+                const batch = containers.slice(index, index + batchSize);
+                index += batchSize;
+
+                // Запускаем партию с batchSize (здесь 3) параллельно
+                await Promise.all(batch.map(async container => {
+                    await generateImagesForPair(container.pair, container);
+                }));
+
+                if (index < containers.length) {
+                    await runBatch(); // Рекурсивно запускаем следующую партию
+                }
+            }
+
+            await runBatch(); // Начинаем первую партию
+        }
+
+
+
+        // Выводим все двустишия сразу с пустыми контейнерами для картинок
+        displayAllTexts(allTexts);
+
+        // Запускаем с ограничением на 3 параллельных процесса
+        processInBatches(containers, 1);
+    });
+    </script>
+</body>
+</html>
