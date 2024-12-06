@@ -21,17 +21,15 @@ def query_model(payload):
 
 
 @app.route('/create_video', methods=['POST'])
-def create_video(image_path, output_path):
-    prompt = "animate the background, sky, clouds, sun"
-    print(prompt)
-    seed = 42
+def create_video(image_path, output_path, video_prompt):
+    seed = random.randint(0, 2**32 - 1)
     height = 480
     width = 848
     num_frames = 121
     frame_rate = 25
 
     data = {
-        'prompt': prompt,
+        'prompt': video_prompt,
         'seed': seed,
         'height': height,
         'width': width,
@@ -80,7 +78,7 @@ def show():
     ttml_file_lines = 'static/ttml_file_lines.ttml'
     ttml_file_words = 'static/ttml_file_words.ttml'
 
-    output_video_avi = 'video/videooutput_video.avi'
+    output_video_avi = 'video/final_video.mp4'
     output_video_mp4 = 'video/final_video_with_audio_1.mp4'
 
     lyrics_file = 'static/lyrics.txt'
@@ -109,10 +107,17 @@ def show():
 
     # create_slideshow(imgs, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles)
     
-
-    # for i, image_path in enumerate(images_path):
-    #     video_url = create_video(image_path=image_path, output_path=str(i)+'.mp4')
-
+    i = 0
+    for image_path, text in zip(images_path, ttml_two_lines):
+        # Read the video_prompt from the file
+        prompt_filename = image_path.replace('.png', '_prompt.txt')
+        with open(prompt_filename, 'r') as f:
+            video_prompt = f.read().strip()
+        
+        # Generate video using video_prompt
+        video_url = create_video(image_path=image_path, output_path=str(i)+'.mp4', video_prompt=video_prompt)
+        i += 1
+        
     video_folder = 'videos'
     videos_path = [str(file) for file in Path(video_folder).rglob('*.mp4')]
 
@@ -124,7 +129,7 @@ def show():
         j += len(line['text'].split(' '))
         videos.append(adjust_video_duration(video, ttml_words[j]['end'] - duration + 1))
         duration = ttml_words[j]['end']
-
+    
     create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles, font_size=80)
     
     if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
@@ -159,13 +164,13 @@ def generate_image():
     prompts = generate_prompt(pair)
     if len(prompts) == 0:
         prompts.append(translate_text(pair))
+        prompts.append('')
 
     # Creating full prompt 
     full_prompt = prompts[0] + ' ' + style_prompt + ' ' + mood_prompt + ' ' + palette_prompt
-
+    video_prompt = prompts[1]
 
     print(full_prompt)
-
 
     
     max_attempts = 5 
@@ -184,6 +189,26 @@ def generate_image():
             })
 
             if model_response["success"]:
+                static_folder = os.path.join(os.getcwd(), "static")
+                prompt_filename = os.path.join(static_folder, f"generate_image_{seed}_prompt.txt")
+                with open(prompt_filename, 'w') as f:
+                    f.write(video_prompt)
+                    print(video_prompt)
+                
+                # Save mp3_file, ttml_file, lyrics_file on 00 image 
+                if verse_index == 0 and image_index == 0:
+                    if mp3_file:
+                        mp3_filename = f'mp3_file.mp3'
+                        mp3_path = os.path.join("static", mp3_filename)
+                        mp3_file.save(mp3_path)
+                    if ttml_file:
+                        ttml_filename = f'ttml_file_lines.ttml'
+                        ttml_path = os.path.join("static", ttml_filename)
+                        ttml_file.save(ttml_path)
+                    if lyrics_file:
+                        lyrics_path = os.path.join("static", lyrics_file.filename)
+                        lyrics_file.save(lyrics_path)
+   
                 return jsonify({
                     "image_url": model_response["image_url"],
                     "prompt": full_prompt
@@ -197,35 +222,6 @@ def generate_image():
 
     if image is None:
         return jsonify({'error': 'Не удалось сгенерировать изображение после нескольких попыток.'}), 500
-
-    # Save image 
-    static_folder = os.path.join(os.getcwd(), "static")
-    filename = os.path.join(static_folder, f"generate_image_{verse_index + 1}_{image_index + 1}_{seed}.png")
-    image.save(filename)
-
-    
-    # Save mp3_file, ttml_file, lyrics_file on 00 image 
-    if verse_index == 0 and image_index == 0:
-        if mp3_file:
-            mp3_filename = f'mp3_file.mp3'
-            mp3_path = os.path.join("static", mp3_filename)
-            mp3_file.save(mp3_path)
-        if ttml_file:
-            ttml_filename = f'ttml_file_lines.ttml'
-            ttml_path = os.path.join("static", ttml_filename)
-            ttml_file.save(ttml_path)
-        if lyrics_file:
-            lyrics_path = os.path.join("static", lyrics_file.filename)
-            lyrics_file.save(lyrics_path)
-   
-    
-    image_filename = f'/generate_image_{verse_index + 1}_{image_index + 1}_{seed}.png'
-    image_url = f'static/{image_filename}'
-
-    return jsonify({
-            'image_url': image_url,
-            'prompt': full_prompt  
-        })
 
 
 

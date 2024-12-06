@@ -62,7 +62,7 @@ def generate_prompt(user_text):
     data["completionOptions"] = {"temperature": 0.3, "maxTokens": 1000}
     # Указываем контекст для модели
     data["messages"] = [
-        {"role": "system", "text": "напиши промт на английском языке для генерации изображения по двум строчкам из песни, затем напиши второй промт для анимации заднего фона изображения. Ответь в формате **Prompt 1** \nprompt \n**Prompt 2**\nprompt"},
+        {"role": "system", "text": "напиши промт на английском языке для генерации изображения по двум строчкам из песни, затем напиши второй промт для анимации этого изображения изображения. Ответь в формате **Prompt 1** \nprompt \n**Prompt 2**\nprompt"},
         {"role": "user", "text": f"{user_text}"},
     ]
     
@@ -394,28 +394,33 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
     --------
     None
     '''
-    
     animations = ['fading', 'rigth2left', 'left2right']
-    animation_images = []
+    animation_clips = []
     current_start_time = 0 
     video_size = images[0].size
-
-    # Создаем анимированные изображения
+    
     for image in images:
         anim = random.choice(animations)
-        image = animation(image, anim)
-        image = image.set_start(current_start_time)
-        current_start_time += (image.duration - 1)
-        animation_images.append(image)
-
+        clip = animation(image, anim)
+        clip = clip.set_start(current_start_time)
+        current_start_time += clip.duration
+        animation_clips.append(clip)
     
+    # Concatenate animation clips
+    final_clip = concatenate_videoclips(animation_clips, method="chain")
+    
+    # Create text clips
     if addSubtitles:
-        text_clips = create_subtitles(ttml_lines, ttml_words, font=font, font_color=font_color, size=images[0].size, font_size=font_size)
-        animation_images += text_clips
-
-    final_clip = CompositeVideoClip(animation_images, size=video_size)
+        text_clips = create_subtitles(ttml_lines, ttml_words, font=font, font_color=font_color, size=video_size, font_size=font_size)
+        final_clip = CompositeVideoClip([final_clip] + text_clips)
+    
+    # Ensure output directory exists
+    if not os.path.exists('video'):
+        os.makedirs('video')
+    
+    # Write the final video file
+    output_path = 'video/final_video.mp4'
     final_clip.write_videofile(output_path, fps=24, codec='libx264')
-
     print(f"Видео сохранено как: {output_path}")
 
 

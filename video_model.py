@@ -111,19 +111,21 @@ def calculate_padding(source_height, source_width, target_height, target_width):
     pad_right = pad_width - pad_left
     return (pad_left, pad_right, pad_top, pad_bottom)
 
-def generate_video(models, input_image, prompt, seed, height, width, num_frames, frame_rate):
+def generate_video(models, input_image, video_prompt, seed, height, width, num_frames, frame_rate):
     global pipeline
-    pipeline = models
+    pipeline = models.to('cuda')
     generator = torch.manual_seed(seed)
+    full_prompt = video_prompt + ' super slow motion'
+    print(full_prompt)
     sample = {
-        "prompt": prompt,
+        "prompt": full_prompt,
         "negative_prompt": "worst quality, inconsistent motion, blurry, jittery, distorted",
         "media_items": input_image,
     }
     images = pipeline(
-        num_inference_steps=40,
+        num_inference_steps=60,
         num_images_per_prompt=1,
-        guidance_scale=3,
+        guidance_scale=7,
         generator=generator,
         output_type="pt",
         height=height,
