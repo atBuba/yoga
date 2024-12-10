@@ -16,7 +16,7 @@ os.makedirs(STATIC_FOLDER, exist_ok=True)
 # Загрузка модели
 print("Загрузка модели...")
 pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16).to('cuda')
-pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
+# pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
 print("Модель загружена.")
 
 @app.route("/generate", methods=["POST"])
@@ -32,7 +32,7 @@ def generate():
 
     try:
         # Генерация изображения
-        generator = torch.Generator("cpu").manual_seed(seed)
+        generator = torch.Generator("cuda").manual_seed(seed)
         image = pipe(
             prompt=prompt,
             height=height,

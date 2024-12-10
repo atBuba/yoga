@@ -114,7 +114,7 @@ def add_audio_to_video(video_path: str, audio_path: str, output_path:str) -> Non
 
     video_with_audio = video_clip.set_audio(audio_clip)
     # Save mp4 video format in output_path 
-    video_with_audio.write_videofile(output_path, codec="libx264", audio_codec="aac")
+    video_with_audio.write_videofile(output_path, codec="libx264", audio_codec="libmp3lame")
     
 def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  word: bool = False) -> list[dict[str, Union[float, str]]]:
     '''
@@ -403,11 +403,11 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
         anim = random.choice(animations)
         clip = animation(image, anim)
         clip = clip.set_start(current_start_time)
-        current_start_time += clip.duration
+        current_start_time += (clip.duration)
         animation_clips.append(clip)
     
     # Concatenate animation clips
-    final_clip = concatenate_videoclips(animation_clips, method="chain")
+    final_clip = concatenate_videoclips(animation_clips, method="compose")
     
     # Create text clips
     if addSubtitles:
@@ -420,7 +420,7 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
     
     # Write the final video file
     output_path = 'video/final_video.mp4'
-    final_clip.write_videofile(output_path, fps=24, codec='libx264')
+    final_clip.write_videofile(output_path, fps=30, codec='libx264')
     print(f"Видео сохранено как: {output_path}")
 
 

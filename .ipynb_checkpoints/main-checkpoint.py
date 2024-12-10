@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, jsonify
 import time
 from tools import *
 from pathlib import Path
+from moviepy.editor import VideoFileClip
 
 # URL микросервиса модели
 IMAGE_MODEL_SERVICE_URL = "http://127.0.0.1:5000"
@@ -21,27 +22,19 @@ def query_model(payload):
 
 
 @app.route('/create_video', methods=['POST'])
-def create_video(image_path, output_path, video_prompt):
+def create_video(image_path, duration):
     seed = random.randint(0, 2**32 - 1)
     height = 480
     width = 848
     num_frames = 121
     frame_rate = 25
 
-    data = {
-        'prompt': video_prompt,
-        'seed': seed,
-        'height': height,
-        'width': width,
-        'num_frames': num_frames,
-        'frame_rate': frame_rate,
-        'output_path' : output_path, 
-    }
-    files = {
-        'image': open(image_path, 'rb')
+    payload = {
+        'image_path': image_path,
+        'duration': duration
     }
 
-    response = requests.post("http://127.0.0.1:6000/generate_video", data=data, files=files)
+    response = requests.post("http://127.0.0.1:6000/process_images", json=payload)
 
     if response.status_code == 200:
         video_url = response.json().get('video_url')
@@ -107,31 +100,29 @@ def show():
 
     # create_slideshow(imgs, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles)
     
-    i = 0
-    for image_path, text in zip(images_path, ttml_two_lines):
-        # Read the video_prompt from the file
-        prompt_filename = image_path.replace('.png', '_prompt.txt')
-        with open(prompt_filename, 'r') as f:
-            video_prompt = f.read().strip()
-        
-        # Generate video using video_prompt
-        video_url = create_video(image_path=image_path, output_path=str(i)+'.mp4', video_prompt=video_prompt)
-        i += 1
-        
-    video_folder = 'videos'
-    videos_path = [str(file) for file in Path(video_folder).rglob('*.mp4')]
-
     duration = 0
     j = 0
     videos = []
-    
-    for video, line in zip(videos_path, ttml_two_lines):
+
+    for image_path, line in zip(images_path, ttml_two_lines):   
         j += len(line['text'].split(' '))
-        videos.append(adjust_video_duration(video, ttml_words[j]['end'] - duration + 1))
+        video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
+        videos.append(VideoFileClip(video_url))
         duration = ttml_words[j]['end']
-    
+        
+
+
+    # duration = 0
+    # j = 0
+    # videos = []
+
+    # for video, line in zip(videos_path, ttml_two_lines):
+    #     j += len(line['text'].split(' '))
+    #     videos.append(adjust_video_duration(video, ttml_words[j]['end'] - duration + 1))
+    #     duration = ttml_words[j]['end']
+        
     create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles, font_size=80)
-    
+
     if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
         add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
 
