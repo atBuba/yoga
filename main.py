@@ -85,43 +85,20 @@ def show():
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
 
-    images_folder = ""
-    images_path = [os.path.join(images_folder, image) for image in images]
-    # duration = 0
-    # j = 0
-    # imgs = []
-    
-    # # Create clips based on duration from ttml
-    # for image, line in zip(images_path, ttml_two_lines):
-    #     j += len(line['text'].split(' '))
-    #     imgs.append(ImageClip(image, duration=ttml_words[j]['end'] - duration + 1))
-    #     duration = ttml_words[j]['end']
+    # images_folder = ""
+    # images_path = [os.path.join(images_folder, image) for image in images]
 
-
-    # create_slideshow(imgs, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles)
-    
     duration = 0
     j = 0
     videos = []
 
-    for image_path, line in zip(images_path, ttml_two_lines):   
+    for image_path, line in zip(images, ttml_two_lines):   
         j += len(line['text'].split(' '))
         video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
         videos.append(VideoFileClip(video_url))
         duration = ttml_words[j]['end']
         
-
-
-    # duration = 0
-    # j = 0
-    # videos = []
-
-    # for video, line in zip(videos_path, ttml_two_lines):
-    #     j += len(line['text'].split(' '))
-    #     videos.append(adjust_video_duration(video, ttml_words[j]['end'] - duration + 1))
-    #     duration = ttml_words[j]['end']
-        
-    create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles, font_size=80)
+    create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=80)
 
     if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
         add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
@@ -182,10 +159,6 @@ def generate_image():
             if model_response["success"]:
                 static_folder = os.path.join(os.getcwd(), "static")
                 prompt_filename = os.path.join(static_folder, f"generate_image_{seed}_prompt.txt")
-                with open(prompt_filename, 'w') as f:
-                    f.write(video_prompt)
-                    print(video_prompt)
-                
                 # Save mp3_file, ttml_file, lyrics_file on 00 image 
                 if verse_index == 0 and image_index == 0:
                     if mp3_file:
