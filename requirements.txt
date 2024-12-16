@@ -18,5 +18,3 @@ requests
 moviepy==1.0.0
 scipy
 pillow==9.5.0
-
-depthflow
