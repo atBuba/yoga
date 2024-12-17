@@ -23,11 +23,6 @@ def query_model(payload):
 
 @app.route('/create_video', methods=['POST'])
 def create_video(image_path, duration):
-    seed = random.randint(0, 2**32 - 1)
-    height = 480
-    width = 848
-    num_frames = 121
-    frame_rate = 25
 
     payload = {
         'image_path': image_path,
@@ -42,7 +37,21 @@ def create_video(image_path, duration):
     else:
         return None
 
+def adiou_to_time_text(audio_path, text_path):
 
+    payload = {
+        'audio_path': audio_path,
+        'text_path': text_path,
+        'language': 'iso',
+    }
+
+    response = requests.post("http://127.0.0.1:7000/align", json=payload)
+
+    if response.status_code == 200:
+        video_url = response.json().get('word_timestamps')
+        return video_url
+    else:
+        return None
 
 
 @app.route('/gallery')
@@ -61,7 +70,8 @@ def show():
     subtitles = data.get('subtitles', 'false') != 'false'
     font = data['font']
     color = data['color']
-    
+    font_size=int(ImageClip(images[0]).size[0] * 0.07)
+
     # get font and font collor
     font_path = get_font_path(font)
     font_fill_color = get_font_color(color)
@@ -75,8 +85,12 @@ def show():
     output_video_mp4 = 'video/final_video_with_audio_1.mp4'
 
     lyrics_file = 'static/lyrics.txt'
-
-    if check_file_exists(ttml_file_lines) and check_file_exists(ttml_file_words):
+    
+    if check_file_exists(audio_path) and check_file_exists(lyrics_file):
+        ttml_words = adiou_to_time_text(audio_path, lyrics_file)
+        ttml_lines = parse(txt_files=lyrics_file)
+        ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
+    elif check_file_exists(ttml_file_lines) and check_file_exists(ttml_file_words):
         ttml_words = parse(ttml_file=ttml_file_words)
         ttml_two_lines = parse(ttml_file=ttml_file_lines, two_lines=True)
         ttml_lines = parse(ttml_file=ttml_file_lines)
@@ -85,46 +99,21 @@ def show():
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
 
-    images_folder = ""
-    images_path = [os.path.join(images_folder, image) for image in images]
-    # duration = 0
-    # j = 0
-    # imgs = []
-    
-    # # Create clips based on duration from ttml
-    # for image, line in zip(images_path, ttml_two_lines):
-    #     j += len(line['text'].split(' '))
-    #     imgs.append(ImageClip(image, duration=ttml_words[j]['end'] - duration + 1))
-    #     duration = ttml_words[j]['end']
-
-
-    # create_slideshow(imgs, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles)
-    
     duration = 0
     j = 0
     videos = []
 
-    for image_path, line in zip(images_path, ttml_two_lines):   
+    for image_path, line in zip(images, ttml_two_lines):   
         j += len(line['text'].split(' '))
         video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
         videos.append(VideoFileClip(video_url))
         duration = ttml_words[j]['end']
-        
 
 
-    # duration = 0
-    # j = 0
-    # videos = []
+    create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
 
-    # for video, line in zip(videos_path, ttml_two_lines):
-    #     j += len(line['text'].split(' '))
-    #     videos.append(adjust_video_duration(video, ttml_words[j]['end'] - duration + 1))
-    #     duration = ttml_words[j]['end']
-        
-    create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=color, output_path = output_video_avi, addSubtitles=subtitles, font_size=80)
-
-    if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
-        add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
+    # if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
+    #     add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
 
 
     if output_video_mp4:
@@ -142,7 +131,8 @@ def generate_image():
     verse_index = int(request.form.get('verse_index'))
     image_index = int(request.form.get('image_index'))
     song_context = request.form.get('song_context') 
-
+    resolution = [int(i) for i in request.form.get('resolution_input').split('x')]
+    
     mp3_file = request.files.get('mp3_file') 
     ttml_file = request.files.get('ttml_file') 
     lyrics_file = request.files.get('lyrics_file')
@@ -175,17 +165,13 @@ def generate_image():
             model_response = query_model({
                 "prompt": full_prompt,
                 "seed": seed,
-                "height": 480,
-                "width": 848
+                "width": resolution[0],
+                "height": resolution[1],
             })
 
             if model_response["success"]:
                 static_folder = os.path.join(os.getcwd(), "static")
                 prompt_filename = os.path.join(static_folder, f"generate_image_{seed}_prompt.txt")
-                with open(prompt_filename, 'w') as f:
-                    f.write(video_prompt)
-                    print(video_prompt)
-                
                 # Save mp3_file, ttml_file, lyrics_file on 00 image 
                 if verse_index == 0 and image_index == 0:
                     if mp3_file:

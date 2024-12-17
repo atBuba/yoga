@@ -37,11 +37,11 @@ def create_video(image_path, duration):
     else:
         return None
 
-def create_video(image_path, duration):
+def adiou_to_time_text(audio_path, text_path):
 
     payload = {
-        'audio_path': image_path,
-        'text_path': duration,
+        'audio_path': audio_path,
+        'text_path': text_path,
         'language': 'iso',
     }
 
@@ -70,7 +70,7 @@ def show():
     subtitles = data.get('subtitles', 'false') != 'false'
     font = data['font']
     color = data['color']
-    font_size=int(ImageClip(images[0]).size[0] * 0.082)
+    font_size=int(ImageClip(images[0]).size[0] * 0.07)
 
     # get font and font collor
     font_path = get_font_path(font)
@@ -85,8 +85,12 @@ def show():
     output_video_mp4 = 'video/final_video_with_audio_1.mp4'
 
     lyrics_file = 'static/lyrics.txt'
-
-    if check_file_exists(ttml_file_lines) and check_file_exists(ttml_file_words):
+    
+    if check_file_exists(audio_path) and check_file_exists(lyrics_file):
+        ttml_words = adiou_to_time_text(audio_path, lyrics_file)
+        ttml_lines = parse(txt_files=lyrics_file)
+        ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
+    elif check_file_exists(ttml_file_lines) and check_file_exists(ttml_file_words):
         ttml_words = parse(ttml_file=ttml_file_words)
         ttml_two_lines = parse(ttml_file=ttml_file_lines, two_lines=True)
         ttml_lines = parse(ttml_file=ttml_file_lines)
@@ -94,9 +98,6 @@ def show():
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
-
-    # images_folder = ""
-    # images_path = [os.path.join(images_folder, image) for image in images]
 
     duration = 0
     j = 0
@@ -111,8 +112,8 @@ def show():
 
     create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
 
-    if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
-        add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
+    # if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
+    #     add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
 
 
     if output_video_mp4:

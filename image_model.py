@@ -18,11 +18,11 @@ app = Flask(__name__)
 STATIC_FOLDER = os.path.join(os.getcwd(), "static")
 os.makedirs(STATIC_FOLDER, exist_ok=True)
 
-# Загрузка модели
-# print("Загрузка модели...")
-# pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16).to('cuda')
-# pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
-# print("Модель загружена.")
+#Загрузка модели
+print("Загрузка модели...")
+pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16).to('cuda')
+pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
+print("Модель загружена.")
 
 def query(payload):
     response = requests.post(API_URL, headers=headers, json=payload)
@@ -41,36 +41,36 @@ def generate():
     num_inference_steps = data.get("num_inference_steps", 25)
 
     try:
-        # generator = torch.Generator("cuda").manual_seed(seed)
-        # image = pipe(
-        #     prompt=prompt,
-        #     height=height,
-        #     width=width,
-        #     guidance_scale=guidance_scale,
-        #     num_inference_steps=num_inference_steps,
-        #     generator=generator
-        # ).images[0]
+        generator = torch.Generator("cuda").manual_seed(seed)
+        image = pipe(
+            prompt=prompt,
+            height=height,
+            width=width,
+            guidance_scale=guidance_scale,
+            num_inference_steps=num_inference_steps,
+            generator=generator
+        ).images[0]
 
-        # filename = f"generate_image_{seed}.png"
-        # file_path = os.path.join(STATIC_FOLDER, filename)
-        # image.save(file_path)
-
-        # Генерация изображения
-        image_bytes = query({
-            "inputs": prompt,
-            "parameters": {
-                "seed": seed,
-                "height": height,
-                "width": width, 
-                "guidance_scale": guidance_scale
-            }
-        })
-
-        image = Image.open(io.BytesIO(image_bytes))
-        # Сохранение изображения
         filename = f"generate_image_{seed}.png"
         file_path = os.path.join(STATIC_FOLDER, filename)
         image.save(file_path)
+
+        # Генерация изображения
+        # image_bytes = query({
+        #     "inputs": prompt,
+        #     "parameters": {
+        #         "seed": seed,
+        #         "height": height,
+        #         "width": width, 
+        #         "guidance_scale": guidance_scale
+        #     }
+        # })
+
+        # image = Image.open(io.BytesIO(image_bytes))
+        # # Сохранение изображения
+        # filename = f"generate_image_{seed}.png"
+        # file_path = os.path.join(STATIC_FOLDER, filename)
+        # image.save(file_path)
 
         return jsonify({
             "success": True,

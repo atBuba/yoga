@@ -84,37 +84,44 @@ def generate_prompt(user_text):
     return prompts 
 
 
+def add_audio_to_video(video_path: str, audio_path: str, output_path: str) -> None:
+    """
+    Добавляет аудио к видео с помощью FFmpeg.
 
-def add_audio_to_video(video_path: str, audio_path: str, output_path:str) -> None:
-    '''
-    Add audio to video and save in output_path
-
-    Parameters:
-    -----------
+    Параметры:
+    ----------
     video_path : str
-        The path to avi video format to which the audio will be added
-    audio_path: str
-        The path to mp3 audio format to be added to the video    
-    output_path: str
-        The path where the mp4 file will be saved
+        Путь к исходному видеофайлу.
+    audio_path : str
+        Путь к аудиофайлу, который нужно добавить.
+    output_path : str
+        Путь для сохранения видео с аудио.
 
-    Returns:
-    --------
+    Возвращает:
+    ----------
     None
-    '''
+    """
+    import subprocess
+    import shutil
+    import os
 
-    video_clip = mp.VideoFileClip(video_path)
-    audio_clip = mp.AudioFileClip(audio_path)
+    # Получаем путь до ffmpeg, если он не указан
+    ffmpeg_path = shutil.which('ffmpeg') or "C:/Users/admin/Documents/BrokenSource/Broken/Externals/Archives/ffmpeg-master-latest-win64-gpl/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe"
+
+    # Формируем команду для добавления аудио к видео
+    command = [
+        ffmpeg_path, 
+        '-i', video_path,      # Видео файл
+        '-i', audio_path,      # Обрезанный аудио файл
+        '-c:v', 'copy',        # Копирование видео без изменений
+        '-c:a', 'aac',         # Используем кодек AAC для аудио
+        '-strict', 'experimental',  # Для использования нестандартных кодеков
+        '-y',                  # Перезаписываем файл без подтверждения
+        output_path            # Выходной файл
+    ]
     
-    # Trim audio and video to the same length
-    if video_clip.duration <  audio_clip.duration:
-        audio_clip = audio_clip.subclip(0, video_clip.duration)
-    else:
-        video_clip = video_clip.subclip(0, audio_clip.duration)
-
-    video_with_audio = video_clip.set_audio(audio_clip)
-    # Save mp4 video format in output_path 
-    video_with_audio.write_videofile(output_path, codec="libx264", audio_codec="libmp3lame")
+    # Запускаем команду
+    subprocess.run(command)
     
 def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  word: bool = False) -> list[dict[str, Union[float, str]]]:
     '''
@@ -166,7 +173,7 @@ def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  
         
         # normalizing the ttml file (end word == start next word)
         for i in range(0, len(slides) - 1):
-            slides[i]['end('] = slides[i + 1]['start']
+            slides[i]['end'] = slides[i + 1]['start']
 
         for i, line in enumerate(slides):
             line['start'] = float(line['start'][:-1:])
@@ -301,7 +308,7 @@ def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words
     animations = [
         movie_latters,
         animate_words_pop_up,
-        animate_cross,
+        # animate_cross,
         animate_words,
         animate_left_angle,
     ]
@@ -309,15 +316,21 @@ def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words
     word_number = 1
     animation_number = 0
 
-    for i, line in enumerate(ttml_lines):
+    for i, line in enumerate(ttml_lines):      
         animation  = animations[animation_number]
         words = ttml_words[word_number:word_number + len(line['text'].split())]
+
+        if animation_number == 1 and len(words) > 7:
+            animation  = animations[0]
+        if animation_number == 2 and len(words) > 7:
+            animation  = animations[0]  
 
         animation_number += 1
         animation_number %= len(animations) 
         word_number += len(line['text'].split())
+
         clip = animation(text=line['text'], ttml=words, duration=words[-1]['end'] - words[0]['start'], font=font, font_color=font_color, size=size, font_size=font_size)
-        final_video.append(clip.set_start(words[0]['start']))
+        final_video.append(clip.set_start(words[0]['start']).set_position('right'))
 
     return final_video
 
@@ -374,7 +387,7 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
         - 'end': float - The end time of the subtitle. If not specified, it will be set
           to the start time of the next subtitle.
         - 'text': str - The text content of the subtitle.
-    ttml_words : list[dict[str, str]]:
+    ttml_words : list[dict[str, str]]: 
         A list of dictionaries, where each dictionary represents a one word from the song
         with the following keys:
         - 'start': flost - The start time of the subtitle.
@@ -397,7 +410,7 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
     animations = ['fading', 'rigth2left', 'left2right']
     animation_clips = []
     current_start_time = 0 
-    video_size = images[0].size
+    textbox_size = (int(images[0].size[0]*0.45), int(images[0].size[1]*0.8))
     
     for image in images:
         anim = random.choice(animations)
@@ -411,16 +424,20 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
     
     # Create text clips
     if addSubtitles:
-        text_clips = create_subtitles(ttml_lines, ttml_words, font=font, font_color=font_color, size=video_size, font_size=font_size)
-        final_clip = CompositeVideoClip([final_clip] + text_clips)
-    
+        text_clips = create_subtitles(ttml_lines, ttml_words, font=font, font_color=font_color, size=textbox_size, font_size=font_size)
+        background = ColorClip(
+                                size=(textbox_size[0], images[0].size[1]),  # Размеры
+                                color=(0, 0, 0, 40)  # Черный цвет с полной прозрачностью (R, G, B, A)
+                            ).set_position('right') 
+        final_clip = CompositeVideoClip([final_clip] + text_clips + [background.set_duration(final_clip.duration)])
+
     # Ensure output directory exists
     if not os.path.exists('video'):
         os.makedirs('video')
     
     # Write the final video file
-    output_path = 'video/final_video.mp4'
-    final_clip.write_videofile(output_path, fps=30, codec='libx264')
+    final_clip.write_videofile(output_path, fps=30, codec='libx264', threads=0)
+
     print(f"Видео сохранено как: {output_path}")
 
 

@@ -173,8 +173,8 @@ def animate_words_pop_up(text: str, ttml: dict[float, Union[float, str]], durati
 
     words = text.split()
     word_clips = []
-    current_y = size[1] // 16  
-    current_w = size[0] // 4  
+    current_y = 0
+    current_w = 0
 
     for i, word in enumerate(words):
         word_image = create_text_image(word, font=font, color=font_color, max_width=size[0], font_size=font_size, align='left')
@@ -182,13 +182,14 @@ def animate_words_pop_up(text: str, ttml: dict[float, Union[float, str]], durati
         h = word_clip.h
         
         word_clip = word_clip.set_position((current_w, current_y)).set_start(ttml[i]['start'] - ttml[0]['start'])
-
+        current_y += h // 2 + line_spacing
+        
         scale = initial_scale
         word_clip = word_clip.resize(lambda t: scale - (initial_scale - 1) * t / word_duration if t < word_duration else 1.0)
         
         word_clips.append(word_clip)
         
-        current_y += h // 2 + line_spacing
+        
 
     animated_clip = CompositeVideoClip(word_clips, size=size)
     return animated_clip.set_duration(duration)
@@ -229,21 +230,21 @@ def animate_cross(text: str, ttml: dict[float, Union[float, str]], duration: flo
 
     words = text.split()
     word_clips = []
-    current_y = size[1] // 32  
+    current_y = 0 
     current_w = 10
 
     for i, word in enumerate(words):
         word_image = create_text_image(word, font=font, color=font_color, max_width=size[0], font_size=font_size, align='left')
         word_clip = ImageClip(word_image).set_duration(duration)
+        
+        word_clip = word_clip.set_position((current_w, current_y)).set_start(ttml[i]['start'] - ttml[0]['start'])
+        word_clip = word_clip.crossfadein(word_duration)
 
         if current_w == 10:
             current_w = size[0] // 2 
         else:
             current_w = 10        
         current_y += word_clip.h // 2 + line_spacing
-
-        word_clip = word_clip.set_position((current_w, current_y)).set_start(ttml[i]['start'] - ttml[0]['start'])
-        word_clip = word_clip.crossfadein(word_duration)
 
         word_clips.append(word_clip)
 
@@ -288,7 +289,7 @@ def animate_words(text: str, ttml: dict[float, Union[float, str]], duration: flo
     word_clips = []
     current_y = 0 
     
-    current_x = size[0] // 4
+    current_x = 0
 
 
     for i, word in enumerate(words):
@@ -301,7 +302,7 @@ def animate_words(text: str, ttml: dict[float, Union[float, str]], duration: flo
         word_clip = word_clip.crossfadein(word_duration)
         word_clips.append(word_clip)
         
-        current_y += word_clip.h
+        current_y += word_clip.h // 2 + line_spacing
 
     animated_clip = CompositeVideoClip(word_clips, size=size)
     return animated_clip.set_duration(duration)
@@ -336,7 +337,7 @@ def animate_left_angle(text: str, duration: float, ttml: dict[float, Union[float
     Video with animated text
     '''
 
-    text_image = create_text_image(text, font=font, color=font_color, max_width=1080, angle=angle, font_size=font_size)
+    text_image = create_text_image(text, font=font, color=font_color, max_width=int(size[0]), angle=angle, font_size=font_size)
     clip = ImageClip(text_image).set_position('center').set_duration(duration)
 
     
@@ -379,12 +380,12 @@ def movie_latters(text: str, duration: float, ttml: dict[float, Union[float, str
     Video with animated text
     '''
 
-    text = text.replace(" ", "\n")
+    # text = text.replace(" ", "\n")
 
     txtClip = ImageClip(create_text_image(text=text, font=font, color=font_color, max_width=size[0], font_size=font_size))
 
     # Composite video clip для текста
-    cvc = CompositeVideoClip([txtClip], size=size)
+    cvc = CompositeVideoClip([txtClip.set_position('center')], size=size)
 
     # Вспомогательная функция для матрицы поворота
     rotMatrix = lambda a: np.array([[np.cos(a), np.sin(a)], [-np.sin(a), np.cos(a)]])

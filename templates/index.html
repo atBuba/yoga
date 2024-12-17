@@ -122,6 +122,8 @@
                         <button type="button" onclick="addChorus()">Добавить припев</button>
                         <input type="file" id="ttml_file" accept=".ttml" />
                         <input type="file" id="mp3_file" accept=".mp3" />
+                        <input type="file" id="txt_file" accept=".txt" />
+
                     </div>
                     <div id="input-container">
                         <!-- Динамически добавляемые поля ввода -->
@@ -155,6 +157,14 @@
                     <select id="palette_input" name="palette_input">
                         <option value="warm">Теплая</option>
                         <option value="cool">Холодная</option>
+                    </select>
+
+                    <!-- New Resolution Selection -->
+                    <label for="resolution_input">Выберите разрешение:</label>
+                    <select id="resolution_input" name="resolution_input">
+                        <option value=" 960x544"> 960 x 544</option>
+                        <option value="1280x720">1280 x 720</option>
+                        <option value="1920x1080">1920 x 1080</option>
                     </select>
                 
                     <!-- Subtitle options (hidden initially) -->
@@ -310,28 +320,44 @@
         allTexts.push(text)
     }
 
-
+    // Function to read text from a .txt file
+    function parseTxt(txtText, allTexts) {
+        const lines = txtText.split('\n');
+        for (let i = 0; i < lines.length; i += 2) {
+            let pair = lines[i].trim();
+            if (i + 1 < lines.length) {
+                pair += '\n' + lines[i + 1].trim();
+            }
+            if (pair !== '') {
+                allTexts.push(pair);
+            }
+        }
+    }
+        
     document.getElementById('image-form').addEventListener('submit', async function(event) {
         event.preventDefault();
 
         const allTexts = [];
-
-        
-        const mp3FileInput = document.getElementById('mp3_file');
         const ttmlFileInput = document.getElementById('ttml_file');
+        const txtFileInput = document.getElementById('txt_file');
+        const mp3FileInput = document.getElementById('mp3_file');
 
-        
-
-        
-
-
-        // Проверяем, загружен ли файл
+        // Read and parse TTML file if selected
         if (ttmlFileInput.files.length > 0) {
             const file = ttmlFileInput.files[0];
-            const text = await readTtmlFile(file);
-            parseTtml(text, allTexts); // Парсим текст из TTML файла
-        } else {
-            // Собираем тексты из textarea
+            const ttmlText = await readTtmlFile(file);
+            parseTtml(ttmlText, allTexts);
+        }
+
+        // Read and parse TXT file if selected
+        if (txtFileInput.files.length > 0) {
+            const file = txtFileInput.files[0];
+            const txtText = await readTtmlFile(file);
+            parseTxt(txtText, allTexts);
+        }
+    
+        // If no files are selected, use textarea inputs
+        if (ttmlFileInput.files.length === 0 && txtFileInput.files.length === 0) {
             const textAreas = document.querySelectorAll('#input-container textarea');
             textAreas.forEach(textarea => {
                 allTexts.push(textarea.value);
@@ -350,6 +376,7 @@
         const fontSelect = document.getElementById('font_select').value;
         const fontColor = document.getElementById('font_color').value;
         const songContext = document.getElementById('song_context').value; 
+        const selectedResolution = document.getElementById('resolution_input').value;
 
 
         const stylePrompt = {
@@ -472,6 +499,7 @@
                 formData.append('mp3_file', mp3FileInput.files[0]);
                 formData.append('ttml_file', ttmlFileInput.files[0]);
                 formData.append('lyrics_file', lyricsFile);
+                formData.append('resolution_input', selectedResolution);
 
                 if (regenerate) {
                     console.log("какого хуя?")

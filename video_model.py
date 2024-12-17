@@ -18,10 +18,9 @@ animation_options = [
     lambda: Components.Triangle(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
     lambda: Components.Triangle(target=Target.OffsetY, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
     lambda: Components.Sine(target=Target.Isometric, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
-    lambda: Components.Cosine(target=Target.Zoom, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
+    # lambda: Components.Cosine(target=Target.Zoom, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
     lambda: Presets.Zoom(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=random.uniform(0, 1)),
     lambda: Presets.Circle(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=(random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1))),
-    # lambda: Components.Custom(code="scene.state.offset_x += 0.1 * math.sin(scene.tau * 2 * math.pi)"),
 ]
 
 class MyAnimationScene(DepthScene):
