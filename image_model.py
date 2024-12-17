@@ -51,6 +51,10 @@ def generate():
         #     generator=generator
         # ).images[0]
 
+        # filename = f"generate_image_{seed}.png"
+        # file_path = os.path.join(STATIC_FOLDER, filename)
+        # image.save(file_path)
+
         # Генерация изображения
         image_bytes = query({
             "inputs": prompt,
