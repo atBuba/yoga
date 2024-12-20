@@ -70,7 +70,7 @@ def show():
     subtitles = data.get('subtitles', 'false') != 'false'
     font = data['font']
     color = data['color']
-    font_size=int(ImageClip(images[0]).size[0] * 0.07)
+    font_size=int(ImageClip(images[0]).size[0] * 0.07)  
 
     # get font and font collor
     font_path = get_font_path(font)
@@ -86,14 +86,14 @@ def show():
 
     lyrics_file = 'static/lyrics.txt'
     
-    if check_file_exists(audio_path) and check_file_exists(lyrics_file):
-        ttml_words = adiou_to_time_text(audio_path, lyrics_file)
-        ttml_lines = parse(txt_files=lyrics_file)
-        ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
-    elif check_file_exists(ttml_file_lines) and check_file_exists(ttml_file_words):
+    if check_file_exists(ttml_file_lines) and check_file_exists(ttml_file_words):
         ttml_words = parse(ttml_file=ttml_file_words)
         ttml_two_lines = parse(ttml_file=ttml_file_lines, two_lines=True)
         ttml_lines = parse(ttml_file=ttml_file_lines)
+    elif check_file_exists(audio_path) and check_file_exists(lyrics_file):
+        ttml_words = adiou_to_time_text(audio_path, lyrics_file)
+        ttml_lines = parse_txt(txt_files=lyrics_file)
+        ttml_two_lines = parse_txt(txt_files=lyrics_file, two_lines=True)
     else: 
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
@@ -102,7 +102,6 @@ def show():
     duration = 0
     j = 0
     videos = []
-
     for image_path, line in zip(images, ttml_two_lines):   
         j += len(line['text'].split(' '))
         video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)

@@ -151,7 +151,7 @@ def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  
     '''
 
     slides = []
-
+    
     #parse ttml
     if ttml_file:
         tree = ET.parse(ttml_file)
@@ -183,9 +183,13 @@ def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  
     elif txt_files and not(word):
         duration_line = 4
         current_line = 0
-
+        
         file = open(txt_files, 'r', encoding='utf-8') 
-        lyrics = file.read().split('\n')[:-1:]
+        lyrics = file.read()
+
+        lyrics = re.sub(r'\[.*?\]', '', lyrics).strip()
+
+        lyrics = lyrics.split('\n')[::]
 
         for line in lyrics:
             slides.append({
@@ -269,9 +273,10 @@ def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  
                 'text':combinedText
             })
 
-        slides = slides_two_lines[:-1:]
+        slides = slides_two_lines[::]
 
     return slides
+
 
 
 def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words: list[dict[str, Union[float, str]]], font: str ="arial.ttf", font_color: str = 'white', size=(848, 480), font_size: int =40) -> list[CompositeVideoClip]:
@@ -320,9 +325,9 @@ def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words
         animation  = animations[animation_number]
         words = ttml_words[word_number:word_number + len(line['text'].split())]
 
-        if animation_number == 1 and len(words) > 7:
+        if animation_number == 1 and len(words) > 5:
             animation  = animations[0]
-        if animation_number == 2 and len(words) > 7:
+        if animation_number == 2 and len(words) > 5:
             animation  = animations[0]  
 
         animation_number += 1

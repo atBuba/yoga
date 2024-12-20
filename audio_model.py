@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import torch
+import re
 from ctc_forced_aligner import (
     load_audio,
     load_alignment_model,
@@ -38,8 +39,10 @@ def align_audio_text():
 
         # Загружаем аудио и текст
         audio_waveform = load_audio(audio_path, alignment_model.dtype, alignment_model.device)
-        with open(text_path, "r", encoding="utf-8") as f:
+        with open(r"C:\Users\admin\Documents\program\text-to-image\web-application\ttml\тризна.txt", "r", encoding="utf-8") as f:
             text = f.read().replace("\n", " ").strip()
+            text = re.sub(r'\[.*?\]', '', text).strip()
+            text = re.sub(r'(\w)\s*-\s*(\w)', r'\1\2', text).strip()
 
         # Генерация эмиссий
         batch_size = 16

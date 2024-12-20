@@ -322,17 +322,25 @@
 
     // Function to read text from a .txt file
     function parseTxt(txtText, allTexts) {
-        const lines = txtText.split('\n');
+        // Удаляем все ключевые слова (например, [Припев], [Куплет] и т.д.)
+        const cleanedText = txtText.replace(/\[.*?\]/g, '').trim();
+        
+        // Разделяем на строки
+        const lines = cleanedText.split('\n');
+        
+        // Перебираем строки и создаем двустрочия
         for (let i = 0; i < lines.length; i += 2) {
-            let pair = lines[i].trim();
+            let pair = lines[i].trim(); // Первая строка пары
             if (i + 1 < lines.length) {
-                pair += '\n' + lines[i + 1].trim();
+                pair += '\n' + lines[i + 1].trim(); // Вторая строка пары
             }
             if (pair !== '') {
-                allTexts.push(pair);
+                allTexts.push(pair); // Добавляем пару в итоговый массив
             }
         }
     }
+
+
         
     document.getElementById('image-form').addEventListener('submit', async function(event) {
         event.preventDefault();

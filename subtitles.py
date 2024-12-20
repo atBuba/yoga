@@ -59,7 +59,7 @@ def create_text_image(text: str, font: str = "arial.ttf", font_size: int = 180, 
     total_height = len(wrapped_lines) * font_size + 2 * padding
 
     # Create a new image with the calculated dimensions
-    image = Image.new('RGBA', (max_width, total_height), (0, 0, 0, 0))
+    image = Image.new('RGBA', (max_width, total_height), (255, 255, 255, 0))
     draw = ImageDraw.Draw(image)
 
     y_text = padding
@@ -136,7 +136,7 @@ def rotate_to_left(clip: ImageClip, duration: float, rotate_duration: float=0.5,
     return rotated_clip
 
 
-def animate_words_pop_up(text: str, ttml: dict[float, Union[float, str]], duration: float, font: str ="arial.ttf", font_color: str ='white', word_duration: float = 0.2, line_spacing: int = 40, initial_scale: float = 2.0, size: tuple[int, int] =(480, 848), font_size: int =40) -> CompositeVideoClip:
+def animate_words_pop_up(text: str, ttml: dict[float, Union[float, str]], duration: float, font: str ="arial.ttf", font_color: str ='white', word_duration: float = 0.2, line_spacing: int = 10, initial_scale: float = 2.0, size: tuple[int, int] =(480, 848), font_size: int =40) -> CompositeVideoClip:
     '''
     Creates animation jumping out words
 
@@ -174,15 +174,15 @@ def animate_words_pop_up(text: str, ttml: dict[float, Union[float, str]], durati
     words = text.split()
     word_clips = []
     current_y = 0
-    current_w = 0
+    current_x = 0
 
     for i, word in enumerate(words):
         word_image = create_text_image(word, font=font, color=font_color, max_width=size[0], font_size=font_size, align='left')
         word_clip = ImageClip(word_image).set_duration(duration)
         h = word_clip.h
-        
-        word_clip = word_clip.set_position((current_w, current_y)).set_start(ttml[i]['start'] - ttml[0]['start'])
-        current_y += h // 2 + line_spacing
+        word_clip = word_clip.set_start(ttml[i]['start'] - ttml[0]['start']).set_position((current_x, current_y))
+
+        current_y += h
         
         scale = initial_scale
         word_clip = word_clip.resize(lambda t: scale - (initial_scale - 1) * t / word_duration if t < word_duration else 1.0)
@@ -302,7 +302,7 @@ def animate_words(text: str, ttml: dict[float, Union[float, str]], duration: flo
         word_clip = word_clip.crossfadein(word_duration)
         word_clips.append(word_clip)
         
-        current_y += word_clip.h // 2 + line_spacing
+        current_y += word_clip.h
 
     animated_clip = CompositeVideoClip(word_clips, size=size)
     return animated_clip.set_duration(duration)
@@ -314,7 +314,7 @@ def animate_left_angle(text: str, duration: float, ttml: dict[float, Union[float
 
     Parameters:
     -----------
-    text : str
+    text : strc
         The text that be animated
     ttml : list[dict[str, Union[float, str]]]:
         A list of dictionaries, where each dictionary represents a one word from the song
@@ -382,7 +382,7 @@ def movie_latters(text: str, duration: float, ttml: dict[float, Union[float, str
 
     # text = text.replace(" ", "\n")
 
-    txtClip = ImageClip(create_text_image(text=text, font=font, color=font_color, max_width=size[0], font_size=font_size))
+    txtClip = ImageClip(create_text_image(text=text, font=font, color=font_color, max_width=size[0], font_size=int(font_size * 1.1)))
 
     # Composite video clip для текста
     cvc = CompositeVideoClip([txtClip.set_position('center')], size=size)
