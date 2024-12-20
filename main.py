@@ -92,8 +92,8 @@ def show():
         ttml_lines = parse(ttml_file=ttml_file_lines)
     elif check_file_exists(audio_path) and check_file_exists(lyrics_file):
         ttml_words = adiou_to_time_text(audio_path, lyrics_file)
-        ttml_lines = parse_txt(txt_files=lyrics_file)
-        ttml_two_lines = parse_txt(txt_files=lyrics_file, two_lines=True)
+        ttml_lines = parse(txt_files=lyrics_file)
+        ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
     else: 
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
