@@ -98,21 +98,22 @@ def show():
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
-
+    
     duration = 0
     j = 0
     videos = []
+
     for image_path, line in zip(images, ttml_two_lines):   
         j += len(line['text'].split(' '))
-        video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
+        video_url = create_video(image_path=image_path, duration=ttml_words[j - 1]['end'] - duration)
         videos.append(VideoFileClip(video_url))
-        duration = ttml_words[j]['end']
+        duration = ttml_words[j - 1]['end']
 
 
     create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
 
-    # if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
-    #     add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
+    if check_file_exists(audio_path):
+        add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
 
 
     if output_video_mp4:
@@ -127,8 +128,8 @@ def generate_image():
     style_prompt = request.form.get('style_prompt')
     mood_prompt = request.form.get('mood_prompt')
     palette_prompt = request.form.get('palette_prompt')
-    verse_index = int(request.form.get('verse_index'))
-    image_index = int(request.form.get('image_index'))
+    verse_index = int(request.form.get('verse_index'), 0)
+    image_index = int(request.form.get('image_index'), 0)
     song_context = request.form.get('song_context') 
     resolution = [int(i) for i in request.form.get('resolution_input').split('x')]
     
@@ -141,14 +142,17 @@ def generate_image():
     text_lines = text.split('\r\n')
     pair = ' '.join(text_lines)
     pair = song_context + ', ' + pair
-    prompts = generate_prompt(pair)
-    if len(prompts) == 0:
-        prompts.append(translate_text(pair))
-        prompts.append('')
+    if style_prompt != '':
+        prompts = generate_prompt(pair)
+        if len(prompts) == 0:
+            prompts.append(translate_text(pair))
+            prompts.append('')
 
-    # Creating full prompt 
-    full_prompt = prompts[0] + ' ' + style_prompt + ' ' + mood_prompt + ' ' + palette_prompt
-    video_prompt = prompts[1]
+        # Creating full prompt 
+        full_prompt = prompts[0] + ' ' + style_prompt + ' ' + mood_prompt + ' ' + palette_prompt
+        video_prompt = prompts[1]
+    else:
+        full_prompt = text
 
     print(full_prompt)
 
@@ -166,6 +170,7 @@ def generate_image():
                 "seed": seed,
                 "width": resolution[0],
                 "height": resolution[1],
+                "num_inference_steps": 50, 
             })
 
             if model_response["success"]:

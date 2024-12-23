@@ -318,7 +318,7 @@ def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words
         animate_left_angle,
     ]
 
-    word_number = 1
+    word_number = 0
     animation_number = 0
 
     for i, line in enumerate(ttml_lines):      
@@ -333,7 +333,7 @@ def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words
         animation_number += 1
         animation_number %= len(animations) 
         word_number += len(line['text'].split())
-
+        
         clip = animation(text=line['text'], ttml=words, duration=words[-1]['end'] - words[0]['start'], font=font, font_color=font_color, size=size, font_size=font_size)
         final_video.append(clip.set_start(words[0]['start']).set_position('right'))
 

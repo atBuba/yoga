@@ -18,7 +18,7 @@ app = Flask(__name__)
 STATIC_FOLDER = os.path.join(os.getcwd(), "static")
 os.makedirs(STATIC_FOLDER, exist_ok=True)
 
-#Загрузка модели
+# #Загрузка модели
 print("Загрузка модели...")
 pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16).to('cuda')
 pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
@@ -55,7 +55,7 @@ def generate():
         file_path = os.path.join(STATIC_FOLDER, filename)
         image.save(file_path)
 
-        # Генерация изображения
+        # # Генерация изображения
         # image_bytes = query({
         #     "inputs": prompt,
         #     "parameters": {

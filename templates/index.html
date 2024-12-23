@@ -322,11 +322,14 @@
 
     // Function to read text from a .txt file
     function parseTxt(txtText, allTexts) {
-        // Удаляем все ключевые слова (например, [Припев], [Куплет] и т.д.)
+        // Удаляем все ключевые слова (например, [Припев], [Куплет], и т.д.)
         const cleanedText = txtText.replace(/\[.*?\]/g, '').trim();
         
-        // Разделяем на строки
-        const lines = cleanedText.split('\n');
+        // Разделяем на строки и фильтруем пустые строки и не относящиеся к песне
+        const lines = cleanedText.split('\n').filter(line => {
+            line = line.trim(); // Убираем лишние пробелы
+            return line !== '' && !/^\d+(\.\d+)?$/.test(line); // Исключаем пустые строки и строки с номерами
+        });
         
         // Перебираем строки и создаем двустрочия
         for (let i = 0; i < lines.length; i += 2) {
@@ -339,6 +342,7 @@
             }
         }
     }
+
 
 
         

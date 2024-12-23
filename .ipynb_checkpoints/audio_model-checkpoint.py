@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import torch
+import re
 from ctc_forced_aligner import (
     load_audio,
     load_alignment_model,
@@ -40,6 +41,7 @@ def align_audio_text():
         audio_waveform = load_audio(audio_path, alignment_model.dtype, alignment_model.device)
         with open(text_path, "r", encoding="utf-8") as f:
             text = f.read().replace("\n", " ").strip()
+            text = re.sub(r'\[.*?\]', '', text).strip()
 
         # Генерация эмиссий
         batch_size = 16
@@ -74,4 +76,4 @@ def align_audio_text():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=7000, debug=True)
+    app.run(host="0.0.0.0", port=7000)
