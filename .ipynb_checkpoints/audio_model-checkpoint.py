@@ -20,7 +20,8 @@ alignment_tokenizer = None
 
 def initialize_model():
     global alignment_model, alignment_tokenizer
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
     dtype = torch.float16 if device == "cuda" else torch.float32
     alignment_model, alignment_tokenizer = load_alignment_model(device, dtype=dtype)
 
