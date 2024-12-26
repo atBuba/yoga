@@ -21,12 +21,13 @@ def process_song(mp3_file, txt_file):
     response = client.chat.completions.create(
         model='Meta-Llama-3.1-405B-Instruct',
         messages=[
-            {"role":"system","content":'''Ты должен создать слайд-шоу клип для песни, раздели текст песни на как можно большее количсетсво смысловых частей, напиши промпт для модели которая будет генерировать изображения по этим строчкам, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно во что одеты люди и как они стоят,  в каких тоннах должно быть изображение, какого настроение это изображения, в к каком стиле. Главные персонажи  должны на всех изображениях выглядеть одинаково, стиль всего слайд шоу должен быть един , цветовая палитра всех картинок должна быть одинакова, укажи в какое время или истроический период происходят действия, у всех картинок этот период должен быть одинаковый.  
-    Ответь в следующей форме: 
+            {"role":"system","content":'''Ты должен создать слайд-шоу клип для песни, раздели текст песни на одну-две строчки, напиши промпт для модели, которая будет генерировать изображения по этим строчкам, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно, во что одеты люди и как они стоят, в каких тонах должно быть изображение, какого настроение это изображения, в каком стиле. Главные персонажи должны на всех изображениях выглядеть одинаково, стиль всего слайд-шоу должен быть един, цветовая палитра всех картинок должна быть одинакова, укажи, в какое время или исторический период происходят действия, у всех картинок этот период должен быть одинаковый.
+    Ответь в следующем формате:
     **Строчки песни**: 
     Строчки песни которые будут показываться вместе с этой картинкой
     **Промт для модели генерирующей изображения**: 
     Укажи настроение, в каких цветах должно быть выполненно изображение, время или исторический промежуток в который происходят события, затем опиши что должно быть изабраженно на кратинки, во что одеты персонажи 
+    Ты должен использовать все строчки песни и выводить их строго в хронологии, как в тексте, выведи даже повторяющиеся строчки.
     песня: 
     '''},
             {"role":"user","content":song_text}],
@@ -35,18 +36,28 @@ def process_song(mp3_file, txt_file):
     )
 
     text = response.choices[0].message.content
+    with open("example.txt", "w") as file:
+        file.write(text)
 
     # Parse the response into a structured format
     pattern = r"\*\*Строчки песни\*\*:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
     matches = re.findall(pattern, text, re.S)
 
-
+    # image_lyrics = []
+    
     prompts_translated = []
     for match in matches:
         lyrics = match[0].strip()
         prompt = match[1].strip()
         translated_prompt = translate_text(prompt)
+        # image_lyrics.appned(lyrics)
         prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": ""})
+
+    # two_line = ''
+    
+    # for line in song_text.split('\n'):
+    #     if line not in image_lyrics:
+    #         two_line += ' ' +  
 
     return prompts_translated
 
@@ -114,9 +125,9 @@ def create_videos(prompts_data, txt_file):
         images.append(i["image_url"])
         
     subtitles = True
-    font = "yoga/font/Faberge-Regular.otf"
-    color = "white"
-    font_size= 70  
+    font_path = "font/Faberge-Regular.otf"
+    font_fill_color = "white"
+    font_size= 90  
 
     # path to files 
     audio_path = 'static/mp3_file.mp3'
@@ -142,7 +153,7 @@ def create_videos(prompts_data, txt_file):
         ttml_lines = parse(txt_files=lyrics_file)
 
     duration = 0
-    j = 0
+    j = -1
     videos = []
     for image_path, line in zip(images, ttml_two_lines):   
         j += len(line['text'].split(' '))
@@ -154,14 +165,14 @@ def create_videos(prompts_data, txt_file):
 
     create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
 
-    # if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
-    #     add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
+    if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
+        add_audio_to_video(output_video_avi, audio_path, output_video_mp4)
 
 
     if output_video_mp4:
-        return jsonify({'video_url': output_video_mp4})
+        return output_video_mp4
     else:
-        return jsonify({'error': 'Video generation failed.'}), 500
+        return 'error'
         
 # Streamlit App
 st.title("MP3 & Lyrics Image Generator")
