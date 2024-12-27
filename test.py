@@ -19,16 +19,17 @@ def process_song(mp3_file, txt_file):
 
     # Call the OpenAI API to process song
     response = client.chat.completions.create(
-        model='Meta-Llama-3.1-405B-Instruct',
+        model='Qwen2.5-72B-Instruct',
         messages=[
-            {"role":"system","content":'''Ты должен создать слайд-шоу клип для песни, раздели текст песни на одну-две строчки, напиши промпт для модели, которая будет генерировать изображения по этим строчкам, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно, во что одеты люди и как они стоят, в каких тонах должно быть изображение, какого настроение это изображения, в каком стиле. Главные персонажи должны на всех изображениях выглядеть одинаково, стиль всего слайд-шоу должен быть един, цветовая палитра всех картинок должна быть одинакова, укажи, в какое время или исторический период происходят действия, у всех картинок этот период должен быть одинаковый.
+            {"role":"system","content":'''Ты должен создать слайд-шоу клип для песни, раздели текст песни на смыссловые части, напиши промпт для модели, которая будет генерировать изображения по этим строчкам, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно, во что одеты люди и как они стоят, в каких тонах должно быть изображение, какого настроение это изображения, в каком стиле. Главные персонажи должны на всех изображениях выглядеть одинаково, стиль всего слайд-шоу должен быть един, цветовая палитра всех картинок должна быть одинакова, укажи, в какое время или исторический период происходят действия, у всех картинок этот период должен быть одинаковый.
     Ответь в следующем формате:
     **Строчки песни**: 
     Строчки песни которые будут показываться вместе с этой картинкой
+    
     **Промт для модели генерирующей изображения**: 
-    Укажи настроение, в каких цветах должно быть выполненно изображение, время или исторический промежуток в который происходят события, затем опиши что должно быть изабраженно на кратинки, во что одеты персонажи 
-    Ты должен использовать все строчки песни и выводить их строго в хронологии, как в тексте, выведи даже повторяющиеся строчки.
-    песня: 
+    Укажи стиль(реалистичный), настроение, в каких цветах должно быть выполнено изображение, время или исторический промежуток, в который происходят события, затем опиши, что должно быть изображено на картинке, во что одеты персонажи.
+    используй все строчки песни, даже если они повторяются.
+    текст песни: 
     '''},
             {"role":"user","content":song_text}],
         temperature =  0.1,
@@ -72,7 +73,7 @@ def generate_image_for_prompt(prompt):
         "height": 720,
         "width": 1280,
         "guidance_scale": 3.5,
-        "num_inference_steps": 25, 
+        "num_inference_steps": 50, 
         "seed": random.randint(0, 2**32 - 1), 
     }
     try:
@@ -155,14 +156,15 @@ def create_videos(prompts_data, txt_file):
     duration = 0
     j = -1
     videos = []
-    for image_path, line in zip(images, ttml_two_lines):   
-        j += len(line['text'].split(' '))
+    prompts_data = prompts_data[:-1:]
+    for image_path, line in zip(images, prompts_data):   
+        j += len(line['lyrics'].split())
         print(ttml_words[j])
         video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
         videos.append(VideoFileClip(video_url))
         duration = ttml_words[j]['end']
-
-
+        
+    
     create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
 
     if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
@@ -179,7 +181,15 @@ st.title("MP3 & Lyrics Image Generator")
 
 # File upload section
 mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
+if mp3_file is not None:
+    with open("static/mp3_file.mp3", "wb") as f:
+        f.write(mp3_file.read())
+
+# Загрузка TXT файла с текстом
 txt_file = st.file_uploader("Upload a TXT file with lyrics", type=["txt"])
+if txt_file is not None:
+    with open("static/lyrics.txt", "w", encoding="utf-8") as f:
+        f.write(txt_file.getvalue().decode("utf-8"))
 
 # Initialize session state for images
 if "prompts_data" not in st.session_state:
@@ -220,7 +230,7 @@ if st.session_state.prompts_data and st.button("Generate Video"):
     with st.spinner("Creating video..."):
         video_url = create_videos(st.session_state.prompts_data, txt_file)
         if video_url and not video_url.startswith("Error"):
-            st.success("Video created successfully!")
+            # st.success("Video created successfully!")
             st.video(video_url)
         else:
             st.error(f"Failed to create video: {video_url}")

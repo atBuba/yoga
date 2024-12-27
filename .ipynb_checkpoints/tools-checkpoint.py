@@ -321,7 +321,8 @@ def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words
     word_number = 0
     animation_number = 0
 
-    for i, line in enumerate(ttml_lines):      
+    for i, line in enumerate(ttml_lines):  
+        print(line)
         animation  = animations[animation_number]
         words = ttml_words[word_number:word_number + len(line['text'].split())]
 

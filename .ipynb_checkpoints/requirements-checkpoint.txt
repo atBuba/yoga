@@ -20,3 +20,4 @@ scipy
 pillow==9.5.0
 
 streamlit
+openai 
