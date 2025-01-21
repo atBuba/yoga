@@ -11,16 +11,16 @@ random.seed(random.randint(0, 2**32 - 1))
 
 # Define a list of possible animations with randomized parameters
 animation_options = [
-    lambda: Presets.Vertical(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=random.uniform(0, 1), steady=random.uniform(0.2, 0.4), isometric=random.uniform(0.5, 0.7)),
-    lambda: Presets.Horizontal(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=random.uniform(0, 1), steady=random.uniform(0.2, 0.4), isometric=random.uniform(0.5, 0.7)),
-    lambda: Components.Sine(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
-    lambda: Components.Cosine(target=Target.OffsetY, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
-    lambda: Components.Triangle(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
-    lambda: Components.Triangle(target=Target.OffsetY, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
-    lambda: Components.Sine(target=Target.Isometric, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
+    lambda: Presets.Vertical(intensity=1.2, smooth=True, loop=True, phase=0.5, steady=0.3, isometric=0.6),
+    lambda: Presets.Horizontal(intensity=1.2, smooth=True, loop=True, phase=0.5, steady=0.3, isometric=0.6),
+    # lambda: Components.Sine(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
+    # lambda: Components.Cosine(target=Target.OffsetY, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
+    # lambda: Components.Triangle(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
+    # lambda: Components.Triangle(target=Target.OffsetY, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
+    # lambda: Components.Sine(target=Target.Isometric, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
     # lambda: Components.Cosine(target=Target.Zoom, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
-    lambda: Presets.Zoom(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=random.uniform(0, 1)),
-    lambda: Presets.Circle(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=(random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1))),
+    lambda: Presets.Zoom(intensity=0.8, smooth=True, loop=True, phase=0.3),
+    # lambda: Presets.Circle(intensity=random.uniform(0.5, 1.5), smooth=True, loop=True, phase=(random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1))),
 ]
 
 class MyAnimationScene(DepthScene):
