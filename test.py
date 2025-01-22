@@ -13,6 +13,9 @@ def process_song(mp3_file, txt_file):
     with open(txt_file, "r") as file:  # Можно использовать "a" для добавления текста
         text = file.read()
 
+    with open('example.txt', 'w') as f:
+        f.write(text)
+    
     # Parse the response into a structured format
     pattern = r"\*\*Строчки песни\*\*:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
 
@@ -27,7 +30,7 @@ def process_song(mp3_file, txt_file):
         prompt = match[1].strip()
         translated_prompt = translate_text(prompt)
         # image_lyrics.appned(lyrics)
-        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": ""})
+        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": "", 'effect': None})
 
     # two_line = ''
     
@@ -93,7 +96,7 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, txt_file):
+def create_videos(prompts_data, txt_file, font, selected_color_1, selected_color_2):
     print("НАААЧАААЛИ!!!!")
 
     images = []
@@ -128,7 +131,7 @@ def create_videos(prompts_data, txt_file):
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
      
-    generate_ass(ttml_words, ttml_lines, output_file="static/subtitles.ass")
+    generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
     
     duration = 0
     j = -1
@@ -136,13 +139,16 @@ def create_videos(prompts_data, txt_file):
     # prompts_data = prompts_data[:6:]
     for image_path, line in zip(images, prompts_data):   
         j += len(line['lyrics'].split())
+        effect = line['effect']
         print(ttml_words[j])
         video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
+        if effect:
+            add_effect(video_url, effect)
         videos.append(VideoFileClip(video_url))
         duration = ttml_words[j]['end']
         
     
-    create_slideshow(videos, ttml_words, ttml_lines, font=font_path, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
+    create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
 
     if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
         add_audio_to_video('video/temp_video.mp4', audio_path, output_video_mp4)
@@ -263,6 +269,22 @@ elif st.session_state["current_page"] == "upload":
         f.write(text)
     txt_file = "static/text.txt"
 
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        selected_color_1 = st.color_picker("Выберите первичный цвет субтитров:", "#ad6109")[1::]
+        selected_color_1 = selected_color_1[4::] + selected_color_1[2:4:] + selected_color_1[:2:]
+    with col2:
+        selected_color_2 = st.color_picker("Выберите вторичный цвет субтитров:", "#C99457")[1::]
+        selected_color_2 = selected_color_2[4::] + selected_color_2[2:4:] + selected_color_2[:2:]
+        
+    fonts = ['Balkara Free Condensed - npoekmu.me', 'Manrope', 'Kaph', 'BOWLER', 'Faberge', 'DejaVu Sans']
+    
+    font = st.selectbox(
+        "Выберите шрифт:",
+        fonts,
+    )
+
+            
     # Initialize session state for images
     if "prompts_data" not in st.session_state:
         st.session_state.prompts_data = []
@@ -277,39 +299,62 @@ elif st.session_state["current_page"] == "upload":
         st.session_state.prompts_data = []
         for prompt_entry in prompts_data:
             if prompt_entry not in st.session_state.prompts_data:
-                print(prompt_entry)
                 new_prompts.append(prompt_entry)
                 # st.session_state.prompts_data.append(prompt_entry)
 
         # Add new prompts to session state
         st.session_state.prompts_data.extend(new_prompts)
+
+    effects = {
+        'Без эффекта' : None,
+        'Звезды' : 'video/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mp4', 
+        'Снег' : 'video/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mp4', 
+        'Листопад' : 'video/ezyZip.mp4', 
+        'Искры' : 'video/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mp4'
+        
+    }
     
     # Display all generated images
     if st.session_state.prompts_data:
         st.write("### Generated Images")
         for entry in st.session_state.prompts_data:
-            lyrics = entry["lyrics"]
-            prompt = entry["prompt"]
-            image_url = entry.get("image_url", None)
-            
-            # Display image if it exists; otherwise, generate and save it
-            st.write(f"**Lyrics:** {lyrics}")
-            st.write(f"**Prompt (Translated):** {prompt}")
-            if image_url:
-                st.image(image_url, caption=lyrics)
-            else:
-                with st.spinner(f"Generating image for: '{lyrics}'..."):
-                    image_url = generate_image_for_prompt(prompt)
-                    if image_url.startswith("static/"):
-                        entry["image_url"] = image_url
-                        st.image(image_url, caption=lyrics)
-                    else:
-                        st.error(image_url)
+            col1, col2 = st.columns([5, 1])
+            with col1:
+                lyrics = entry["lyrics"]
+                prompt = entry["prompt"]
+                image_url = entry.get("image_url", None)
+                
+                # Display image if it exists; otherwise, generate and save it
+                st.write(f"**Lyrics:** {lyrics}")
+                st.write(f"**Prompt (Translated):** {prompt}")
+                if image_url:
+                    st.image(image_url, caption=lyrics)
+                else:
+                    with st.spinner(f"Generating image for: '{lyrics}'..."):
+                        image_url = generate_image_for_prompt(prompt)
+                        if image_url.startswith("static/"):
+                            entry["image_url"] = image_url
+                            st.image(image_url, caption=lyrics)
+                        else:
+                            st.error(image_url)
+            with col2:
+                selected_effect = st.selectbox(
+                    "Выберите эффект:",
+                    list(effects.keys()),
+                    key=f"effect_{image_url[:-3:]}",
+                )
+    
+                # Обновление выбранного эффекта в prompts_data
+                entry['effect'] = effects[selected_effect]
+                # print(entry)
+                # Отображение выбранного эффекта
+                # st.write(f"Выбранный эффект: {selected_effect}")
+                
 
     # Generate Video Button
     if st.session_state.prompts_data and st.button("Generate Video"):
         with st.spinner("Creating video..."):
-            video_url = create_videos(st.session_state.prompts_data, txt_file)
+            video_url = create_videos(st.session_state.prompts_data, txt_file, font, selected_color_1, selected_color_2)
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:

@@ -281,7 +281,7 @@ def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  
     return slides
 
 
-def generate_ass(ttml_words, ttml_lines, output_file):
+def generate_ass(ttml_words, ttml_lines, output_file, font, font_color_1, font_color_2):
     header = f"""[Script Info]
 Title: Karaoke Lyrics
 ScriptType: v4.00+
@@ -290,7 +290,7 @@ PlayDepth: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Balkara Free Condensed - npoekmu.me,23,&H000961ad,&H005794C9,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
+Style: Default,{font},23,&H00{font_color_1},&H00{font_color_2},&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -347,6 +347,24 @@ def  create_subtitles_2(input_video, subtitles_file, output_video):
         ]
         # Запуск команды FFmpeg
     subprocess.run(command, check=True)  
+
+def add_effect(video, effect):
+    temp_file = "videos/temp.mp4"
+    
+    command = [
+        "ffmpeg",
+        "-stream_loop", "-1",
+        "-i", effect,
+        "-i", video,
+        "-filter_complex", "[0:v]chromakey=0x00FF00:0.3:0.2[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
+        "-c:v", "libx264",
+        "-crf", "23",
+        "-preset", "veryfast",
+        "-y", temp_file
+    ]
+
+    subprocess.run(command, check=True)  
+    os.replace(temp_file, video)
 
 
 def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words: list[dict[str, Union[float, str]]], font: str ="arial.ttf", font_color: str = 'white', size=(848, 480), font_size: int =40) -> list[CompositeVideoClip]:

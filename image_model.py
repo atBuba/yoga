@@ -48,6 +48,7 @@ def generate():
             width=width,
             guidance_scale=guidance_scale,
             num_inference_steps=num_inference_steps,
+            max_sequence_length=512,
             generator=generator
         ).images[0]
 

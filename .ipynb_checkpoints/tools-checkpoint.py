@@ -8,6 +8,9 @@ import random
 from subtitles import *
 from typing import Union
 import re
+from datetime import timedelta
+import subprocess
+
 
 # token for yandex translate 
 IAM_TOKEN = 'AQVNzmvjqc5VLwWjpRWA_8XDFHOe0ybnBn4fhIAi'
@@ -278,6 +281,91 @@ def parse(ttml_file: str =None, txt_files: str =None, two_lines: bool = False,  
     return slides
 
 
+def generate_ass(ttml_words, ttml_lines, output_file, font, font_color_1, font_color_2):
+    header = f"""[Script Info]
+Title: Karaoke Lyrics
+ScriptType: v4.00+
+Collisions: Normal
+PlayDepth: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,{font},23,&H00{font_color_1},&H00{font_color_2},&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    events = []
+    j = 0
+
+    ttml_lines = ttml_lines[::]
+    for line in ttml_lines:
+        # if j != 0:
+        #     start_time, end_time = ttml_words[j - 1]['end'], ttml_words[j + len(line['text'].split()) - 1]['end']
+        # else: 
+        #     start_time, end_time = 0, ttml_words[j + len(line['text'].split()) - 1]['end']
+
+        start_time, end_time = ttml_words[j]['start'] - 0.4, ttml_words[j + len(line['text'].split()) - 1]['end']
+        duration_clip= end_time - start_time
+            
+        karaoke_line = ""
+        for i in range(j, j + len(line['text'].split())):
+            if i != j:
+                duration = (ttml_words[i]['end'] - ttml_words[i - 1]['end']) * 100  # duration in centiseconds
+                karaoke_line += f"{{\\kf{int(duration)}}}{ttml_words[i]['text']} "               
+            else:
+                duration = (ttml_words[i]['end'] - start_time) * 100  # duration in centiseconds
+                karaoke_line += f"{{\\fad(400,0)\\an2\\kf{int(duration)}}}{ttml_words[i]['text']} "
+
+        events.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{karaoke_line.strip()}")
+        j += len(line['text'].split())
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(header + "\n".join(events))
+
+
+def format_time(seconds):
+    td = timedelta(seconds=float(seconds))
+    # Получаем количество секунд с остаточными миллисекундами
+    total_seconds = td.total_seconds()
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    seconds, milliseconds = divmod(seconds, 1)
+    milliseconds = round(milliseconds, 3)  # округляем до 3 знаков после запятой
+
+    # Форматируем время с часами, минутами, секундами и миллисекундами
+    return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
+
+def  create_subtitles_2(input_video, subtitles_file, output_video):
+    command = [
+            "ffmpeg",
+            "-i", input_video,
+            "-vf", f"ass={subtitles_file}",
+            '-y',
+            # '-attach', 'font/BalkaraCondensed.ttf', 
+            'video/temp_video.mp4',
+        ]
+        # Запуск команды FFmpeg
+    subprocess.run(command, check=True)  
+
+def add_effect(video, effect):
+    temp_file = "videos/temp.mp4"
+    
+    command = [
+        "ffmpeg",
+        "-stream_loop", "-1",
+        "-i", effect,
+        "-i", video,
+        "-filter_complex", "[0:v]chromakey=0x00FF00:0.3:0.2[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
+        "-c:v", "libx264",
+        "-crf", "23",
+        "-preset", "veryfast",
+        "-y", temp_file
+    ]
+
+    subprocess.run(command, check=True)  
+    os.replace(temp_file, video)
+
 
 def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words: list[dict[str, Union[float, str]]], font: str ="arial.ttf", font_color: str = 'white', size=(848, 480), font_size: int =40) -> list[CompositeVideoClip]:
     '''
@@ -427,15 +515,6 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
     
     # Concatenate animation clips
     final_clip = concatenate_videoclips(animation_clips, method="compose")
-    
-    # Create text clips
-    if addSubtitles:
-        text_clips = create_subtitles(ttml_lines, ttml_words, font=font, font_color=font_color, size=textbox_size, font_size=font_size)
-        background = ColorClip(
-                                size=(textbox_size[0], images[0].size[1]),  # Размеры
-                                color=(0, 0, 0, 40)  # Черный цвет с полной прозрачностью (R, G, B, A)
-                            ).set_position('right') 
-        final_clip = CompositeVideoClip([final_clip] + text_clips + [background.set_duration(final_clip.duration)])
 
     # Ensure output directory exists
     if not os.path.exists('video'):
@@ -443,7 +522,8 @@ def create_slideshow(images: list[ImageClip] , ttml_words: list[dict] =None, ttm
     
     # Write the final video file
     final_clip.write_videofile(output_path, fps=30, codec='libx264', threads=0)
-
+    if addSubtitles:
+        create_subtitles_2(output_path, 'static/subtitles.ass', output_path)
     print(f"Видео сохранено как: {output_path}")
 
 
