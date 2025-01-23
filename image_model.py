@@ -21,6 +21,7 @@ os.makedirs(STATIC_FOLDER, exist_ok=True)
 # #Загрузка модели
 print("Загрузка модели...")
 pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
+# pipe = torch.compile(pipe)
 pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
 print("Модель загружена.")
 

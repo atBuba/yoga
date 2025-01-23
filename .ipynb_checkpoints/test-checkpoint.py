@@ -6,6 +6,7 @@ import openai
 from tools import *
 import random
 from openai import OpenAI
+from streamlit_image_select import image_select
 
 def process_song(mp3_file, txt_file):
     """Process song text file and generate structured prompts."""
@@ -30,7 +31,7 @@ def process_song(mp3_file, txt_file):
         prompt = match[1].strip()
         translated_prompt = translate_text(prompt)
         # image_lyrics.appned(lyrics)
-        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": "", 'effect': None})
+        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": [], 'effect': None})
 
     # two_line = ''
     
@@ -96,12 +97,12 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, txt_file, font, selected_color_1, selected_color_2):
+def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2):
     print("НАААЧАААЛИ!!!!")
 
     images = []
-    for i in prompts_data:
-        images.append(i["image_url"])
+    for i in selected_images:
+        images.append(i)
         
     subtitles = True
     font_path = "font/Faberge-Regular.otf"
@@ -183,7 +184,7 @@ if "role_message" not in st.session_state:
 **Строчки песни**: 
 Строчки песни которые будут показываться вместе с этой картинкой
 
-**Промт для модели генерирующей изображения**:
+**Промт для модели генерирующей изображения**:(максимальное количество слов 50)
 Укажи стиль(реалистичный), настроение, в каких цветах должно быть выполнено изображение, время или исторический промежуток, в который происходят события, затем опиши, что должно быть изображено на картинке, во что одеты персонажи.
 используй все строчки песни, даже если они повторяются.
 текст песни: '''
@@ -317,31 +318,40 @@ elif st.session_state["current_page"] == "upload":
     # Display all generated images
     if st.session_state.prompts_data:
         st.write("### Generated Images")
-        for entry in st.session_state.prompts_data:
+        for i, entry in enumerate(st.session_state.prompts_data):
             col1, col2 = st.columns([5, 1])
             with col1:
                 lyrics = entry["lyrics"]
                 prompt = entry["prompt"]
-                image_url = entry.get("image_url", None)
+                image_urls = entry.get("image_url", [])
                 
                 # Display image if it exists; otherwise, generate and save it
                 st.write(f"**Lyrics:** {lyrics}")
                 st.write(f"**Prompt (Translated):** {prompt}")
-                if image_url:
-                    st.image(image_url, caption=lyrics)
+                if image_urls != []:
+                    img = image_select("Label", image_urls)
+                    st.session_state[f"selected_image_{i}"] = img 
                 else:
-                    with st.spinner(f"Generating image for: '{lyrics}'..."):
-                        image_url = generate_image_for_prompt(prompt)
-                        if image_url.startswith("static/"):
-                            entry["image_url"] = image_url
-                            st.image(image_url, caption=lyrics)
-                        else:
-                            st.error(image_url)
+                    for _ in range(3):
+                        with st.spinner(f"Generating image for: '{lyrics}'..."):
+                            image_url = generate_image_for_prompt(prompt)
+                            if image_url.startswith("static/"):
+                                entry["image_url"].append(image_url)
+                            else:
+                                st.error(image_url)
+                    img = image_select("Выберите изобаржение", entry["image_url"])
+                    st.session_state[f"selected_image_{i}"] = img 
+
+                selected_image = st.session_state.get(f"selected_image_{i}", None)
+                if selected_image:
+                    st.success("Selected image:")
+                    st.image(selected_image)
+                                
             with col2:
                 selected_effect = st.selectbox(
                     "Выберите эффект:",
                     list(effects.keys()),
-                    key=f"effect_{image_url[:-3:]}",
+                    key=f"effect_{i}",
                 )
     
                 # Обновление выбранного эффекта в prompts_data
@@ -349,19 +359,27 @@ elif st.session_state["current_page"] == "upload":
                 # print(entry)
                 # Отображение выбранного эффекта
                 # st.write(f"Выбранный эффект: {selected_effect}")
-                
-
+            st.write('---')
+        
     # Generate Video Button
-    if st.session_state.prompts_data and st.button("Generate Video"):
-        with st.spinner("Creating video..."):
-            video_url = create_videos(st.session_state.prompts_data, txt_file, font, selected_color_1, selected_color_2)
-            if video_url and not video_url.startswith("Error"):
-                st.video(video_url)
-            else:
-                st.error(f"Failed to create video: {video_url}")
+    if st.button("Generate Video with Selected Images"):
+        selected_images = [
+            st.session_state.get(f"selected_image_{idx}")
+            for idx in range(len(st.session_state.prompts_data))
+        ]
+    
+        # Проверяем, что все изображения выбраны
+        if None in selected_images:
+            st.error("Please select an image for all lyrics!")
+        else:
+            with st.spinner("Creating video..."):
+                video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2)
+                if video_url and not video_url.startswith("Error"):
+                    st.video(video_url)
+                else:
+                    st.error(f"Failed to create video: {video_url}")
 
     # Button to return to main page
     if st.button("Вернуться на главную"):
         st.session_state["current_page"] = "main"
         st.rerun()
-
