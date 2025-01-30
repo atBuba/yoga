@@ -10,6 +10,7 @@ from typing import Union
 import re
 from datetime import timedelta
 import subprocess
+from time import sleep
 
 
 # token for yandex translate 
@@ -353,10 +354,10 @@ def add_effect(video, effect):
     
     command = [
         "ffmpeg",
-        "-stream_loop", "-1",
+        # "-stream_loop", "-1",
         "-i", effect,
         "-i", video,
-        "-filter_complex", "[0:v]chromakey=0x00FF00:0.3:0.2[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
+        "-filter_complex", "[0:v]chromakey=0x00FF00:0.1:0.1[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
         "-c:v", "libx264",
         "-crf", "23",
         "-preset", "veryfast",
@@ -365,6 +366,114 @@ def add_effect(video, effect):
 
     subprocess.run(command, check=True)  
     os.replace(temp_file, video)
+
+
+
+# Функция для создания команды FFmpeg
+def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_videos, effects_next):
+    print('Создание видео путем склеивания без переходов')
+    
+    with open("file_list.txt", "w") as f:
+        for video in video_files:
+            f.write(f"file '{video}'\n")
+    
+    command = [
+        'ffmpeg',
+        '-f', 'concat',
+        '-safe', '0',
+        '-i', 'file_list.txt',
+        '-c', 'copy',
+        '-y', output_file
+    ]
+    
+    print(' '.join(command))
+    try:
+        subprocess.run(command, shell=False, check=True)
+        print("Видео успешно склеены!")
+    except subprocess.CalledProcessError as e:
+        print("Ошибка при склеивании видео:", e)
+
+    durations = []
+    
+    for i in range(len(video_files) - 1):
+        video_duration = get_video_duration(video_files[i])
+        if effects_next[i]:
+            durations.append([effects_next[i], float(video_duration)])       
+    
+    apply_chromakey_with_overlays(output_file, overlay_videos, short_overlay_videos, durations,)
+
+
+def get_video_duration(video_file):
+    result = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", video_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return float(result.stdout)
+
+
+
+
+def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_videos, durations):
+    # Выходное видео сохраняется с тем же именем
+    temp_file = "videos/temp.mp4"
+
+    filter_complex = []
+    inputs = [f'-i {base_video}']
+    for i, dur in enumerate(durations):
+        if dur[0] == 1:
+            inputs.append(f'-i {random.choice(overlay_videos)}')
+        elif dur[0] == 2: 
+            inputs.append(f'-i {random.choice(short_overlay_videos)}')
+
+    
+    overlay_streams = []
+
+    duration = 0 
+    for i, dur in enumerate(durations):
+        if dur[0] == 1:
+            tr = f'tr{i}'
+            over = f'over{i}'
+            delay = duration + durations[i][1] - 2.5  
+            duration += durations[i][1]
+            filter_complex.append(
+                f'[{i+1}:v]chromakey=0x00FF00:0.1:0.2,setpts=PTS+{delay}/TB[{tr}]'
+            )
+            overlay_streams.append(tr)
+        elif dur[0] == 2:
+            tr = f'tr{i}'
+            over = f'over{i}'
+            delay = duration + durations[i][1] - 0.6
+            duration += durations[i][1]
+            filter_complex.append(
+                f'[{i+1}:v]chromakey=0x00FF00:0.1:0.2,setpts=PTS+{delay}/TB[{tr}]'
+            )
+            overlay_streams.append(tr)   
+            
+    base = '[0:v]'
+    for i, over in enumerate(overlay_streams):
+        output = f'base{i+1}' if i < len(overlay_streams) - 1 else 'v'
+        filter_complex.append(f'{base}[{over}]overlay[{output}]')
+        base = f'[{output}]'
+    
+    filter_complex_str = '; '.join(filter_complex)
+    
+    command = [
+        'ffmpeg',
+        *inputs,
+        '-filter_complex', f'"{filter_complex_str}"',
+        '-map', '[v]',
+        '-c:v', 'libx264',
+        '-c:a', 'aac',
+        '-preset', 'fast',
+        '-y', temp_file  # Перезаписываем исходный файл
+    ]
+
+    print(' '.join(command))
+    
+    subprocess.run(' '.join(command), shell=True)
+
+    os.replace(temp_file, base_video)
+
+    return base_video  # Возвращаем путь к перезаписанному файлу
+
+    
 
 
 def  create_subtitles(ttml_lines: list[dict[str, Union[float, str]]], ttml_words: list[dict[str, Union[float, str]]], font: str ="arial.ttf", font_color: str = 'white', size=(848, 480), font_size: int =40) -> list[CompositeVideoClip]:

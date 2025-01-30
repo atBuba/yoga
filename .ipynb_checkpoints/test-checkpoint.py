@@ -7,6 +7,8 @@ from tools import *
 import random
 from openai import OpenAI
 from streamlit_image_select import image_select
+from datetime import datetime
+from time import sleep
 
 def process_song(mp3_file, txt_file):
     """Process song text file and generate structured prompts."""
@@ -18,7 +20,7 @@ def process_song(mp3_file, txt_file):
         f.write(text)
     
     # Parse the response into a structured format
-    pattern = r"\*\*Строчки песни\*\*:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
+    pattern = r"\*\*Кадр\*\*:\s+(.+?)\n\n\*\*Промпт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
 
     # pattern = r"\#\#\#\# Строчки песни:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
     matches = re.findall(pattern, text, re.S)
@@ -31,7 +33,7 @@ def process_song(mp3_file, txt_file):
         prompt = match[1].strip()
         translated_prompt = translate_text(prompt)
         # image_lyrics.appned(lyrics)
-        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": [], 'effect': None})
+        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": [], 'effect': None, 'effects_next': None})
 
     # two_line = ''
     
@@ -101,8 +103,33 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     print("НАААЧАААЛИ!!!!")
 
     images = []
+
+    time = []
     for i in selected_images:
         images.append(i)
+
+    effects_next = [] 
+    for i in prompts_data:
+        effects_next.append(i['effects_next'])
+
+    for i in range(len(prompts_data)):
+        t = prompts_data[i]['lyrics'].split('-') 
+        if i == 0:
+            start = t[0].split(':')
+            end = t[1].split(':')
+            
+            
+            start_second = float(start[0]) * 3600 + float(start[1]) * 60 + float(start[2])
+            end_second = float(end[0]) * 3600 + float(end[1]) * 60 + float(end[2])
+            time.append([start_second, end_second])
+        else:
+            # print(end)
+            end = t[1].split(':')
+
+            end_second = float(end[0]) * 3600 + float(end[1]) * 60 + float(end[2])
+
+            time.append([time[i-1][1], end_second])
+            
         
     subtitles = True
     font_path = "font/Faberge-Regular.otf"
@@ -138,18 +165,50 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     j = -1
     videos = []
     # prompts_data = prompts_data[:6:]
-    for image_path, line in zip(images, prompts_data):   
-        j += len(line['lyrics'].split())
+    # for image_path, line in zip(images, prompts_data):   
+    #     j += len(line['lyrics'].split())
+    #     effect = line['effect']
+    #     print(ttml_words[j])
+    #     video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
+    #     if effect:
+    #         add_effect(video_url, effect)
+    #     videos.append(VideoFileClip(video_url))
+    #     duration = ttml_words[j]['end']
+
+    # time = time[:-1:]
+    # for i in time:
+    #     print(i)
+    for image_path, t , line in zip(images, time, prompts_data):   
         effect = line['effect']
-        print(ttml_words[j])
-        video_url = create_video(image_path=image_path, duration=ttml_words[j]['end'] - duration)
+        video_url = create_video(image_path=image_path, duration=t[1] - t[0])
         if effect:
             add_effect(video_url, effect)
-        videos.append(VideoFileClip(video_url))
-        duration = ttml_words[j]['end']
-        
+        videos.append(video_url)
     
-    create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
+    # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
+    print('create_video')
+
+    overlay_videos = [
+        'videos/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mp4',
+        'videos/vecteezy_red-liquid-transition-green-screen_49115367.mp4',
+        'videos/vecteezy_2-transition-ink-variant-color-green-screen_48868893.mp4',
+        'videos/vecteezy_transitions-love-green-screen_48868982.mp4',
+        
+    ]
+
+    short_overlay_videos = [
+        'videos/1.mp4',
+        # 'videos/2.mp4',
+        'videos/3.mp4',
+        'videos/4.mp4',  
+        'videos/5.mp4',  
+        'videos/6.mp4',  
+        'videos/7.mp4',  
+    ]
+    
+    concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+
+    create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
 
     if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
         add_audio_to_video('video/temp_video.mp4', audio_path, output_video_mp4)
@@ -162,13 +221,13 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
 
 # Загрузка модели Sambanova
 client = OpenAI(
-    api_key="51739d1a-35eb-4bf0-a78b-dd1c1f65fc1b",
+    api_key="c28b215f-2bf4-4f13-a5ac-bf9d0389d24f",
     base_url="https://api.sambanova.ai/v1",
 )
 
 # Инициализация состояния
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
+    st.session_state["openai_model"] = "Meta-Llama-3.1-405B-Instruct"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -179,15 +238,16 @@ if "current_page" not in st.session_state:
 # Устанавливаем роль модели (скрыто от пользователя)
 if "role_message" not in st.session_state:
     st.session_state.role_message = (
-        '''Ты должен создать слайд-шоу клип для песни, раздели текст песни на смыссловые части, напиши промпт для модели, которая будет генерировать изображения по этим строчкам, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно, во что одеты люди и как они стоят, в каких тонах должно быть изображение, какого настроение это изображения, в каком стиле. Главные персонажи должны на всех изображениях выглядеть одинаково, стиль всего слайд-шоу должен быть един, цветовая палитра всех картинок должна быть одинакова, укажи, в какое время или исторический период происходят действия, у всех картинок этот период должен быть одинаковый.
+        '''Ты должен создать слайд-шоу-клип для песни, ты получишь текст песни вместе с временными метками и должен будешь разделить песню по кадрам и написать промпт для генерации изображения на этом кадре, каждый кадр не должен идти меньше 5 и дольше 7 секунд, ты можешь объеденять строчки, чтобы достич такой длиный. Кадры, которые будут показываться в момент, когда нет текста, должны просто передавать атмосферу клипа, кадры должны быть непрерывны, то есть начало текущего клипа — это конец предыдущего. Напиши промпт для модели, которая будет генерировать изображения для этих кадров, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно, во что одеты люди и как они стоят, в каких тонах должно быть изображение, какого настроение это изображения, в каком стиле. Главные персонажи должны на всех изображениях выглядеть одинаково, стиль всего слайд-шоу должен быть един, цветовая палитра всех картинок должна быть одинакова, укажи, в какое время или исторический период происходят действия, у всех картинок этот период должен быть одинаковый. Кадры, которые будут показываться вместе с текстом, должны передавать то, о чем говорится в этих строчках, эти кадры должны показываться строго вместе с текстом.
 Ответь в следующем формате:
-**Строчки песни**: 
-Строчки песни которые будут показываться вместе с этой картинкой
 
-**Промт для модели генерирующей изображения**:(максимальное количество слов 50)
-Укажи стиль(реалистичный), настроение, в каких цветах должно быть выполнено изображение, время или исторический промежуток, в который происходят события, затем опиши, что должно быть изображено на картинке, во что одеты персонажи.
+**Кадр**: (без номера)
+временная метка когда будет показываться этот кадр в формате XX:XX:XX.XX - XX:XX:XX.XX(кадр не должен идти меньше 5 и дольше 7 секунд)
+
+**Промпт для модели генерирующей изображения**:(максимальное количество слов 77)
+Укажи стиль(реалистичный, кинематографичный), настроение, в каких цветах должно быть выполнено изображение, время или исторический промежуток, в который происходят события, затем опиши, что должно быть изображено на картинке, во что одеты персонажи.
 используй все строчки песни, даже если они повторяются.
-текст песни: '''
+текст песни вместе с временными метками: '''
     )
 
 # Добавляем роль модели в историю сообщений только для запроса
@@ -233,7 +293,7 @@ if st.session_state["current_page"] == "main":
                     stream=True,
                     temperature=0.7,
                     top_p=0.9,
-                    max_tokens=3500,
+                    max_tokens=7000,
                 )
 
                 for chunk in stream:
@@ -311,7 +371,17 @@ elif st.session_state["current_page"] == "upload":
         'Звезды' : 'video/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mp4', 
         'Снег' : 'video/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mp4', 
         'Листопад' : 'video/ezyZip.mp4', 
-        'Искры' : 'video/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mp4'
+        'Искры' : 'video/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mp4',
+        'Кот' : 'video/Green-Screen-Happy-Happy-Happy-Cat-Meme.mp4',
+        
+        
+    }
+
+    effects_next = {
+        'Без эффекта' : 0,
+        'Длинный' : 1, 
+        'Короткий' : 2, 
+        
         
     }
     
@@ -332,7 +402,7 @@ elif st.session_state["current_page"] == "upload":
                     img = image_select("Label", image_urls)
                     st.session_state[f"selected_image_{i}"] = img 
                 else:
-                    for _ in range(3):
+                    for _ in range(1): # количество изображений для одного кадра 
                         with st.spinner(f"Generating image for: '{lyrics}'..."):
                             image_url = generate_image_for_prompt(prompt)
                             if image_url.startswith("static/"):
@@ -359,6 +429,14 @@ elif st.session_state["current_page"] == "upload":
                 # print(entry)
                 # Отображение выбранного эффекта
                 # st.write(f"Выбранный эффект: {selected_effect}")
+                selected_effect = st.selectbox(
+                    "Выберите эффект переключения на следующие видео:",
+                    list(effects_next.keys()),
+                    key=f"effect_0{i}",
+                )
+    
+                # Обновление выбранного эффекта в prompts_data
+                entry['effects_next'] = effects_next[selected_effect]
             st.write('---')
         
     # Generate Video Button

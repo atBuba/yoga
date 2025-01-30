@@ -11,8 +11,8 @@ random.seed(random.randint(0, 2**32 - 1))
 
 # Define a list of possible animations with randomized parameters
 animation_options = [
-    lambda: Presets.Vertical(intensity=1.2, smooth=True, loop=True, phase=0.5, steady=0.3, isometric=0.6),
-    lambda: Presets.Horizontal(intensity=1.2, smooth=True, loop=True, phase=0.5, steady=0.3, isometric=0.6),
+    lambda: Presets.Vertical(intensity=0.6, smooth=True, loop=True, phase=0.25, steady=0.15, isometric=0.3),
+    lambda: Presets.Horizontal(intensity=0.6, smooth=True, loop=True, phase=0.25, steady=0.15, isometric=0.3),
     # lambda: Components.Sine(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
     # lambda: Components.Cosine(target=Target.OffsetY, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
     # lambda: Components.Triangle(target=Target.OffsetX, amplitude=random.uniform(0.3, 0.7), cycles=random.uniform(0.5, 1.5), phase=random.uniform(0, 1)),
