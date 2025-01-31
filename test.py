@@ -9,6 +9,8 @@ from openai import OpenAI
 from streamlit_image_select import image_select
 from datetime import datetime
 from time import sleep
+from PIL import Image, ImageDraw, ImageFont
+
 
 def process_song(mp3_file, txt_file):
     """Process song text file and generate structured prompts."""
@@ -20,7 +22,7 @@ def process_song(mp3_file, txt_file):
         f.write(text)
     
     # Parse the response into a structured format
-    pattern = r"\*\*Кадр\*\*:\s+(.+?)\n\n\*\*Промпт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
+    pattern = r"\*\*Кадр\*\*:\s+(.+?)\n\n\*\*Часть песни\*\*:\s+(.+?)\n\n\*\*Текст\*\*:\s+(.+?)\n\n\*\*Промпт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
 
     # pattern = r"\#\#\#\# Строчки песни:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
     matches = re.findall(pattern, text, re.S)
@@ -29,11 +31,14 @@ def process_song(mp3_file, txt_file):
     
     prompts_translated = []
     for match in matches:
-        lyrics = match[0].strip()
-        prompt = match[1].strip()
+        shot = match[0].strip()
+        part = match[1].strip()
+        lyrics = match[2].strip()
+        prompt = match[3].strip()
         translated_prompt = translate_text(prompt)
+        print(translated_prompt)
         # image_lyrics.appned(lyrics)
-        prompts_translated.append({"lyrics": lyrics, "prompt": translated_prompt, "image_url": [], 'effect': None, 'effects_next': None})
+        prompts_translated.append({"lyrics": lyrics, 'part': part, 'shot': shot, "prompt": translated_prompt, "image_url": [], 'effect': None, 'effects_next': None})
 
     # two_line = ''
     
@@ -101,6 +106,7 @@ def adiou_to_time_text(audio_path, text_path):
 
 def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2):
     print("НАААЧАААЛИ!!!!")
+    status = st.empty()
 
     images = []
 
@@ -113,7 +119,7 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         effects_next.append(i['effects_next'])
 
     for i in range(len(prompts_data)):
-        t = prompts_data[i]['lyrics'].split('-') 
+        t = prompts_data[i]['shot'].split('-') 
         if i == 0:
             start = t[0].split(':')
             end = t[1].split(':')
@@ -151,14 +157,16 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         ttml_two_lines = parse(ttml_file=ttml_file_lines, two_lines=True)
         ttml_lines = parse(ttml_file=ttml_file_lines)
     elif check_file_exists(audio_path) and check_file_exists(lyrics_file):
-        ttml_words = adiou_to_time_text(audio_path, lyrics_file)
-        ttml_lines = parse(txt_files=lyrics_file)
-        ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
+        with status:    
+            with st.spinner("Создание субтитров 1/5"): 
+                ttml_words = adiou_to_time_text(audio_path, lyrics_file)
+                ttml_lines = parse(txt_files=lyrics_file)
+                ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
     else: 
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
-     
+    
     generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
     
     duration = 0
@@ -178,12 +186,14 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     # time = time[:-1:]
     # for i in time:
     #     print(i)
-    for image_path, t , line in zip(images, time, prompts_data):   
-        effect = line['effect']
-        video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-        if effect:
-            add_effect(video_url, effect)
-        videos.append(video_url)
+    with status:
+        with st.spinner("Анимация изображений 2/5"):
+            for image_path, t , line in zip(images, time, prompts_data):   
+                effect = line['effect']
+                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+                if effect:
+                    add_effect(video_url, effect)
+                videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
@@ -191,7 +201,7 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     overlay_videos = [
         'videos/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mp4',
         'videos/vecteezy_red-liquid-transition-green-screen_49115367.mp4',
-        'videos/vecteezy_2-transition-ink-variant-color-green-screen_48868893.mp4',
+        'videos/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mp4',
         'videos/vecteezy_transitions-love-green-screen_48868982.mp4',
         
     ]
@@ -203,15 +213,20 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         'videos/4.mp4',  
         'videos/5.mp4',  
         'videos/6.mp4',  
-        'videos/7.mp4',  
+        'videos/7.mp4',
+        'videos/8.mp4',  
+        'videos/9.mp4',  
     ]
-    
-    concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
-
-    create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
-
-    if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
-        add_audio_to_video('video/temp_video.mp4', audio_path, output_video_mp4)
+    with status:
+        with st.spinner("Рендеринг видео 3/5"):
+            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    with status:
+        with st.spinner("Добавление субтитров 4/5"):
+            create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
+    with status:
+        with st.spinner("Добавление аудио файла к видео 5/5"):
+            if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
+                add_audio_to_video('video/temp_video.mp4', audio_path, output_video_mp4)
 
 
     if output_video_mp4:
@@ -221,13 +236,13 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
 
 # Загрузка модели Sambanova
 client = OpenAI(
-    api_key="c28b215f-2bf4-4f13-a5ac-bf9d0389d24f",
-    base_url="https://api.sambanova.ai/v1",
+    api_key="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",
+    base_url="https://huggingface.co/api/inference-proxy/together",
 )
 
 # Инициализация состояния
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "Meta-Llama-3.1-405B-Instruct"
+    st.session_state["openai_model"] = "mistralai/Mistral-Small-24B-Instruct-2501"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -243,6 +258,12 @@ if "role_message" not in st.session_state:
 
 **Кадр**: (без номера)
 временная метка когда будет показываться этот кадр в формате XX:XX:XX.XX - XX:XX:XX.XX(кадр не должен идти меньше 5 и дольше 7 секунд)
+
+**Часть песни**: 
+Выведи, к какой части песни относится этот кадр: куплет, припев, вступление и так далее. 
+
+**Текст**: 
+Выведи стрчоки песнис с которыми будет показываться этот текст, если этот кадр будет показываться без текста, то выведи просто "-"
 
 **Промпт для модели генерирующей изображения**:(максимальное количество слов 77)
 Укажи стиль(реалистичный, кинематографичный), настроение, в каких цветах должно быть выполнено изображение, время или исторический промежуток, в который происходят события, затем опиши, что должно быть изображено на картинке, во что одеты персонажи.
@@ -293,7 +314,7 @@ if st.session_state["current_page"] == "main":
                     stream=True,
                     temperature=0.7,
                     top_p=0.9,
-                    max_tokens=7000,
+                    max_tokens=8000,
                 )
 
                 for chunk in stream:
@@ -338,12 +359,55 @@ elif st.session_state["current_page"] == "upload":
         selected_color_2 = st.color_picker("Выберите вторичный цвет субтитров:", "#C99457")[1::]
         selected_color_2 = selected_color_2[4::] + selected_color_2[2:4:] + selected_color_2[:2:]
         
-    fonts = ['Balkara Free Condensed - npoekmu.me', 'Manrope', 'Kaph', 'BOWLER', 'Faberge', 'DejaVu Sans']
     
-    font = st.selectbox(
-        "Выберите шрифт:",
-        fonts,
-    )
+    # Список шрифтов и их путей
+    fonts = ['Balkara Free Condensed - npoekmu.me', 'Manrope', 'Kaph', 'BOWLER']
+    fonts_path = {
+        'Balkara Free Condensed - npoekmu.me': 'font/ofont.ru_BalkaraCondensed.ttf',
+        'Manrope': 'font/ofont.ru_Manrope.ttf',
+        'Kaph': 'font/ofont.ru_Kaph.ttf',
+        'BOWLER': 'font/ofont.ru_Bowler.ttf',
+    }
+    
+    # Выбор шрифта
+    font = st.selectbox("Выберите шрифт:", fonts)
+    
+    # Текст для отображения
+    sample_text = "съешь ещё этих мягких французских булок, да выпей чаю"
+    
+    # Функция для создания изображения с текстом
+    def create_text_image(text, font_path, font_size=24):
+        try:
+            # Загружаем шрифт
+            font = ImageFont.truetype(font_path, font_size)
+        except Exception as e:
+            st.error(f"Ошибка загрузки шрифта: {e}")
+            return None
+        
+        # Определяем размер текста
+        image_width = 800
+        image_height = 100
+        
+        # Создаем изображение
+        img = Image.new('RGB', (image_width, image_height), color=(255, 255, 255))
+        draw = ImageDraw.Draw(img)
+        
+        # Рисуем текст
+        draw.text((10, 10), text, font=font, fill=(0, 0, 0))
+        return img
+    
+    # Получаем путь к выбранному шрифту
+    font_path = fonts_path.get(font)
+    
+    if font_path:
+        # Создаем изображение с текстом
+        img = create_text_image(sample_text, font_path)
+        
+        if img:
+            # Отображаем изображение в Streamlit
+            st.image(img, use_container_width=True)
+    else:
+        st.error("Шрифт не найден!")
 
             
     # Initialize session state for images
@@ -379,31 +443,54 @@ elif st.session_state["current_page"] == "upload":
 
     effects_next = {
         'Без эффекта' : 0,
-        'Длинный' : 1, 
         'Короткий' : 2, 
-        
-        
+        'Длинный' : 1,         
     }
+
+    number_images = 1
     
     # Display all generated images
     if st.session_state.prompts_data:
-        st.write("### Generated Images")
+        st.write("# Generated Images")
+
+        previous_part = '' 
+        
         for i, entry in enumerate(st.session_state.prompts_data):
+        
+            lyrics = entry["lyrics"]
+            part = entry["part"]
+            shot = entry["shot"]
+            prompt = entry["prompt"]
+            image_urls = entry.get("image_url", [])
+
+            if previous_part != part:
+                st.write("***")
+                st.write(f"## {part}")
+                previous_part = part
+
             col1, col2 = st.columns([5, 1])
-            with col1:
-                lyrics = entry["lyrics"]
-                prompt = entry["prompt"]
-                image_urls = entry.get("image_url", [])
-                
-                # Display image if it exists; otherwise, generate and save it
+            
+            with col1: 
+                st.write(f"**Time:** {shot}")
+                st.write(f"**Part:** {part}")
                 st.write(f"**Lyrics:** {lyrics}")
-                st.write(f"**Prompt (Translated):** {prompt}")
+                # st.write(f"**Prompt (Translated):** {prompt}")
+
+                user_prompt = st.text_area(
+                    '**Prompt**', 
+                    value=f"{prompt}", 
+                    height=150, 
+                    # value=st.session_state.user_data,
+                    key=f'user_input_{i}',
+                    # label_visibility =False,z
+                )
+                
                 if image_urls != []:
-                    img = image_select("Label", image_urls)
+                    img = image_select("", image_urls)
                     st.session_state[f"selected_image_{i}"] = img 
                 else:
-                    for _ in range(1): # количество изображений для одного кадра 
-                        with st.spinner(f"Generating image for: '{lyrics}'..."):
+                    for _ in range(number_images): # количество изображений для одного кадра 
+                        with st.spinner(f"Generating image"):
                             image_url = generate_image_for_prompt(prompt)
                             if image_url.startswith("static/"):
                                 entry["image_url"].append(image_url)
@@ -432,11 +519,31 @@ elif st.session_state["current_page"] == "upload":
                 selected_effect = st.selectbox(
                     "Выберите эффект переключения на следующие видео:",
                     list(effects_next.keys()),
-                    key=f"effect_0{i}",
+                    key=f"effect_next_{i}",
                 )
     
                 # Обновление выбранного эффекта в prompts_data
                 entry['effects_next'] = effects_next[selected_effect]
+
+                if st.button("Перегенерировать", key=f'button_{i}'):
+                    
+                    entry["image_url"] = [] 
+                    
+                    if user_prompt != prompt: 
+                        entry["prompt"] = user_prompt
+                        prompt = user_prompt
+                        
+                    for _ in range(number_images): # количество изображений для одного кадра 
+                        with st.spinner(f"Generating image"):
+                            image_url = generate_image_for_prompt(prompt)
+                            if image_url.startswith("static/"):
+                                entry["image_url"].append(image_url)
+                            else:
+                                st.error(image_url)
+                                
+                    st.session_state[f"selected_image_{i}"] = None
+                    st.rerun()
+                    
             st.write('---')
         
     # Generate Video Button
@@ -450,12 +557,11 @@ elif st.session_state["current_page"] == "upload":
         if None in selected_images:
             st.error("Please select an image for all lyrics!")
         else:
-            with st.spinner("Creating video..."):
-                video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2)
-                if video_url and not video_url.startswith("Error"):
-                    st.video(video_url)
-                else:
-                    st.error(f"Failed to create video: {video_url}")
+            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2)
+            if video_url and not video_url.startswith("Error"):
+                st.video(video_url)
+            else:
+                st.error(f"Failed to create video: {video_url}")
 
     # Button to return to main page
     if st.button("Вернуться на главную"):

@@ -14,7 +14,7 @@ from time import sleep
 
 
 # token for yandex translate 
-IAM_TOKEN = 'AQVNzmvjqc5VLwWjpRWA_8XDFHOe0ybnBn4fhIAi'
+IAM_TOKEN = 'AQVNzbPNKEeoixhfHLFZavVdM66AJ23Ow4zFkKwQ'
 folder_id = 'b1gbfto7jeu1ghuc8heq'
 target_language = 'en'
 
@@ -398,9 +398,10 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
     for i in range(len(video_files) - 1):
         video_duration = get_video_duration(video_files[i])
         if effects_next[i]:
-            durations.append([effects_next[i], float(video_duration)])       
-    
-    apply_chromakey_with_overlays(output_file, overlay_videos, short_overlay_videos, durations,)
+            durations.append([effects_next[i], float(video_duration)])      
+            
+    if len(duration):
+        apply_chromakey_with_overlays(output_file, overlay_videos, short_overlay_videos, durations,)
 
 
 def get_video_duration(video_file):
