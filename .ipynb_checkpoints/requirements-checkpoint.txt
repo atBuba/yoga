@@ -20,4 +20,5 @@ scipy
 pillow==9.5.0
 
 streamlit
+streamlit_image_select
 openai 

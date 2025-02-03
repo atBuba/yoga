@@ -357,7 +357,7 @@ def add_effect(video, effect):
         # "-stream_loop", "-1",
         "-i", effect,
         "-i", video,
-        "-filter_complex", "[0:v]chromakey=0x00FF00:0.1:0.1[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
+        "-filter_complex", "[0:v]chromakey=0x00FF00:0.2:0.3[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
         "-c:v", "libx264",
         "-crf", "23",
         "-preset", "veryfast",
@@ -394,13 +394,17 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
         print("Ошибка при склеивании видео:", e)
 
     durations = []
-    
+    dd = 0
     for i in range(len(video_files) - 1):
         video_duration = get_video_duration(video_files[i])
-        if effects_next[i]:
-            durations.append([effects_next[i], float(video_duration)])      
+        if effects_next[i]: 
+            durations.append([effects_next[i], dd + float(video_duration)])    
+            dd = 0
             
-    if len(duration):
+        else: 
+            dd += float(video_duration)
+            
+    if len(durations):
         apply_chromakey_with_overlays(output_file, overlay_videos, short_overlay_videos, durations,)
 
 

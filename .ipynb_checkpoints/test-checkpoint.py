@@ -22,7 +22,7 @@ def process_song(mp3_file, txt_file):
         f.write(text)
     
     # Parse the response into a structured format
-    pattern = r"\*\*Кадр\*\*:\s+(.+?)\n\n\*\*Часть песни\*\*:\s+(.+?)\n\n\*\*Текст\*\*:\s+(.+?)\n\n\*\*Промпт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
+    pattern = r"\*\*Frame\*\*:\s+(.+?)\n\n\*\*Part of the song\*\*:\s+(.+?)\n\n\*\*Text\*\*:\s+(.+?)\n\n\*\*Prompt for the image generating model\*\*:\s+(.+?)(?=\n\n|\Z)"
 
     # pattern = r"\#\#\#\# Строчки песни:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
     matches = re.findall(pattern, text, re.S)
@@ -236,13 +236,13 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
 
 # Загрузка модели Sambanova
 client = OpenAI(
-    api_key="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",
-    base_url="https://huggingface.co/api/inference-proxy/together",
+    api_key="c28b215f-2bf4-4f13-a5ac-bf9d0389d24f",
+    base_url="https://api.sambanova.ai/v1",
 )
 
 # Инициализация состояния
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "mistralai/Mistral-Small-24B-Instruct-2501"
+    st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -253,22 +253,22 @@ if "current_page" not in st.session_state:
 # Устанавливаем роль модели (скрыто от пользователя)
 if "role_message" not in st.session_state:
     st.session_state.role_message = (
-        '''Ты должен создать слайд-шоу-клип для песни, ты получишь текст песни вместе с временными метками и должен будешь разделить песню по кадрам и написать промпт для генерации изображения на этом кадре, каждый кадр не должен идти меньше 5 и дольше 7 секунд, ты можешь объеденять строчки, чтобы достич такой длиный. Кадры, которые будут показываться в момент, когда нет текста, должны просто передавать атмосферу клипа, кадры должны быть непрерывны, то есть начало текущего клипа — это конец предыдущего. Напиши промпт для модели, которая будет генерировать изображения для этих кадров, изображения должны быть связанны друг с другом, весь клип должен отражать смысл песни, передавать ее настроение. Распиши подробно, во что одеты люди и как они стоят, в каких тонах должно быть изображение, какого настроение это изображения, в каком стиле. Главные персонажи должны на всех изображениях выглядеть одинаково, стиль всего слайд-шоу должен быть един, цветовая палитра всех картинок должна быть одинакова, укажи, в какое время или исторический период происходят действия, у всех картинок этот период должен быть одинаковый. Кадры, которые будут показываться вместе с текстом, должны передавать то, о чем говорится в этих строчках, эти кадры должны показываться строго вместе с текстом.
-Ответь в следующем формате:
+        '''Use the entire text carefully. You have to create a slideshow clip for the song, you will receive the lyrics along with timestamps and you will have to divide the song into frames and write a prompt to generate an image on this frame, each frame should not go less than 5 and longer than 7 seconds, you can combine the lines to achieve such a long, but the frame It should not contain lyrics from different parts of the song (the lyrics should be only from the chorus or only from the verse or etc.). The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip, the frames should be continuous, that is, the beginning of the current clip is the end of the previous one. Write a prompt for the model that will generate images for these frames, the images should be connected to each other, the whole clip should reflect the meaning of the song, convey its mood. Describe in detail what people are wearing and how they stand, what colors the image should be in, what mood the image is in, and what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly with the text.
+Please respond in the following format:
 
-**Кадр**: (без номера)
-временная метка когда будет показываться этот кадр в формате XX:XX:XX.XX - XX:XX:XX.XX(кадр не должен идти меньше 5 и дольше 7 секунд)
+**Frame**: (without number)
+timestamp of when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX (the frame should not be less than 5 and longer than 7 seconds)
 
-**Часть песни**: 
-Выведи, к какой части песни относится этот кадр: куплет, припев, вступление и так далее. 
+**Part of the song**: 
+Print out which part of the song this frame belongs to: verse, chorus, intro, and so on. 
 
-**Текст**: 
-Выведи стрчоки песнис с которыми будет показываться этот текст, если этот кадр будет показываться без текста, то выведи просто "-"
+**Text**: 
+Print the song sections with which this text will be shown, if this frame will be shown without text, then simply output "-"
 
-**Промпт для модели генерирующей изображения**:(максимальное количество слов 77)
-Укажи стиль(реалистичный, кинематографичный), настроение, в каких цветах должно быть выполнено изображение, время или исторический промежуток, в который происходят события, затем опиши, что должно быть изображено на картинке, во что одеты персонажи.
-используй все строчки песни, даже если они повторяются.
-текст песни вместе с временными метками: '''
+**Prompt for the image generating model**:(maximum number of words is 77)
+Specify the style (realistic, cinematic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
+use all the lines of the song, even if they are repeated.
+song lyrics along with timestamps: '''
     )
 
 # Добавляем роль модели в историю сообщений только для запроса
@@ -385,7 +385,7 @@ elif st.session_state["current_page"] == "upload":
             return None
         
         # Определяем размер текста
-        image_width = 800
+        image_width = 1050
         image_height = 100
         
         # Создаем изображение
@@ -415,7 +415,7 @@ elif st.session_state["current_page"] == "upload":
         st.session_state.prompts_data = []
 
     # Generate Images Button
-    if mp3_file and txt_file and st.button("Generate Images"):
+    if txt_file and st.button("Generate Images"):
         # Process files
         prompts_data = process_song(mp3_file, txt_file)
         
