@@ -370,28 +370,38 @@ def add_effect(video, effect):
 
 
 # Функция для создания команды FFmpeg
-def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_videos, effects_next):
-    print('Создание видео путем склеивания без переходов')
+def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_videos, effects_next, fade_duration=0.2):
+    print('Создание видео со склейкой и эффектом появления (fade in)')
     
-    with open("file_list.txt", "w") as f:
-        for video in video_files:
-            f.write(f"file '{video}'\n")
+    filter_complex_parts = []
+    input_files = []
+    
+    for i, video in enumerate(video_files):
+        input_files.extend(["-i", video])
+        filter_complex_parts.append(
+            f"[{i}:v]fade=t=in:st=0:d={fade_duration}[v{i}]"
+        )
+    
+    video_streams = "".join(f"[v{i}]" for i in range(len(video_files)))
+    filter_complex = ";".join(filter_complex_parts) + f";{video_streams}concat=n={len(video_files)}:v=1:a=0[outv]"
     
     command = [
-        'ffmpeg',
-        '-f', 'concat',
-        '-safe', '0',
-        '-i', 'file_list.txt',
-        '-c', 'copy',
-        '-y', output_file
+        "ffmpeg",
+        *input_files,
+        "-filter_complex", filter_complex,
+        "-map", "[outv]",  # исправлено
+        "-c:v", "libx264",
+        "-preset", "fast",
+        "-y", output_file
     ]
     
     print(' '.join(command))
+    
     try:
         subprocess.run(command, shell=False, check=True)
-        print("Видео успешно склеены!")
+        print("Видео успешно склеены с эффектом fade in!")
     except subprocess.CalledProcessError as e:
-        print("Ошибка при склеивании видео:", e)
+        print("Ошибка при обработке видео:", e)
 
     durations = []
     dd = 0

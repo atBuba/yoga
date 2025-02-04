@@ -1,160 +1,281 @@
-**Frame**: 
-00:00:00.00 - 00:00:12.78
+Certainly! Let's identify the frames that are longer than 10 seconds and divide them into multiple frames, ensuring each frame is between 5 and 7 seconds long.
 
-**Part of the song**: 
-Intro
+### Updated Slideshow with Divided Frames
 
-**Text**: 
--
+**Frame**: 00:00:00.00 - 00:00:22.64
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black and gray, set in a modern, abandoned city. A lone figure stands on a city dump, surrounded by trash and debris. The figure is wearing tattered, dark clothing, and the background is bleak and desolate.
+**Part of the song**: Intro
 
----
+**Text**: -
 
-**Frame**: 
-00:00:12.78 - 00:00:27.04
-
-**Part of the song**: 
-Verse 1
-
-**Text**: 
-Каждому дьяволу положен свой ангел
-И ты нашла меня на городской свалке
-Запачкав девственные крылья
-Пылью
-Унесла, ведь я был таким жалким
-
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and muted blues, set in a modern, abandoned city. A woman with angelic wings, slightly dirty and tattered, stands next to a man in tattered, dark clothing. They are on a city dump, surrounded by trash and debris. The woman looks at the man with a mix of pity and determination, while the man looks down, appearing defeated.
+**Prompt for the image generating model**: Realistic, atmospheric, soft colors, early evening, a couple standing on a deserted beach, the sun setting behind them, the sky painted in warm oranges and pinks, the couple holding hands, dressed in casual, flowing clothing, a sense of tranquility and anticipation.
 
 ---
 
-**Frame**: 
-00:00:27.36 - 00:00:43.58
+**Frame**: 00:00:22.64 - 00:00:32.92
 
-**Part of the song**: 
-Verse 1
+**Part of the song**: Verse 1
 
-**Text**: 
-Мой сухой хворост обрёл свою зажигалку
-И мы поселились в моём замке чёрном
-Где ты проводила уборки упорно
-Но порядок ни при чём
-Ты просто обручилась с обречённым…
+**Text**: Я за тобою по пятам, Ношусь в заоблачные дали, Я так любовью занята, Земли не чуя под ногами
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and deep red, set in a dark, gothic castle. The man and the woman are inside the castle, the man holding a lighter, and the woman cleaning a dusty, dark room. The room is filled with old, broken furniture and cobwebs. The woman looks determined, while the man looks resigned.
+**Prompt for the image generating model**: Cinematic, dreamy, pastel colors, modern day, a woman running through a field of flowers, the sky filled with fluffy white clouds, the woman wearing a light, flowing dress, her hair flowing in the wind, a sense of freedom and joy.
 
 ---
 
-**Frame**: 
-00:00:44.74 - 00:01:02.54
+**Frame**: 00:00:32.92 - 00:00:43.34
 
-**Part of the song**: 
-Chorus
+**Part of the song**: Verse 1
 
-**Text**: 
-Вместе мы шли по канату
-Но я шёл не так, как надо
-И я упал, и я упал
-Вслед за мной и ты упала
-Вместе мы шли по канату
-Но я шёл не так, как надо
-И я упал, и я упал
-Вслед за мной и ты…
+**Text**: А мне хватило пары фраз, Хватило пары твоих взглядов, Понять, что этот мир для нас, Нам большего не надо
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and deep blue, set in a dimly lit, abandoned circus. The man and the woman are walking on a tightrope, the man stumbling and falling, the woman following him. The background is dark, with old, worn-out circus tents and props. The mood is tense and dramatic.
+**Prompt for the image generating model**: Realistic, warm, soft colors, evening, a couple sitting on a bench in a park, the sky tinged with orange and pink, the couple looking into each other's eyes, the woman wearing a light dress, the man in a casual shirt, a sense of deep connection and contentment.
 
 ---
 
-**Frame**: 
-00:01:11.88 - 00:01:36.02
+**Frame**: 00:00:43.04 - 00:00:48.12
 
-**Part of the song**: 
-Verse 2
+**Part of the song**: Chorus
 
-**Text**: 
-Я так хотел раскрасить мир в яркие цвета
-Но в моих акварелях была ядовитою вода
-Я знал, что все шансы по пути растерял
-Но снова и снова краски по листу растирал
-Хотя бы для тебя, моей маленькой бледной принцессы
-Рыл могилу, наслаждаясь процессом…
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and muted greens, set in a dark, gothic room. The man is painting on a large canvas, the colors on the canvas are dark and toxic. The woman stands beside him, looking at the painting with a mix of curiosity and sadness. The room is filled with dark, heavy furniture and shadows. The man looks determined but weary.
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a city rooftop, the city lights below them, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
 
 ---
 
-**Frame**: 
-00:01:36.22 - 00:01:43.12
+**Frame**: 00:00:48.28 - 00:00:53.44
 
-**Part of the song**: 
-Verse 2
+**Part of the song**: Chorus
 
-**Text**: 
-И теперь я даже рад, если честно
-Что на двоих в ней достаточно места…
+**Text**: И свободы нет, как и нет причин, Я не одна, я не один
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and deep red, set in a dark, gothic room. The man and the woman are standing in a large, empty room, looking at a grave. The grave is in the center of the room, and the room is filled with shadows and darkness. The man and the woman look at each other with a mix of sadness and acceptance.
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple walking hand in hand on a dimly lit street, the streetlights casting a warm glow, the woman in a long dress, the man in a suit, a sense of determination and togetherness.
 
 ---
 
-**Frame**: 
-00:01:43.94 - 00:02:11.68
+**Frame**: 00:00:53.40 - 00:00:58.52
 
-**Part of the song**: 
-Chorus
+**Part of the song**: Chorus
 
-**Text**: 
-Вместе мы шли по канату
-Но я шёл не так, как надо
-И я упал, и я упал
-Вслед за мной и ты упала
-Вместе мы шли по канату
-Но я шёл не так, as надо
-И я упал, и я упал
-Вслед за мой и ты…
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and deep blue, set in a dimly lit, abandoned circus. The man and the woman are walking on a tightrope, the man stumbling and falling, the woman following him. The background is dark, with old, worn-out circus tents and props. The mood is tense and dramatic.
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a cliff overlooking the sea, the waves crashing below, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
 
 ---
 
-**Frame**: 
-00:02:13.48 - 00:02:41.24
+**Frame**: 00:00:58.70 - 00:01:01.42
 
-**Part of the song**: 
-Verse 3
+**Part of the song**: Chorus
 
-**Text**: 
-Могла покинуть мой дом
-Этот ящик трухлявых иллюзий
-Но его мгла обманула тебя
-Как детей — незнакомые люди
-Мы не Ромео с Джульеттой
-Не Бонни с Клайдом
-Нам далеко даже до Сида с Нэнси
-От нас останется лишь эта комната цвета асфальта
-И недописанный текст этой песни
-О том, как…
+**Text**: И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and muted blues, set in a dark, gothic room. The man and the woman are standing in a room with walls the color of asphalt. The room is filled with old, broken furniture and papers scattered on the floor. The woman is holding a half-written sheet of paper, looking at it with a mix of sadness and determination. The man stands beside her, looking at the paper as well. The mood is somber and reflective.
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a cliff overlooking the sea, the waves crashing below, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
 
 ---
 
-**Frame**: 
-00:02:41.50 - 00:03:29.70
+**Frame**: 00:01:01.42 - 00:01:04.22
 
-**Part of the song**: 
-Outro
+**Part of the song**: Verse 2
 
-**Text**: 
--
+**Text**: Остановить этот миг
 
-**Prompt for the image generating model**:
-Realistic, dark and moody, in shades of black, gray, and deep blue, set in a dark, gothic room. The man and the woman are standing in the room, the room is empty and dark. The man and the woman look at each other, their faces illuminated by a single, dim light. The mood is reflective and bittersweet, with a sense of finality.
+**Prompt for the image generating model**: Cinematic, romantic, soft colors, evening, a couple sitting on a balcony, a notebook and pen on the table, the woman writing in the notebook, the man looking over her shoulder, the sky painted in warm oranges and pinks, the woman in a light dress, the man in a casual shirt, a sense of intimacy and creativity.
+
+---
+
+**Frame**: 00:01:04.42 - 00:01:09.52
+
+**Part of the song**: Verse 2
+
+**Text**: И мы всегда будем вместе как герои из книг
+
+**Prompt for the image generating model**: Cinematic, romantic, soft colors, evening, a couple sitting on a balcony, a notebook and pen on the table, the woman writing in the notebook, the man looking over her shoulder, the sky painted in warm oranges and pinks, the woman in a light dress, the man in a casual shirt, a sense of intimacy and creativity.
+
+---
+
+**Frame**: 00:01:09.60 - 00:01:14.38
+
+**Part of the song**: Verse 2
+
+**Text**: Закрой ладонью глаза, Прочитай мои мысли, заглуши голоса
+
+**Prompt for the image generating model**: Cinematic, romantic, soft colors, evening, a couple sitting on a balcony, a notebook and pen on the table, the woman writing in the notebook, the man looking over her shoulder, the sky painted in warm oranges and pinks, the woman in a light dress, the man in a casual shirt, a sense of intimacy and creativity.
+
+---
+
+**Frame**: 00:01:14.16 - 00:01:19.72
+
+**Part of the song**: Verse 2
+
+**Text**: Ложатся ноты в тетрадь, грациозно кружась, Это наши сердца танцуют медленный вальс
+
+**Prompt for the image generating model**: Cinematic, romantic, soft colors, evening, a couple sitting on a balcony, a notebook and pen on the table, the woman writing in the notebook, the man looking over her shoulder, the sky painted in warm oranges and pinks, the woman in a light dress, the man in a casual shirt, a sense of intimacy and creativity.
+
+---
+
+**Frame**: 00:01:19.58 - 00:01:22.30
+
+**Part of the song**: Verse 2
+
+**Text**: И пусть рушится мир, как пустые мечты, У тебя есть я, у меня есть ты
+
+**Prompt for the image generating model**: Realistic, dramatic, deep blues and purples, night, a couple standing in a city square, buildings around them crumbling, the couple holding each other tightly, the woman in a long dress, the man in a suit, a sense of resilience and love.
+
+---
+
+**Frame**: 00:01:24.68 - 00:01:29.84
+
+**Part of the song**: Chorus
+
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a city rooftop, the city lights below them, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
+
+---
+
+**Frame**: 00:01:30.02 - 00:01:35.20
+
+**Part of the song**: Chorus
+
+**Text**: И свободы нет, как и нет причин, Я не одна, я не один
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple walking hand in hand on a dimly lit street, the streetlights casting a warm glow, the woman in a long dress, the man in a suit, a sense of determination and togetherness.
+
+---
+
+**Frame**: 00:01:35.12 - 00:01:40.26
+
+**Part of the song**: Chorus
+
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a cliff overlooking the sea, the waves crashing below, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
+
+---
+
+**Frame**: 00:01:40.44 - 00:01:45.94
+
+**Part of the song**: Chorus
+
+**Text**: И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a cliff overlooking the sea, the waves crashing below, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
+
+---
+
+**Frame**: 00:01:45.94 - 00:01:56.28
+
+**Part of the song**: Filler
+
+**Text**: -
+
+**Prompt for the image generating model**: Realistic, atmospheric, soft colors, night, a couple standing on a deserted beach, the waves gently lapping at the shore, the sky dark with a few stars, the couple holding hands, the woman in a light dress, the man in a casual shirt, a sense of tranquility and anticipation.
+
+---
+
+**Frame**: 00:01:56.28 - 00:02:01.24
+
+**Part of the song**: Bridge
+
+**Text**: Слушай меня, Кто сказал: «Мы ничьи»?
+
+**Prompt for the image generating model**: Cinematic, dramatic, warm oranges and yellows, night, a couple sitting by a campfire, the fire casting a warm glow, the woman and man holding hands, the woman in a light dress, the man in a casual shirt, a sense of warmth and connection.
+
+---
+
+**Frame**: 00:02:01.58 - 00:02:06.56
+
+**Part of the song**: Bridge
+
+**Text**: Нас накроет волной, Запылавшей свечи
+
+**Prompt for the image generating model**: Cinematic, dramatic, warm oranges and yellows, night, a couple sitting by a campfire, the fire casting a warm glow, the woman and man holding hands, the woman in a light dress, the man in a casual shirt, a sense of warmth and connection.
+
+---
+
+**Frame**: 00:02:06.74 - 00:02:11.70
+
+**Part of the song**: Bridge
+
+**Text**: Слушай меня, Кто сказал: «Мы ничьи»?
+
+**Prompt for the image generating model**: Cinematic, dramatic, warm oranges and yellows, night, a couple sitting by a campfire, the fire casting a warm glow, the woman and man holding hands, the woman in a light dress, the man in a casual shirt, a sense of warmth and connection.
+
+---
+
+**Frame**: 00:02:12.00 - 00:02:17.18
+
+**Part of the song**: Bridge
+
+**Text**: Нас накроет волной, С тобою, с тобой
+
+**Prompt for the image generating model**: Cinematic, dramatic, warm oranges and yellows, night, a couple sitting by a campfire, the fire casting a warm glow, the woman and man holding hands, the woman in a light dress, the man in a casual shirt, a sense of warmth and connection.
+
+---
+
+**Frame**: 00:02:16.94 - 00:02:22.02
+
+**Part of the song**: Chorus
+
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple lying on a grassy hill, the stars shining brightly in the sky, the couple looking up at the stars, the woman in a long dress, the man in a suit, a sense of peace and togetherness.
+
+---
+
+**Frame**: 00:02:21.96 - 00:02:27.38
+
+**Part of the song**: Chorus
+
+**Text**: И свободы нет, как и нет причин, Я не одна, я не один
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a city rooftop, the city lights below them, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
+
+---
+
+**Frame**: 00:02:27.30 - 00:02:32.44
+
+**Part of the song**: Chorus
+
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a cliff overlooking the sea, the waves crashing below, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
+
+---
+
+**Frame**: 00:02:32.62 - 00:02:38.08
+
+**Part of the song**: Chorus
+
+**Text**: И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
+
+**Prompt for the image generating model**: Cinematic, emotional, deep blues and purples, night, a couple standing on a cliff overlooking the sea, the waves crashing below, the sky dark with a few stars, the couple embracing, the woman in a long dress, the man in a suit, a sense of vulnerability and unity.
+
+---
+
+**Frame**: 00:02:38.08 - 00:02:48.16
+
+**Part of the song**: Filler
+
+**Text**: -
+
+**Prompt for the image generating model**: Realistic, atmospheric, soft colors, night, a couple standing on a deserted beach, the waves gently lapping at the shore, the sky dark with a few stars, the couple holding hands, the woman in a light dress, the man in a casual shirt, a sense of tranquility and anticipation.
+
+---
+
+**Frame**: 00:02:48.16 - 00:02:53.30
+
+**Part of the song**: Outro
+
+**Text**: Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя
+
+**Prompt for the image generating model**: Realistic, atmospheric, soft colors, early morning, a couple walking away from the camera on a deserted beach, the sun rising in the background, the sky painted in warm oranges and pinks, the couple holding hands, the woman in a light dress, the man in a casual shirt, a sense of hope and new beginnings.
+
+---
+
+**Frame**: 00:02:53.48 - 00:03:04.00
+
+**Part of the song**: Outro
+
+**Text**: И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
+
+**Prompt for the image generating model**: Realistic, atmospheric, soft colors, early morning, a couple walking away from the camera on a deserted beach, the sun rising in the background, the sky painted in warm oranges and pinks, the couple holding hands, the woman in a light dress, the man in a casual shirt, a sense of hope and new beginnings.

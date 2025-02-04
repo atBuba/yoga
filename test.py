@@ -104,7 +104,7 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2):
+def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type):
     print("НАААЧАААЛИ!!!!")
     status = st.empty()
 
@@ -144,6 +144,9 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
 
     # path to files 
     audio_path = 'static/mp3_file.mp3'
+    vocal_path = 'static/vocal.mp3'
+    no_vocal_path = 'static/no_vocal.mp3'
+
     ttml_file_lines = 'static/ttml_file_lines.ttml'
     ttml_file_words = 'static/ttml_file_words.ttml'
 
@@ -162,6 +165,7 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
                 ttml_words = adiou_to_time_text(audio_path, lyrics_file)
                 ttml_lines = parse(txt_files=lyrics_file)
                 ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
+        pass
     else: 
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
@@ -186,14 +190,15 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     # time = time[:-1:]
     # for i in time:
     #     print(i)
-    with status:
-        with st.spinner("Анимация изображений 2/5"):
-            for image_path, t , line in zip(images, time, prompts_data):   
-                effect = line['effect']
-                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-                if effect:
-                    add_effect(video_url, effect)
-                videos.append(video_url)
+    
+    # with status:
+    #     with st.spinner("Анимация изображений 2/5"):
+    #         for image_path, t , line in zip(images, time, prompts_data):   
+    #             effect = line['effect']
+    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+    #             if effect:
+    #                 add_effect(video_url, effect)
+    #             videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
@@ -217,16 +222,18 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         'videos/8.mp4',  
         'videos/9.mp4',  
     ]
-    with status:
-        with st.spinner("Рендеринг видео 3/5"):
-            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
-    with status:
-        with st.spinner("Добавление субтитров 4/5"):
-            create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
+    # with status:
+    #     with st.spinner("Рендеринг видео 3/5"):
+    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    # with status:
+    #     with st.spinner("Добавление субтитров 4/5"):
+    #         create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
     with status:
         with st.spinner("Добавление аудио файла к видео 5/5"):
-            if check_file_exists(ttml_file_lines) and check_file_exists(audio_path):
+            if audio_type == 'Плюс-фонограмма':
                 add_audio_to_video('video/temp_video.mp4', audio_path, output_video_mp4)
+            elif audio_type == 'Минус-фонограмма':
+                add_audio_to_video('video/temp_video.mp4', no_vocal_path, output_video_mp4)
 
 
     if output_video_mp4:
@@ -371,6 +378,11 @@ elif st.session_state["current_page"] == "upload":
     
     # Выбор шрифта
     font = st.selectbox("Выберите шрифт:", fonts)
+
+    audio_type = st.selectbox(
+                    "Выберите вид фонограммы:",
+                    ['Плюс-фонограмма', 'Минус-фонограмма'],
+                )
     
     # Текст для отображения
     sample_text = "съешь ещё этих мягких французских булок, да выпей чаю"
@@ -471,10 +483,17 @@ elif st.session_state["current_page"] == "upload":
             col1, col2 = st.columns([5, 1])
             
             with col1: 
-                st.write(f"**Time:** {shot}")
                 st.write(f"**Part:** {part}")
                 st.write(f"**Lyrics:** {lyrics}")
                 # st.write(f"**Prompt (Translated):** {prompt}")
+                user_shot = st.text_area(
+                    '**Prompt**', 
+                    value=f"{shot}", 
+                    height=68 , 
+                    # value=st.session_state.user_data,
+                    key=f'user_shot_{i}',
+                    # label_visibility =False,z
+                )
 
                 user_prompt = st.text_area(
                     '**Prompt**', 
@@ -543,7 +562,10 @@ elif st.session_state["current_page"] == "upload":
                                 
                     st.session_state[f"selected_image_{i}"] = None
                     st.rerun()
-                    
+            if user_shot != shot: 
+                entry["shot"] = user_shot
+                shot = user_shot 
+            
             st.write('---')
         
     # Generate Video Button
@@ -557,7 +579,7 @@ elif st.session_state["current_page"] == "upload":
         if None in selected_images:
             st.error("Please select an image for all lyrics!")
         else:
-            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2)
+            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type)
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:
