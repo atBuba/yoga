@@ -448,7 +448,7 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
             delay = duration + durations[i][1] - 2.5  
             duration += durations[i][1]
             filter_complex.append(
-                f'[{i+1}:v]chromakey=0x00FF00:0.1:0.2,setpts=PTS+{delay}/TB[{tr}]'
+                f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
             )
             overlay_streams.append(tr)
         elif dur[0] == 2:
@@ -457,7 +457,7 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
             delay = duration + durations[i][1] - 0.6
             duration += durations[i][1]
             filter_complex.append(
-                f'[{i+1}:v]chromakey=0x00FF00:0.1:0.2,setpts=PTS+{delay}/TB[{tr}]'
+                f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
             )
             overlay_streams.append(tr)   
             

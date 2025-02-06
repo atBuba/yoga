@@ -191,43 +191,44 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     # for i in time:
     #     print(i)
     
-    # with status:
-    #     with st.spinner("Анимация изображений 2/5"):
-    #         for image_path, t , line in zip(images, time, prompts_data):   
-    #             effect = line['effect']
-    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-    #             if effect:
-    #                 add_effect(video_url, effect)
-    #             videos.append(video_url)
+    with status:
+        with st.spinner("Анимация изображений 2/5"):
+            for image_path, t , line in zip(images, time, prompts_data):   
+                effect = line['effect']
+                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+                if effect:
+                    add_effect(video_url, effect)
+                videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
 
     overlay_videos = [
-        'videos/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mp4',
-        'videos/vecteezy_red-liquid-transition-green-screen_49115367.mp4',
-        'videos/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mp4',
-        'videos/vecteezy_transitions-love-green-screen_48868982.mp4',
+        'videos/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
+        'videos/vecteezy_red-liquid-transition-green-screen_49115367.mov',
+        'videos/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
+        'videos/vecteezy_transitions-love-green-screen_48868982.mov',
         
     ]
 
     short_overlay_videos = [
-        'videos/1.mp4',
-        # 'videos/2.mp4',
-        'videos/3.mp4',
-        'videos/4.mp4',  
-        'videos/5.mp4',  
-        'videos/6.mp4',  
-        'videos/7.mp4',
-        'videos/8.mp4',  
-        'videos/9.mp4',  
+        'videos/1.mov',
+        'videos/2.mov',
+        'videos/3.mov',
+        'videos/4.mov',  
+        'videos/5.mov',  
+        'videos/6.mov',  
+        'videos/7.mov',
+        'videos/8.mov',  
+        'videos/9.mov',  
     ]
-    # with status:
-    #     with st.spinner("Рендеринг видео 3/5"):
-    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
-    # with status:
-    #     with st.spinner("Добавление субтитров 4/5"):
-    #         create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
+    
+    with status:
+        with st.spinner("Рендеринг видео 3/5"):
+            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    with status:
+        with st.spinner("Добавление субтитров 4/5"):
+            create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
     with status:
         with st.spinner("Добавление аудио файла к видео 5/5"):
             if audio_type == 'Плюс-фонограмма':
@@ -249,7 +250,7 @@ client = OpenAI(
 
 # Инициализация состояния
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
+    st.session_state["openai_model"] = "Meta-Llama-3.1-405B-Instruct"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -320,7 +321,7 @@ if st.session_state["current_page"] == "main":
                     messages=messages,
                     stream=True,
                     temperature=0.7,
-                    top_p=0.9,
+                    top_p=0.1,
                     max_tokens=8000,
                 )
 
