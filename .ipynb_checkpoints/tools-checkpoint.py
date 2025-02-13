@@ -16,12 +16,11 @@ from time import sleep
 # token for yandex translate 
 IAM_TOKEN = 'AQVNzbPNKEeoixhfHLFZavVdM66AJ23Ow4zFkKwQ'
 folder_id = 'b1gbfto7jeu1ghuc8heq'
-target_language = 'en'
 
 URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
 
 
-def translate_text(texts: str) -> str:
+def translate_text(texts: str, language : str) -> str:
     '''
     Translates text from Russian to English (or another target language) 
     using the Yandex Translate API.
@@ -38,7 +37,7 @@ def translate_text(texts: str) -> str:
     '''
 
     body = {
-        "targetLanguageCode": target_language,
+        "targetLanguageCode": language,
         "texts": texts,
         "folderId": folder_id,
     }
@@ -55,6 +54,25 @@ def translate_text(texts: str) -> str:
 
     return response.json()['translations'][0]['text']
 
+
+def detect_language(text):
+    url = "https://translate.api.cloud.yandex.net/translate/v2/detect"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Api-Key {0}".format(IAM_TOKEN)
+    }
+    data = {
+        "folderId": folder_id,
+        "text": text
+    }
+    
+    response = requests.post(url, json=data, headers=headers)
+    
+    if response.status_code == 200:
+        language_code = response.json().get("languageCode", "Не удалось определить язык")
+        return language_code
+    else:
+        return f"Ошибка: {response.status_code}, {response.text}"
 
 
 def generate_prompt(user_text):    
@@ -479,17 +497,15 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
     filter_complex = []
     inputs = [f'-i {base_video}']
     for i, dur in enumerate(durations):
-        if dur[0] == 1:
-            inputs.append(f'-i {random.choice(overlay_videos)}')
-        elif dur[0] == 2: 
-            inputs.append(f'-i {random.choice(short_overlay_videos)}')
+        if dur[0]:
+            inputs.append(f'-i {dur[0]}')
 
     
     overlay_streams = []
 
     duration = 0 
     for i, dur in enumerate(durations):
-        if dur[0] == 1:
+        if dur[0] in overlay_videos:
             tr = f'tr{i}'
             over = f'over{i}'
             delay = duration + durations[i][1] - 2.5  
@@ -498,7 +514,7 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
                 f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
             )
             overlay_streams.append(tr)
-        elif dur[0] == 2:
+        elif dur[0] in short_overlay_videos:
             tr = f'tr{i}'
             over = f'over{i}'
             delay = duration + durations[i][1] - 0.6

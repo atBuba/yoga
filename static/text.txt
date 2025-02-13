@@ -8,7 +8,7 @@
 -
 
 **Prompt for the image generating model**: 
-Create a cinematic image of a serene landscape with a warm color palette, set in the 1950s. A young woman with curly brown hair and a bright yellow sundress is standing at the edge of a cliff, looking out at the vast expanse of the ocean. The atmosphere is peaceful and contemplative. A young man with short brown hair and a white shirt is standing next to her, looking at her with a smile.
+Create a cinematic image of a vast, snowy Siberian landscape at dawn, with a hint of mist and a few bare trees in the distance. The color palette should be cold and muted, with shades of blue and gray. The mood is serene and mysterious.
 
 **Frame**: 
 00:00:05.00 - 00:00:10.00
@@ -20,7 +20,7 @@ Create a cinematic image of a serene landscape with a warm color palette, set in
 -
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing at the edge of the cliff, with the camera panning out to reveal the vast expanse of the ocean. The color palette remains warm and serene, with the sound of seagulls in the distance. They are holding hands and looking out at the ocean together.
+Depict a realistic scene of a few snowflakes gently falling on a frozen lake, with a few bare trees and a misty atmosphere in the background. The color palette should be cold and muted, with shades of blue and gray. The mood is serene and peaceful.
 
 **Frame**: 
 00:00:10.00 - 00:00:15.00
@@ -32,10 +32,10 @@ Continue the cinematic image of the young woman and the young man standing at th
 -
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man walking along the beach, with the sun shining down on them. The color palette is warm and vibrant, with a sense of happiness and joy. They are laughing and smiling together, with the ocean waves crashing in the background.
+Create a cinematic image of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and exploration.
 
 **Frame**: 
-00:00:15.00 - 00:00:22.62
+00:00:15.00 - 00:00:20.00
 
 **Part of the song**: 
 Вступление
@@ -44,340 +44,352 @@ Create a cinematic image of the young woman and the young man walking along the 
 -
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man walking along the beach, with the camera panning out to reveal the beautiful landscape of the coastline. The color palette remains warm and vibrant, with a sense of freedom and adventure. They are walking hand in hand, with the wind blowing through their hair.
+Depict a realistic scene of a few horses grazing in a snowy meadow, with a few bare trees and a misty atmosphere in the background. The color palette should be cold and muted, with shades of blue and gray. The mood is serene and peaceful.
 
 **Frame**: 
-00:00:22.64 - 00:00:29.98
+00:00:20.00 - 00:00:25.00
+
+**Part of the song**: 
+Вступление
+
+**Text**: 
+-
+
+**Prompt for the image generating model**: 
+Create a cinematic image of a vast, snowy Siberian landscape at dawn, with a hint of mist and a few bare trees in the distance. The color palette should be cold and muted, with shades of blue and gray. The mood is serene and mysterious.
+
+**Frame**: 
+00:00:25.00 - 00:00:30.46
+
+**Part of the song**: 
+Вступление
+
+**Text**: 
+-
+
+**Prompt for the image generating model**: 
+Depict a realistic scene of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and exploration.
+
+**Frame**: 
+00:00:30.46 - 00:00:37.16
 
 **Part of the song**: 
 Куплет 1
 
 **Text**: 
-Я за тобою по пятам, Ношусь в заоблачные дали, Я так любовью занята
+Мне ведан сказ, как царь направил атамана
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man walking along a winding road, with a suitcase in hand and a look of determination on their faces. The color palette is warm and vibrant, with a sense of excitement and adventure. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
+Create a cinematic image of a 16th-century Russian tsar giving orders to an ataman, with a few Cossacks in the background, dressed in traditional clothing and holding spears. The image should be set in a dimly lit, ornate throne room with a large map of Siberia on the wall. The color palette should be rich and warm, with shades of gold and red. The mood is one of grandeur and adventure.
 
 **Frame**: 
-00:00:30.46 - 00:00:38.46
+00:00:37.16 - 00:00:43.82
 
 **Part of the song**: 
 Куплет 1
 
 **Text**: 
-Земли не чуя под ногами, А мне хватило пары фраз, Хватило пары твоих взглядов
+Сквозь устья рек, влача по суше корабли
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man walking along the winding road, with the camera panning out to reveal a beautiful landscape of rolling hills and sunflowers. The color palette remains warm and vibrant, with a sense of freedom and joy.
+Depict a realistic scene of a Cossack on horseback, riding through a snowy forest, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of determination and exploration.
 
 **Frame**: 
-00:00:38.28 - 00:00:43.34
+00:00:43.82 - 00:00:50.46
 
 **Part of the song**: 
 Куплет 1
 
 **Text**: 
-Понять, что этот мир для нас, Нам большего не надо
+Скорей скачи казак и одолей в Сибири хана
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a field of sunflowers, with a look of happiness and contentment on their faces. The color palette is warm and vibrant, with a sense of peace and tranquility. They are surrounded by sunflowers, with a few birds flying overhead.
+Create a cinematic image of a Cossack on horseback, riding through a snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of determination and adventure.
 
 **Frame**: 
-00:00:43.04 - 00:00:51.00
+00:00:50.46 - 00:00:57.26
+
+**Part of the song**: 
+Куплет 1
+
+**Text**: 
+В глубь неизведанной земли
+
+**Prompt for the image generating model**: 
+Depict a realistic scene of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and exploration.
+
+**Frame**: 
+00:00:57.26 - 00:01:04.00
+
+**Part of the song**: 
+Куплет 1
+
+**Text**: 
+Летели дни, край был покорней с каждой битвой
+
+**Prompt for the image generating model**: 
+Create a cinematic image of a Cossack camp, with a few warriors sitting around a fire, dressed in traditional clothing and holding spears. In the background, a few horses should be visible, with a large, ornate chest in the center of the image. The color palette should be warm and rich, with shades of gold and red. The mood is one of camaraderie and celebration.
+
+**Frame**: 
+00:01:04.00 - 00:01:10.56
+
+**Part of the song**: 
+Куплет 1
+
+**Text**: 
+И Рюрик слал свой дар из двух златых кольчуг
+
+**Prompt for the image generating model**: 
+Depict a realistic scene of a Cossack holding a suit of armor, with a few priests in the background, praying and holding crosses. The image should be set in a dimly lit, ornate church with a few candles and a large, stained-glass window. The color palette should be rich and warm, with shades of gold and red. The mood is one of reverence and protection.
+
+**Frame**: 
+00:01:10.56 - 00:01:17.30
+
+**Part of the song**: 
+Куплет 1
+
+**Text**: 
+Ты облачись в мой дар, его скрепив молитвой
+
+**Prompt for the image generating model**: 
+Create a cinematic image of a Cossack putting on a suit of armor, with a few priests in the background, praying and holding crosses. The image should be set in a dimly lit, ornate church with a few candles and a large, stained-glass window. The color palette should be rich and warm, with shades of gold and red. The mood is one of reverence and protection.
+
+**Frame**: 
+00:01:17.30 - 00:01:23.18
+
+**Part of the song**: 
+Куплет 1
+
+**Text**: 
+И неподвластен будь мечу
+
+**Prompt for the image generating model**: 
+Depict a realistic scene of a Cossack standing in a snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of determination and adventure.
+
+**Frame**: 
+00:01:23.18 - 00:01:30.18
+
+**Part of the song**: 
+Предваряющий припев
+
+**Text**: 
+Щедростью не обижу, В дальних краях я слышал
+
+**Prompt for the image generating model**: 
+Create a cinematic image of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and longing.
+
+**Frame**: 
+00:01:29.98 - 00:01:36.62
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя, И свободы нет, как и нет причин
+Как прекрасна Сибирь ночами, И щедра на кровавый снег
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a dimly lit room, with a piano in the background. The color palette is muted and introspective, with a sense of longing and yearning. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
+Depict a realistic scene of a vast, snowy Siberian landscape at night, with a full moon and a few stars visible in the sky. In the distance, a few bare trees should be visible, with a misty atmosphere. The color palette should be cold and muted, with shades of blue and gray. The mood is one of serenity and mystery.
 
 **Frame**: 
-00:00:51.00 - 00:00:58.52
+00:01:36.62 - 00:01:43.82
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-Я не одна, я не один, Просто в этой жизни нет смысла без тебя
+Кто утешит её печали, Она плачет и тихо шепчет мне
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing in the dimly lit room, with the camera panning out to reveal a cityscape at night. The color palette remains muted and introspective, with a sense of isolation and disconnection.
+Create a cinematic image of a Cossack standing in a snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and longing.
 
 **Frame**: 
-00:00:58.70 - 00:01:04.22
-
-**Part of the song**: 
-Припев
-
-**Text**: 
-И моя мелодия уже не моя, И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man walking alone in the city at night, with a sense of disconnection and isolation. The color palette remains muted and introspective, with a hint of sadness and longing. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
-
-**Frame**: 
-00:01:04.42 - 00:01:11.26
+00:01:43.82 - 00:01:51.08
 
 **Part of the song**: 
 Куплет 2
 
 **Text**: 
-Остановить этот миг, И мы всегда будем вместе как герои из книг
+Леса тайги его питали новой силой
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a library, surrounded by books and papers. The color palette is warm and nostalgic, with a sense of wonder and curiosity. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
+Depict a realistic scene of a Cossack standing in a forest, surrounded by tall trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of harmony and connection with nature.
 
 **Frame**: 
-00:01:11.70 - 00:01:17.10
+00:01:51.08 - 00:01:58.80
 
 **Part of the song**: 
 Куплет 2
 
 **Text**: 
-Закрой ладонью глаза, Прочитай мои мысли, заглуши голоса
+В лучах Луны он тихо слушал её зов
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing in the library, with the camera panning out to reveal a beautiful landscape of rolling hills and trees. The color palette remains warm and nostalgic, with a sense of peace and tranquility.
+Create a cinematic image of a Cossack standing in a forest, surrounded by tall trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of harmony and connection with nature.
 
 **Frame**: 
-00:01:17.00 - 00:01:22.30
+00:01:58.80 - 00:02:05.62
 
 **Part of the song**: 
 Куплет 2
 
 **Text**: 
-Ложатся ноты в тетрадь, грациозно кружась, Это наши сердца танцуют медленный вальс
+Хранив тот дар Ермак прослыл сыном Сибири
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man sitting at a desk, writing in a notebook. The color palette is warm and creative, with a sense of inspiration and imagination. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
+Depict a realistic scene of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and exploration.
 
 **Frame**: 
-00:01:22.22 - 00:01:24.92
+00:02:05.62 - 00:02:11.46
 
 **Part of the song**: 
 Куплет 2
 
 **Text**: 
-И пусть рушится мир, как пустые мечты, У тебя есть я, у меня есть ты
+И понимал её без слов
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man sitting at the desk, with the camera panning out to reveal a beautiful landscape of rolling hills and sunflowers. The color palette remains warm and vibrant, with a sense of hope and optimism.
+Create a cinematic image of a Cossack standing in a forest, surrounded by tall trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of harmony and connection with nature.
 
 **Frame**: 
-00:01:24.84 - 00:01:32.74
+00:02:11.46 - 00:02:18.52
+
+**Part of the song**: 
+Предваряющий припев
+
+**Text**: 
+Щедростью не обижу, В дальних краях я слышал
+
+**Prompt for the image generating model**: 
+Depict a realistic scene of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and longing.
+
+**Frame**: 
+00:02:18.30 - 00:02:24.94
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя, И свободы нет, как и нет причин
+Как прекрасна Сибирь ночами, И щедра на кровавый снег
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a field of sunflowers, with a look of happiness and contentment on their faces. The color palette is warm and vibrant, with a sense of peace and tranquility. They are surrounded by sunflowers, with a few birds flying overhead.
+Create a cinematic image of a vast, snowy Siberian landscape at night, with a full moon and a few stars visible in the sky. In the distance, a few bare trees should be visible, with a misty atmosphere. The color palette should be cold and muted, with shades of blue and gray. The mood is one of serenity and mystery.
 
 **Frame**: 
-00:01:32.60 - 00:01:40.26
+00:02:24.94 - 00:02:32.14
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-Я не одна, я не один, Просто в этой жизни нет смысла без тебя
+Кто утешит её печали, Она плачет и тихо шепчет мне
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing in the field of sunflowers, with the camera panning out to reveal a beautiful landscape of rolling hills and trees. The color palette remains warm and vibrant, with a sense of hope and optimism.
+Depict a realistic scene of a Cossack standing in a snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and longing.
 
 **Frame**: 
-00:01:40.44 - 00:01:45.94
+00:02:32.14 - 00:02:48.82
 
 **Part of the song**: 
-Припев
-
-**Text**: 
-И моя мелодия уже не моя, И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man walking alone in the city at night, with a sense of disconnection and isolation. The color palette remains muted and introspective, with a hint of sadness and longing. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
-
-**Frame**: 
-00:01:45.94 - 00:01:50.00
-
-**Part of the song**: 
-Проигрыш
+-
 
 **Text**: 
 -
 
 **Prompt for the image generating model**: 
-Create a cinematic image of a cityscape at night, with a sense of energy and movement. The color palette is cool and vibrant, with a hint of excitement and adventure. The young woman and the young man are walking in the distance, hand in hand.
+Create a cinematic image of a vast, snowy Siberian landscape at dawn, with a hint of mist and a few bare trees in the distance. The color palette should be cold and muted, with shades of blue and gray. The mood is serene and mysterious.
 
 **Frame**: 
-00:01:50.00 - 00:01:55.00
-
-**Part of the song**: 
-Проигрыш
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Continue the cinematic image of the cityscape at night, with the camera panning out to reveal a beautiful landscape of rolling hills and trees. The color palette remains cool and vibrant, with a sense of freedom and adventure. The young woman and the young man are standing on a hill, looking out at the city.
-
-**Frame**: 
-00:01:55.00 - 00:01:56.28
-
-**Part of the song**: 
-Проигрыш
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing on the hill, with the cityscape at night in the background. The color palette is cool and vibrant, with a sense of hope and optimism. They are holding hands and looking out at the city together.
-
-**Frame**: 
-00:01:56.28 - 00:02:04.22
+00:02:48.82 - 00:03:01.12
 
 **Part of the song**: 
 Бридж
 
 **Text**: 
-Слушай меня, Кто сказал: «Мы ничьи»?, Нас накроет волной
+Встали льды, сошли снега
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing on a rocky coastline, with a look of determination and courage on their faces. The color palette is cool and dramatic, with a sense of power and intensity. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
+Depict a realistic scene of a Cossack standing on a frozen river, surrounded by ice and snow. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of tension and danger.
 
 **Frame**: 
-00:02:04.20 - 00:02:11.70
+00:03:01.12 - 00:03:05.04
 
 **Part of the song**: 
 Бридж
 
 **Text**: 
-Запылавшей свечи, Слушай меня, Кто сказал: «Мы ничьи»?
+Пал казак в капкан врага
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing on the rocky coastline, with the camera panning out to reveal a beautiful landscape of rolling hills and trees. The color palette remains cool and dramatic, with a sense of hope and optimism.
+Create a cinematic image of a Cossack struggling to free himself from a trap, surrounded by enemies. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of tension and danger.
 
 **Frame**: 
-00:02:12.00 - 00:02:17.18
+00:03:05.04 - 00:03:10.30
 
 **Part of the song**: 
 Бридж
 
 **Text**: 
-Нас накроет волной, С тобою, с тобою
+У реки им бой принять, Было суждено
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a field of sunflowers, with a look of happiness and contentment on their faces. The color palette is warm and vibrant, with a sense of peace and tranquility. They are surrounded by sunflowers, with a few birds flying overhead.
+Depict a realistic scene of a Cossack standing on a cliff, looking out at a vast, snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and determination.
 
 **Frame**: 
-00:02:16.94 - 00:02:24.90
+00:03:10.30 - 00:03:18.82
+
+**Part of the song**: 
+Бридж
+
+**Text**: 
+Но в той битве царский дар, Непосильной ношей стал
+
+**Prompt for the image generating model**: 
+Create a cinematic image of a Cossack struggling to carry a heavy load, such as a suit of armor or a large stone. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of struggle and desperation.
+
+**Frame**: 
+00:03:18.82 - 00:03:31.62
+
+**Part of the song**: 
+Бридж
+
+**Text**: 
+И утащил его на дно
+
+**Prompt for the image generating model**: 
+Depict a realistic scene of a Cossack being dragged underwater, surrounded by ice and snow. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of tension and danger.
+
+**Frame**: 
+00:03:31.62 - 00:03:38.26
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-Просто в этой жизни нет смысла без тебя, И моя мелодия уже не моя, И свободы нет, как и нет причин
+Как прекрасна Сибирь ночами, В темном облике знойных стуж
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a dimly lit room, with a piano in the background. The color palette is muted and introspective, with a sense of longing and yearning. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
+Create a cinematic image of a vast, snowy Siberian landscape at night, with a full moon and a few stars visible in the sky. In the distance, a few bare trees should be visible, with a misty atmosphere. The color palette should be cold and muted, with shades of blue and gray. The mood is one of serenity and mystery.
 
 **Frame**: 
-00:02:24.80 - 00:02:32.44
+00:03:38.26 - 00:03:45.30
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-Я не одна, я не один, Просто в этой жизни нет смысла без тебя
+Кто утешит её печали, Её крик жаждет новых душ
 
 **Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing in the dimly lit room, with the camera panning out to reveal a cityscape at night. The color palette remains muted and introspective, with a sense of isolation and disconnection.
+Depict a realistic scene of a Cossack standing in a snowy landscape, with a few bare trees and a misty atmosphere. The Cossack should be dressed in traditional clothing, with a fur hat and a spear in hand. The color palette should be cold and muted, with shades of blue and gray. The mood is one of contemplation and longing.
 
 **Frame**: 
-00:02:32.62 - 00:02:38.10
+00:03:44.98 - 00:04:06.06
 
 **Part of the song**: 
 Припев
 
 **Text**: 
-И моя мелодия уже не моя, И свободы нет, как и нет причин, Чтобы быть одной, чтобы быть одним
+Как прекрасна Сибирь ночами, И щедра на кровавый снег, Кто утешит её печали, Она плачет и тихо шепчет мне
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man walking alone in the city at night, with a sense of disconnection and isolation. The color palette remains muted and introspective, with a hint of sadness and longing. They are wearing matching outfits, with the young woman in a bright yellow sundress and the young man in a white shirt and brown pants.
-
-**Frame**: 
-00:02:38.10 - 00:02:42.00
-
-**Part of the song**: 
-Проигрыш
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a cinematic image of a cityscape at night, with a sense of energy and movement. The color palette is cool and vibrant, with a hint of excitement and adventure. The young woman and the young man are walking in the distance, hand in hand.
-
-**Frame**: 
-00:02:42.00 - 00:02:46.00
-
-**Part of the song**: 
-Проигрыш
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Continue the cinematic image of the cityscape at night, with the camera panning out to reveal a beautiful landscape of rolling hills and trees. The color palette remains cool and vibrant, with a sense of freedom and adventure. The young woman and the young man are standing on a hill, looking out at the city.
-
-**Frame**: 
-00:02:46.00 - 00:02:48.16
-
-**Part of the song**: 
-Проигрыш
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing on the hill, with the cityscape at night in the background. The color palette is cool and vibrant, with a sense of hope and optimism. They are holding hands and looking out at the city together.
-
-**Frame**: 
-00:02:48.16 - 00:02:52.00
-
-**Part of the song**: 
-Аутро
-
-**Text**: 
-Просто в этой жизни нет смысла без тебя
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man standing in a field of sunflowers, with a look of happiness and contentment on their faces. The color palette is warm and vibrant, with a sense of peace and tranquility. They are surrounded by sunflowers, with a few birds flying overhead.
-
-**Frame**: 
-00:02:52.00 - 00:02:56.00
-
-**Part of the song**: 
-Аутро
-
-**Text**: 
-И моя мелодия уже не моя, И свободы нет, как и нет причин
-
-**Prompt for the image generating model**: 
-Continue the cinematic image of the young woman and the young man standing in the field of sunflowers, with the camera panning out to reveal a beautiful landscape of rolling hills and trees. The color palette remains warm and vibrant, with a sense of hope and optimism.
-
-**Frame**: 
-00:02:56.00 - 00:03:04.00
-
-**Part of the song**: 
-Аутро
-
-**Text**: 
-Чтобы быть одной, чтобы быть одним
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the young woman and the young man walking hand in hand, with the sun setting in the background. The color palette is warm and vibrant, with a sense of happiness and joy. They are walking towards the horizon, with a sense of hope and optimism. The final shot is of the young woman and the young man embracing, with the sun setting behind them.
+Create a cinematic image of a vast, snowy Siberian landscape at night, with a full moon and a few stars visible in the sky. In the distance, a few bare trees should be visible, with a misty atmosphere. The color palette should be cold and muted, with shades of blue and gray. The mood is one of serenity and mystery.

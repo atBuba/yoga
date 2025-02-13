@@ -35,10 +35,10 @@ def process_song(mp3_file, txt_file):
         part = match[1].strip()
         lyrics = match[2].strip()
         prompt = match[3].strip()
-        translated_prompt = translate_text(prompt)
-        print(translated_prompt)
+        # translated_prompt = translate_text(prompt)
+        # print(translated_prompt)
         # image_lyrics.appned(lyrics)
-        prompts_translated.append({"lyrics": lyrics, 'part': part, 'shot': shot, "prompt": translated_prompt, "image_url": [], 'effect': None, 'effects_next': None})
+        prompts_translated.append({"lyrics": lyrics, 'part': part, 'shot': shot, "prompt": prompt, "image_url": [], 'effect': None, 'effects_next': None})
 
     # two_line = ''
     
@@ -165,19 +165,21 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
                 ttml_words = adiou_to_time_text(audio_path, lyrics_file)
                 ttml_lines = parse(txt_files=lyrics_file)
                 ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
-        pass
+
+                with open(lyrics_file, "r", encoding="utf-8") as f:
+                    text = f.read()
+                text_language = detect_language(text[:999:]) 
+                print(text_language)
+                if language == text_language:
+                    generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
+                else:
+                    translate_lyrics = translate_text(text, language)
+                    generate_ass_eng(ttml_words, ttml_lines, translate_lyrics,"static/subtitles.ass", font, selected_color_1, selected_color_2)
+                    
     else: 
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
-    if language == 'rus':
-        generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
-    else language == 'eng':
-        with open(lyrics_file, "r", encoding="utf-8") as f:
-            text = f.read()
-
-        eng_lyrics = translate_text(text)
-        generate_ass_eng(ttml_words, ttml_lines, eng_lyrics,"static/subtitles.ass", font, selected_color_1, selected_color_2)
         
     duration = 0
     j = -1
@@ -387,8 +389,9 @@ elif st.session_state["current_page"] == "upload":
         'BOWLER': 'font/ofont.ru_Bowler.ttf',
     }
     languages = {
-        'Русский' : 'rus',
-        'Английский' : 'eng',
+        'Русский' : 'ru',
+        'Английский' : 'en',
+        'Китайский' : 'zh',
     }
     
     # Выбор шрифта
@@ -475,10 +478,6 @@ elif st.session_state["current_page"] == "upload":
         'Белый' : 'video/vecteezy_light-leaks-light-white.mov',
         'Фиолетовый' : 'video/vecteezy_light-leaks-purple.mov',
         'Летучие мыши' : 'video/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
-
-        
-        
-        
     }
 
     effects_next = {
@@ -486,6 +485,25 @@ elif st.session_state["current_page"] == "upload":
         'Короткий' : 2, 
         'Длинный' : 1,         
     }
+
+    short_effect = {
+        "Красная капля" : 'effect_next/1.mov',
+        "Черная капля" : 'effect_next/2.mov',
+        "Фиолетовая капля " : 'effect_next/3.mov',
+        "Белая капля" : 'effect_next/4.mov',  
+        "Синяя волна" : 'effect_next/5.mov',  
+        "Фиолетовая волна" : 'effect_next/6.mov',  
+        "Розовая волна" : 'effect_next/7.mov',
+        "Белая заморозка" : 'effect_next/8.mov',  
+        "Желтая заморозка" : 'effect_next/9.mov',  
+    }
+    long_effect = {
+        "Черно красный круг" : 'effect_next/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
+        "Красно белый жидкий переход" : 'effect_next/vecteezy_red-liquid-transition-green-screen_49115367.mov',
+        "Градиентные чернила" : 'effect_next/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
+        "Сердечки" : 'effect_next/vecteezy_transitions-love-green-screen_48868982.mov',
+    }
+
 
     number_images = 1
     
@@ -568,9 +586,27 @@ elif st.session_state["current_page"] == "upload":
                     list(effects_next.keys()),
                     key=f"effect_next_{i}",
                 )
-    
-                # Обновление выбранного эффекта в prompts_data
-                entry['effects_next'] = effects_next[selected_effect]
+                
+
+                if selected_effect == "Длинный": 
+                    effect_type = st.selectbox(
+                        "Выберите эффект переключения на следующие видео:",
+                        list(long_effect.keys()),
+                        key=f"effect_next_long{i}",
+                    )
+                    entry['effects_next'] = long_effect[effect_type]
+                    
+                elif selected_effect == "Короткий":
+                    effect_type = st.selectbox(
+                        "Выберите эффект переключения на следующие видео:",
+                        list(short_effect.keys()),
+                        key=f"effect_next_short{i}",
+                    )
+
+                    entry['effects_next'] = short_effect[effect_type]
+                else: 
+                    entry['effects_next'] = None
+                
 
                 if st.button("Перегенерировать", key=f'button_{i}'):
                     
