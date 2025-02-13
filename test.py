@@ -104,7 +104,7 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type):
+def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type, language):
     print("НАААЧАААЛИ!!!!")
     status = st.empty()
 
@@ -170,12 +170,18 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         ttml_words = parse(txt_files=lyrics_file, word=True)
         ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
         ttml_lines = parse(txt_files=lyrics_file)
-    
-    generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
-    
+    if language == 'rus':
+        generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
+    else language == 'eng':
+        with open(lyrics_file, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        eng_lyrics = translate_text(text)
+        generate_ass_eng(ttml_words, ttml_lines, eng_lyrics,"static/subtitles.ass", font, selected_color_1, selected_color_2)
+        
     duration = 0
     j = -1
-    videos = []
+    videos = [] 
     # prompts_data = prompts_data[:6:]
     # for image_path, line in zip(images, prompts_data):   
     #     j += len(line['lyrics'].split())
@@ -190,11 +196,13 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     # time = time[:-1:]
     # for i in time:
     #     print(i)
+
     
     with status:
         with st.spinner("Анимация изображений 2/5"):
             for image_path, t , line in zip(images, time, prompts_data):   
                 effect = line['effect']
+                print(t[1] - t[0])
                 video_url = create_video(image_path=image_path, duration=t[1] - t[0])
                 if effect:
                     add_effect(video_url, effect)
@@ -222,7 +230,9 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         'videos/8.mov',  
         'videos/9.mov',  
     ]
-    
+
+    print(videos)
+    sleep(10)
     with status:
         with st.spinner("Рендеринг видео 3/5"):
             concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
@@ -376,9 +386,16 @@ elif st.session_state["current_page"] == "upload":
         'Kaph': 'font/ofont.ru_Kaph.ttf',
         'BOWLER': 'font/ofont.ru_Bowler.ttf',
     }
+    languages = {
+        'Русский' : 'rus',
+        'Английский' : 'eng',
+    }
     
     # Выбор шрифта
     font = st.selectbox("Выберите шрифт:", fonts)
+
+    language = st.selectbox('Выбрите язык субтитров', list(languages.keys()))
+    language = languages[language]
 
     audio_type = st.selectbox(
                     "Выберите вид фонограммы:",
@@ -445,11 +462,21 @@ elif st.session_state["current_page"] == "upload":
 
     effects = {
         'Без эффекта' : None,
-        'Звезды' : 'video/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mp4', 
-        'Снег' : 'video/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mp4', 
-        'Листопад' : 'video/ezyZip.mp4', 
-        'Искры' : 'video/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mp4',
-        'Кот' : 'video/Green-Screen-Happy-Happy-Happy-Cat-Meme.mp4',
+        'Звезды' : 'video/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
+        'Снег' : 'video/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
+        'Листопад' : 'video/ezyZip.mov', 
+        'Искры' : 'video/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mov',
+        'Кот' : 'video/Green-Screen-Happy-Happy-Happy-Cat-Meme.mov',
+        'Облака' : 'video/vecteezy_4k-alpha-channel-render-fly-through-the-realistic-procedural_720p.mov',
+        'Дождевые облака' : 'video/vecteezy_free-download-rain-clouds-stock-video-clip_6529321.mov',
+        'Солнечные лучи' : 'video/vecteezy_light-leak-of-blue-lens-flare-in-the-background-light_38190348.mov',
+        'Зеленый' : 'video/vecteezy_light-leaks-light-green.mov',
+        'Красный' : 'video/vecteezy_light-leaks-light-red.mov',
+        'Белый' : 'video/vecteezy_light-leaks-light-white.mov',
+        'Фиолетовый' : 'video/vecteezy_light-leaks-purple.mov',
+        'Летучие мыши' : 'video/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
+
+        
         
         
     }
@@ -580,7 +607,7 @@ elif st.session_state["current_page"] == "upload":
         if None in selected_images:
             st.error("Please select an image for all lyrics!")
         else:
-            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type)
+            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type, language)
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:
@@ -590,3 +617,4 @@ elif st.session_state["current_page"] == "upload":
     if st.button("Вернуться на главную"):
         st.session_state["current_page"] = "main"
         st.rerun()
+        

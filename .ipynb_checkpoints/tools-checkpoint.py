@@ -325,6 +325,35 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         f.write(header + "\n".join(events))
 
 
+def generate_ass_eng(ttml_words, ttml_lines, eng_lyrics, output_file, font, font_color_1, font_color_2):
+    header = f"""[Script Info]
+Title: Karaoke Lyrics
+ScriptType: v4.00+
+Collisions: Normal
+PlayDepth: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,{font},23,&H00{font_color_1},&H00{font_color_2},&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    events = []
+    j = 0
+
+    eng_lyrics = eng_lyrics.split('\n')
+    for i, line in enumerate(ttml_lines):
+        start_time, end_time = ttml_words[j]['start'] - 0.4, ttml_words[j + len(line['text'].split()) - 1]['end']
+        duration_clip= end_time - start_time
+            
+        events.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{eng_lyrics[i]}")
+        j += len(line['text'].split())
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(header + "\n".join(events))
+
+
 def format_time(seconds):
     td = timedelta(seconds=float(seconds))
     # Получаем количество секунд с остаточными миллисекундами
@@ -351,19 +380,37 @@ def  create_subtitles_2(input_video, subtitles_file, output_video):
 
 def add_effect(video, effect):
     temp_file = "videos/temp.mp4"
-    
-    command = [
-        "ffmpeg",
-        # "-stream_loop", "-1",
-        "-i", effect,
-        "-i", video,
-        "-filter_complex", "[0:v]chromakey=0x00FF00:0.2:0.3[cleaned]; [cleaned]scale=1280:720[scaled]; [1:v][scaled]overlay=0:0:shortest=1",
-        "-c:v", "libx264",
-        "-crf", "23",
-        "-preset", "veryfast",
-        "-y", temp_file
-    ]
 
+    if get_video_duration(video) > get_video_duration(effect):
+        print(1)
+        command = [
+            "ffmpeg",
+            "-i", video,
+            "-stream_loop", "-1",
+            "-i", effect,
+            "-filter_complex", "[0:v][1:v]overlay=shortest=1",
+            '-c:a', 'copy',
+            # "-c:v", "libx264",
+            # "-crf", "23",
+            # "-preset", "veryfast",
+            '-t', str(get_video_duration(video)),
+            "-y", temp_file
+        ]
+    else: 
+        print(2)
+        command = [
+            "ffmpeg",
+            "-i", video,
+            # "-stream_loop", "-1",
+            "-i", effect,
+            "-filter_complex", "[0:v][1:v]overlay=shortest=1",
+            '-c:a', 'copy',        
+            # "-c:v", "libx264",
+            # "-crf", "23",
+            # "-preset", "veryfast",
+            '-t', str(get_video_duration(video)),
+            "-y", temp_file
+        ]
     subprocess.run(command, check=True)  
     os.replace(temp_file, video)
 
