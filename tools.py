@@ -399,8 +399,9 @@ def  create_subtitles_2(input_video, subtitles_file, output_video):
 def add_effect(video, effect):
     temp_file = "videos/temp.mp4"
 
+    # print(effect)
+    # print(video)
     if get_video_duration(video) > get_video_duration(effect):
-        print(1)
         command = [
             "ffmpeg",
             "-i", video,
@@ -415,7 +416,6 @@ def add_effect(video, effect):
             "-y", temp_file
         ]
     else: 
-        print(2)
         command = [
             "ffmpeg",
             "-i", video,
@@ -454,7 +454,7 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
         "ffmpeg",
         *input_files,
         "-filter_complex", filter_complex,
-        "-map", "[outv]",  # исправлено
+        "-map", "[outv]",  
         "-c:v", "libx264",
         "-preset", "fast",
         "-y", output_file
@@ -464,7 +464,6 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
     
     try:
         subprocess.run(command, shell=False, check=True)
-        print("Видео успешно склеены с эффектом fade in!")
     except subprocess.CalledProcessError as e:
         print("Ошибка при обработке видео:", e)
 
@@ -505,24 +504,26 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
 
     duration = 0 
     for i, dur in enumerate(durations):
-        if dur[0] in overlay_videos:
-            tr = f'tr{i}'
-            over = f'over{i}'
-            delay = duration + durations[i][1] - 2.5  
-            duration += durations[i][1]
-            filter_complex.append(
-                f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
-            )
-            overlay_streams.append(tr)
-        elif dur[0] in short_overlay_videos:
-            tr = f'tr{i}'
-            over = f'over{i}'
-            delay = duration + durations[i][1] - 0.6
-            duration += durations[i][1]
-            filter_complex.append(
-                f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
-            )
-            overlay_streams.append(tr)   
+        if dur[0]:
+            time = get_video_duration(dur[0])
+            if time > 4.0:
+                tr = f'tr{i}'
+                over = f'over{i}'
+                delay = duration + durations[i][1] - 2.5  
+                duration += durations[i][1]
+                filter_complex.append(
+                    f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
+                )
+                overlay_streams.append(tr)
+            else:
+                tr = f'tr{i}'
+                over = f'over{i}'
+                delay = duration + durations[i][1] - 0.6
+                duration += durations[i][1]
+                filter_complex.append(
+                    f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
+                )
+                overlay_streams.append(tr)   
             
     base = '[0:v]'
     for i, over in enumerate(overlay_streams):

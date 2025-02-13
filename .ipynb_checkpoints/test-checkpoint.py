@@ -200,44 +200,44 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     #     print(i)
 
     
-    with status:
-        with st.spinner("Анимация изображений 2/5"):
-            for image_path, t , line in zip(images, time, prompts_data):   
-                effect = line['effect']
-                print(t[1] - t[0])
-                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-                if effect:
-                    add_effect(video_url, effect)
-                videos.append(video_url)
+    # with status:
+    #     with st.spinner("Анимация изображений 2/5"):
+    #         for image_path, t , line in zip(images, time, prompts_data):   
+    #             effect = line['effect']
+    #             print(t[1] - t[0])
+    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+    #             if effect:
+    #                 add_effect(video_url, effect)
+    #             videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
 
     overlay_videos = [
-        'videos/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
-        'videos/vecteezy_red-liquid-transition-green-screen_49115367.mov',
-        'videos/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
-        'videos/vecteezy_transitions-love-green-screen_48868982.mov',
+        'effect_next/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
+        'effect_next/vecteezy_red-liquid-transition-green-screen_49115367.mov',
+        'effect_next/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
+        'effect_next/vecteezy_transitions-love-green-screen_48868982.mov',
         
     ]
 
     short_overlay_videos = [
-        'videos/1.mov',
-        'videos/2.mov',
-        'videos/3.mov',
-        'videos/4.mov',  
-        'videos/5.mov',  
-        'videos/6.mov',  
-        'videos/7.mov',
-        'videos/8.mov',  
-        'videos/9.mov',  
+        'effect_next/1.mov',
+        'effect_next/2.mov',
+        'effect_next/3.mov',
+        'effect_next/4.mov',  
+        'effect_next/5.mov',  
+        'effect_next/6.mov',  
+        'effect_next/7.mov',
+        'effect_next/8.mov',  
+        'effect_next/9.mov',  
     ]
 
-    print(videos)
-    sleep(10)
-    with status:
-        with st.spinner("Рендеринг видео 3/5"):
-            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    # print(videos)
+    # sleep(10)
+    # with status:
+    #     with st.spinner("Рендеринг видео 3/5"):
+    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
     with status:
         with st.spinner("Добавление субтитров 4/5"):
             create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
@@ -381,24 +381,28 @@ elif st.session_state["current_page"] == "upload":
         
     
     # Список шрифтов и их путей
-    fonts = ['Balkara Free Condensed - npoekmu.me', 'Manrope', 'Kaph', 'BOWLER']
+    
     fonts_path = {
         'Balkara Free Condensed - npoekmu.me': 'font/ofont.ru_BalkaraCondensed.ttf',
         'Manrope': 'font/ofont.ru_Manrope.ttf',
         'Kaph': 'font/ofont.ru_Kaph.ttf',
         'BOWLER': 'font/ofont.ru_Bowler.ttf',
+        'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf',
     }
     languages = {
         'Русский' : 'ru',
         'Английский' : 'en',
         'Китайский' : 'zh',
     }
-    
-    # Выбор шрифта
-    font = st.selectbox("Выберите шрифт:", fonts)
 
     language = st.selectbox('Выбрите язык субтитров', list(languages.keys()))
     language = languages[language]
+    
+    # Выбор шрифта
+    if language == 'zh':
+        font = st.selectbox("Выберите шрифт:", list({'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf'}.keys()))
+    else:
+        font = st.selectbox("Выберите шрифт:", list(fonts_path.keys()))
 
     audio_type = st.selectbox(
                     "Выберите вид фонограммы:",
@@ -465,19 +469,19 @@ elif st.session_state["current_page"] == "upload":
 
     effects = {
         'Без эффекта' : None,
-        'Звезды' : 'video/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
-        'Снег' : 'video/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
-        'Листопад' : 'video/ezyZip.mov', 
-        'Искры' : 'video/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mov',
-        'Кот' : 'video/Green-Screen-Happy-Happy-Happy-Cat-Meme.mov',
-        'Облака' : 'video/vecteezy_4k-alpha-channel-render-fly-through-the-realistic-procedural_720p.mov',
-        'Дождевые облака' : 'video/vecteezy_free-download-rain-clouds-stock-video-clip_6529321.mov',
-        'Солнечные лучи' : 'video/vecteezy_light-leak-of-blue-lens-flare-in-the-background-light_38190348.mov',
-        'Зеленый' : 'video/vecteezy_light-leaks-light-green.mov',
-        'Красный' : 'video/vecteezy_light-leaks-light-red.mov',
-        'Белый' : 'video/vecteezy_light-leaks-light-white.mov',
-        'Фиолетовый' : 'video/vecteezy_light-leaks-purple.mov',
-        'Летучие мыши' : 'video/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
+        'Звезды' : 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
+        'Снег' : 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
+        'Листопад' : 'effects/ezyZip.mov', 
+        'Искры' : 'effects/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mov',
+        'Кот' : 'effects/Green-Screen-Happy-Happy-Happy-Cat-Meme.mov',
+        'Облака' : 'effects/vecteezy_4k-alpha-channel-render-fly-through-the-realistic-procedural_720p.mov',
+        'Дождевые облака' : 'effects/vecteezy_free-download-rain-clouds-stock-video-clip_6529321.mov',
+        'Солнечные лучи' : 'effects/vecteezy_light-leak-of-blue-lens-flare-in-the-background-light_38190348.mov',
+        'Зеленый' : 'effects/vecteezy_light-leaks-light-green.mov',
+        'Красный' : 'effects/vecteezy_light-leaks-light-red.mov',
+        'Белый' : 'effects/vecteezy_light-leaks-light-white.mov',
+        'Фиолетовый' : 'effects/vecteezy_light-leaks-purple.mov',
+        'Летучие мыши' : 'effects/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
     }
 
     effects_next = {
