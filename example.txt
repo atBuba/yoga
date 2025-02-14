@@ -1,5 +1,5 @@
 **Frame**: 
-00:00:00.00 - 00:00:10.00
+00:00:00.00 - 00:00:10.30
 
 **Part of the song**: 
 Intro
@@ -8,335 +8,376 @@ Intro
 -
 
 **Prompt for the image generating model**: 
-Create a cinematic image of a city street at dusk in the 1990s, with a cold color palette and a melancholic mood. The camera pans over a crowded street, showing people walking in different directions, with a sense of urgency and indifference.
+Create a realistic image of a homeless man sitting on a sidewalk, surrounded by trash and graffiti, in a city during the Great Depression. He's wearing tattered clothes and a hat, with a hopeless expression on his face. The color palette is muted, with shades of gray, brown, and beige. The mood is somber and desperate.
 
 **Frame**: 
-00:00:10.00 - 00:00:20.00
-
-**Part of the song**: 
-Intro
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a close-up image of a person's face, with a look of concern and worry. The camera zooms in on their eyes, which convey a sense of deep sadness and desperation. The color palette is muted, with a focus on conveying a sense of quiet reflection and introspection.
-
-**Frame**: 
-00:00:20.00 - 00:00:30.00
-
-**Part of the song**: 
-Intro
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the city street at dusk, with a cold color palette and a melancholic mood. The camera pans over a crowded street, showing people walking in different directions, with a sense of urgency and indifference.
-
-**Frame**: 
-00:00:30.00 - 00:00:40.00
-
-**Part of the song**: 
-Intro
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a surreal image of a cityscape at night, with a vibrant color palette and a sense of energy and movement. The camera pans over a bustling street, showing people walking in different directions, with a sense of excitement and anticipation.
-
-**Frame**: 
-00:00:40.00 - 00:00:54.96
-
-**Part of the song**: 
-Intro
-
-**Text**: 
--
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the city street at dusk, with a cold color palette and a melancholic mood. The camera pans over a crowded street, showing people walking in different directions, with a sense of urgency and indifference.
-
-**Frame**: 
-00:00:54.96 - 00:01:07.70
-
-**Part of the song**: 
-Verse 1
-
-**Text**: 
-She calls out to the man on the street
-"Sir, can you help me?
-It's cold and I've nowhere to sleep
-Is there somewhere you can tell me?"
-
-**Prompt for the image generating model**: 
-Create a realistic image of a homeless woman, dressed in tattered clothing, approaching a well-dressed man on the street. The woman's face is desperate and pleading, while the man's expression is indifferent and dismissive. The color palette is muted, with a focus on blues and greys to convey a sense of coldness and despair.
-
-**Frame**: 
-00:01:07.70 - 00:01:17.48
-
-**Part of the song**: 
-Verse 1
-
-**Text**: 
-He walks on, doesn't look back
-He pretends he can't hear her
-
-**Prompt for the image generating model**: 
-Create a cinematic image of the man walking away from the woman, with his back turned to her. The woman's face is visible in the background, with a look of disappointment and desperation. The man's body language conveys a sense of discomfort and embarrassment, as he tries to distance himself from the situation. The color palette remains muted, with a focus on conveying a sense of indifference and apathy.
-
-**Frame**: 
-00:01:17.48 - 00:01:27.94
-
-**Part of the song**: 
-Verse 1
-
-**Text**: 
-Starts to whistle as he crosses the street
-Seems embarrassed to be there
-
-**Prompt for the image generating model**: 
-Create a realistic image of the man, now walking across the street, whistling to himself. His expression is one of forced nonchalance, as he tries to ignore the woman's pleas for help. The camera pans out to reveal the cityscape in the background, with people walking by and ignoring the woman. The color palette remains muted, with a focus on conveying a sense of discomfort and avoidance.
-
-**Frame**: 
-00:01:27.94 - 00:01:41.90
+00:00:10.30 - 00:00:17.86
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Oh, think twice
-'Cause it's another day
-For you and me in paradise
-Oh, think twice
+I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Well, I need a dollar, dollar
 
 **Prompt for the image generating model**: 
-Create a surreal image of a paradise-like environment, with lush greenery and vibrant colors. However, the atmosphere is juxtaposed with a sense of irony and unease, as the viewer is aware of the stark contrast between this idealized world and the harsh reality of the homeless woman's situation. The camera pans over a serene landscape, with the sound of birds chirping and water flowing in the background.
+Depict the homeless man holding a cardboard sign with the words "I need a dollar" written on it, as he looks up at passersby with a pleading expression. The background is a blurred city street with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
 
 **Frame**: 
-00:01:41.90 - 00:01:48.20
+00:00:17.86 - 00:00:23.36
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-'Cause it's another day for you
-You and me in paradise
+Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the woman, now standing in the midst of the paradise-like environment, looking out of place and disconnected from her surroundings. Her expression is one of sadness and longing, as she gazes out at the viewer with a sense of desperation. The color palette remains vibrant, but the atmosphere is tinged with a sense of melancholy and irony.
+Show the homeless man's face, with a mix of sadness and determination, as he continues to hold out his sign. The background is a close-up of his tattered clothing and the sidewalk beneath him. The color palette remains muted, with a focus on the man's emotions.
 
 **Frame**: 
-00:01:48.20 - 00:01:59.98
+00:00:23.36 - 00:00:29.34
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
--
+Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
 
 **Prompt for the image generating model**: 
-Create a surreal image of the paradise-like environment, now with a sense of irony and unease. The camera pans over a serene landscape, with the sound of birds chirping and water flowing in the background. However, the atmosphere is juxtaposed with a sense of discomfort and awareness, as the viewer is aware of the stark contrast between this idealized world and the harsh reality of the homeless woman's situation.
+Depict the homeless man sitting on the sidewalk, with a small crowd of people gathered around him, listening to his story. The background is a blurred city street, with a focus on the man's storytelling. The color palette remains muted, with a hint of hope.
 
 **Frame**: 
-00:01:59.98 - 00:02:01.48
+00:00:30.56 - 00:00:41.06
 
 **Part of the song**: 
-Post-Chorus
+Verse 1
 
 **Text**: 
-Think about it
+Bad times are coming and I reap what I done sowed (Hey, hey), Well, let me tell you something, all that glitters ain't gold (Hey, hey)
 
 **Prompt for the image generating model**: 
-Create a close-up image of the woman's face, with a look of introspection and contemplation. The camera zooms in on her eyes, which convey a sense of deep sadness and desperation. The color palette is muted, with a focus on conveying a sense of quiet reflection and introspection.
+Show the homeless man standing in front of a city skyline, with a dark and ominous cloud looming in the background. He's looking down at his feet, with a regretful expression on his face. The color palette remains muted, with a focus on the man's introspection.
 
 **Frame**: 
-00:02:01.48 - 00:02:10.30
+00:00:41.06 - 00:00:51.40
 
 **Part of the song**: 
--
+Verse 1
+
+**Text**: 
+It's been a long old trouble, long old troublesome road, And I'm looking for somebody come and help me carry this load
+
+**Prompt for the image generating model**: 
+Depict the homeless man walking down a long, deserted road, with a heavy backpack on his shoulders. He's looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's journey.
+
+**Frame**: 
+00:00:51.10 - 00:00:58.30
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Well, I need a dollar, dollar
+
+**Prompt for the image generating model**: 
+Show the homeless man holding out his sign again, as he looks up at passersby with a pleading expression. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+
+**Frame**: 
+00:00:58.30 - 00:01:05.52
+
+**Part of the song**: 
+Break
 
 **Text**: 
 -
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the city street at dusk, with a cold color palette and a melancholic mood. The camera pans over a crowded street, showing people walking in different directions, with a sense of urgency and indifference.
+Depict the homeless man sitting on the sidewalk, surrounded by trash and graffiti, looking down at his feet with a hopeless expression. The background is a blurred city street, with a focus on the man's despair. The color palette remains muted, with a focus on the man's emotions.
 
 **Frame**: 
-00:02:10.30 - 00:02:23.40
+00:01:05.52 - 00:01:11.64
+
+**Part of the song**: 
+Break
+
+**Text**: 
+Well, I don't know if I'm walking on solid ground, 'Cause everything around me is falling down
+
+**Prompt for the image generating model**: 
+Show the homeless man standing in front of a city skyline, with a dark and ominous cloud looming in the background. He's looking down at his feet, with a fearful expression on his face. The background is a blurred city street, with a focus on the man's uncertainty.
+
+**Frame**: 
+00:01:11.64 - 00:01:15.52
+
+**Part of the song**: 
+Break
+
+**Text**: 
+And all I want is for someone to help me
+
+**Prompt for the image generating model**: 
+Depict the homeless man looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's longing for help.
+
+**Frame**: 
+00:01:17.04 - 00:01:23.42
 
 **Part of the song**: 
 Verse 2
 
 **Text**: 
-She calls out to the man on the street
-He can see she's been crying
-She's got blisters on the soles of her feet
-She can't walk, but she's trying
+I had a job but the boss man let me go (He said), I'm sorry, but I won't be needing your help no more (I said)
 
 **Prompt for the image generating model**: 
-Create a realistic image of the woman, now sitting on the sidewalk, with her feet visible to the viewer. Her face is etched with pain and desperation, as she tries to convey her situation to the man. The man's expression is one of discomfort and avoidance, as he tries to distance himself from the situation. The color palette remains muted, with a focus on conveying a sense of desperation and despair.
+Show the homeless man standing in front of a closed factory gate, with a sign that reads "Closed" or "Out of Business". He's looking down at his feet, with a regretful expression on his face. The background is a blurred industrial landscape, with a focus on the man's lost opportunity.
 
 **Frame**: 
-00:02:23.40 - 00:02:27.60
+00:01:23.42 - 00:01:32.60
 
 **Part of the song**: 
 Verse 2
 
 **Text**: 
--
+Please, Mister Boss man I need this job more than you know, But he gave me my last paycheck and he sent me on out the door
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the man, now walking away from the woman, with his back turned to her. The woman's face is visible in the background, with a look of disappointment and desperation. The man's body language conveys a sense of discomfort and embarrassment, as he tries to distance himself from the situation. The color palette remains muted, with a focus on conveying a sense of indifference and apathy.
+Depict the homeless man standing in front of the factory gate, with a pleading expression on his face. The background is a blurred industrial landscape, with a focus on the man's desperation.
 
 **Frame**: 
-00:02:27.60 - 00:02:56.26
+00:01:32.60 - 00:01:37.66
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+But he gave me my last paycheck and he sent me on out the door
+
+**Prompt for the image generating model**: 
+Show the homeless man walking away from the factory gate, with a defeated expression on his face. The background is a blurred industrial landscape, with a focus on the man's disappointment.
+
+**Frame**: 
+00:01:38.48 - 00:01:46.18
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Oh, think twice
-'Cause it's another day
-For you and me in paradise
-Oh, think twice
+Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar
 
 **Prompt for the image generating model**: 
-Create a surreal image of the paradise-like environment, now with a sense of irony and unease. The camera pans over a serene landscape, with the sound of birds chirping and water flowing in the background. However, the atmosphere is juxtaposed with a sense of discomfort and awareness, as the viewer is aware of the stark contrast between this idealized world and the harsh reality of the homeless woman's situation.
+Depict the homeless man holding out his sign again, as he looks up at passersby with a pleading expression. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
 
 **Frame**: 
-00:02:56.26 - 00:03:07.78
+00:01:46.18 - 00:01:52.92
 
 **Part of the song**: 
-Post-Chorus
+Chorus
 
 **Text**: 
-Just think about it
+Dollar, that's what I need (Hey, hey), And I need dollar, dollar
 
 **Prompt for the image generating model**: 
-Create a close-up image of the woman's face, with a look of introspection and contemplation. The camera zooms in on her eyes, which convey a sense of deep sadness and desperation. The color palette is muted, with a focus on conveying a sense of quiet reflection and introspection.
+Show the homeless man's face, with a mix of sadness and determination, as he continues to hold out his sign. The background is a close-up of his tattered clothing and the sidewalk beneath him. The color palette remains muted, with a focus on the man's emotions.
 
 **Frame**: 
-00:03:07.78 - 00:03:14.98
+00:01:52.92 - 00:01:57.52
 
 **Part of the song**: 
-Bridge
+Chorus
 
 **Text**: 
-Oh, Lord
-Is there nothing more anybody can do?
+Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the woman, now standing in a dimly lit alleyway, looking up towards the sky. Her expression is one of desperation and pleading, as she conveys her situation to a higher power. The color palette is muted, with a focus on conveying a sense of despair and hopelessness.
+Depict the homeless man sitting on the sidewalk, with a small crowd of people gathered around him, listening to his story. The background is a blurred city street, with a focus on the man's storytelling. The color palette remains muted, with a hint of hope.
 
 **Frame**: 
-00:03:14.98 - 00:03:23.44
+00:01:57.16 - 00:02:03.98
 
 **Part of the song**: 
-Bridge
-
-**Text**: 
-Oh, Lord
-There must be something You can say
-
-**Prompt for the image generating model**: 
-Create a realistic image of the woman, now kneeling on the ground, with her hands clasped together in prayer. Her face is etched with pain and desperation, as she begs for help and guidance. The camera pans out to reveal the cityscape in the background, with people walking by and ignoring her. The color palette remains muted, with a focus on conveying a sense of desperation and isolation.
-
-**Frame**: 
-00:03:23.44 - 00:03:28.02
-
-**Part of the song**: 
--
+Break
 
 **Text**: 
 -
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the city street at dusk, with a cold color palette and a melancholic mood. The camera pans over a crowded street, showing people walking in different directions, with a sense of urgency and indifference.
+Show the homeless man sitting on the sidewalk, surrounded by trash and graffiti, looking down at his feet with a hopeless expression. The background is a blurred city street, with a focus on the man's despair. The color palette remains muted, with a focus on the man's emotions.
 
 **Frame**: 
-00:03:28.02 - 00:03:41.20
+00:02:04.04 - 00:02:08.74
+
+**Part of the song**: 
+Break
+
+**Text**: 
+Well, I don't know if I'm walking on solid ground, 'Cause everything around me is crumbling down
+
+**Prompt for the image generating model**: 
+Depict the homeless man standing in front of a city skyline, with a dark and ominous cloud looming in the background. He's looking down at his feet, with a fearful expression on his face. The background is a blurred city street, with a focus on the man's uncertainty.
+
+**Frame**: 
+00:02:09.02 - 00:02:13.40
+
+**Part of the song**: 
+Break
+
+**Text**: 
+And all I want is for someone to help me
+
+**Prompt for the image generating model**: 
+Show the homeless man looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's longing for help.
+
+**Frame**: 
+00:02:16.28 - 00:02:20.70
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+What in the world am I gonna do tomorrow?
+
+**Prompt for the image generating model**: 
+Depict the homeless man sitting on the sidewalk, with a calendar or a newspaper in front of him, looking at the date with a worried expression. The background is a blurred city street, with a focus on the man's uncertainty.
+
+**Frame**: 
+00:02:21.42 - 00:02:25.58
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Is there someone with a dollar I could borrow?
+
+**Prompt for the image generating model**: 
+Show the homeless man looking around at passersby, with a pleading expression on his face. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+
+**Frame**: 
+00:02:25.58 - 00:02:29.72
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Who can help me take away my sorrow?
+
+**Prompt for the image generating model**: 
+Depict the homeless man sitting on the sidewalk, with his head in his hands, looking down at the ground with a sad expression. The background is a blurred city street, with a focus on the man's emotions.
+
+**Frame**: 
+00:02:30.66 - 00:02:32.54
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Maybe it's inside the bottle
+
+**Prompt for the image generating model**: 
+Show the homeless man holding a bottle of liquor, with a mix of sadness and temptation on his face. The background is a blurred city street, with a focus on the man's struggle.
+
+**Frame**: 
+00:02:33.08 - 00:02:36.30
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+(Maybe it's inside the bottle)
+
+**Prompt for the image generating model**: 
+Depict the homeless man taking a swig from the bottle, with a look of temporary relief on his face. The background is a blurred city street, with a focus on the man's coping mechanism.
+
+**Frame**: 
+00:02:36.02 - 00:02:45.84
 
 **Part of the song**: 
 Verse 3
 
 **Text**: 
-You can tell from the lines on her face
-You can see that she's been there
-Probably been moved on from every place
-'Cause she didn't fit in there
+I had some good old buddies, names is Whiskey and Wine (Hey, hey), And for my good old buddies I spent my last dime (Hey, hey)
 
 **Prompt for the image generating model**: 
-Create a realistic image of the woman, now sitting on a bench, with a look of resignation and despair. Her face is etched with lines and wrinkles, conveying a sense of age and experience. The camera pans out to reveal the cityscape in the background, with people walking by and ignoring her. The color palette remains muted, with a focus on conveying a sense of desperation and isolation.
+Show the homeless man sitting on the sidewalk, surrounded by empty bottles and trash, with a regretful expression on his face. The background is a blurred city street, with a focus on the man's past mistakes.
 
 **Frame**: 
-00:03:41.20 - 00:03:46.54
+00:02:45.84 - 00:02:55.14
 
 **Part of the song**: 
--
+Verse 3
 
 **Text**: 
--
+Now Wine is good to me, he help me pass the time, And my good old buddy Whiskey keep me warmer than sunshine (Hey, hey)
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the woman, now standing up and walking away from the bench, with a sense of resignation and defeat. The camera pans out to reveal the cityscape in the background, with people walking by and ignoring her. The color palette remains muted, with a focus on conveying a sense of desperation and isolation.
+Depict the homeless man holding a bottle of wine and a bottle of whiskey, with a mix of sadness and comfort on his face. The background is a blurred city street, with a focus on the man's coping mechanisms.
 
 **Frame**: 
-00:03:46.54 - 00:04:09.20
+00:02:55.14 - 00:03:05.74
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Your mama may have blessed the child that's got his own (Hey, hey), If God has plans for me I hope it ain't written in stone (Hey, hey)
+
+**Prompt for the image generating model**: 
+Show the homeless man looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's longing for a better life.
+
+**Frame**: 
+00:03:05.74 - 00:03:15.96
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Because I've been working, working myself down to the bone, And I swear on Grandpa's grave I'll be paid when I come home (Hey, hey)
+
+**Prompt for the image generating model**: 
+Depict the homeless man standing in front of a city skyline, with a determined expression on his face. The background is a blurred city street, with a focus on the man's resolve.
+
+**Frame**: 
+00:03:15.72 - 00:03:25.66
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Oh, think twice
-'Cause it's another day
-For you and me in paradise
-Oh, think twice
+Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar
 
 **Prompt for the image generating model**: 
-Create a surreal image of the paradise-like environment, now with a sense of irony and unease. The camera pans over a serene landscape, with the sound of birds chirping and water flowing in the background. However, the atmosphere is juxtaposed with a sense of discomfort and awareness, as the viewer is aware of the stark contrast between this idealized world and the harsh reality of the homeless woman's situation.
+Show the homeless man holding out his sign again, as he looks up at passersby with a pleading expression. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
 
 **Frame**: 
-00:04:09.20 - 00:04:23.84
+00:03:25.66 - 00:03:34.70
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-It's just another day for you
-You and me in paradise
-Just think about it
+Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the woman, now standing in the midst of the paradise-like environment, looking out of place and disconnected from her surroundings. Her expression is one of sadness and longing, as she gazes out at the viewer with a sense of desperation. The color palette remains vibrant, but the atmosphere is tinged with a sense of melancholy and irony.
+Depict the homeless man sitting on the sidewalk, with a small crowd of people gathered around him, listening to his story. The background is a blurred city street, with a focus on the man's storytelling. The color palette remains muted, with a hint of hope.
 
 **Frame**: 
-00:04:23.84 - 00:04:48.82
+00:03:34.70 - 00:03:44.72
 
 **Part of the song**: 
-Outro
+Chorus
 
 **Text**: 
-It's just another day
-For you and me in paradise
-It's just another day
-For you and me in paradise
+(C'mon share your dollar with me, Go 'head, share your dollar with me, C'mon share your dollar, gimme your dollar, Share your dollar with me)
 
 **Prompt for the image generating model**: 
-Create a surreal image of the paradise-like environment, now with a sense of irony and unease. The camera pans over a serene landscape, with the sound of birds chirping and water flowing in the background. However, the atmosphere is juxtaposed with a sense of discomfort and awareness, as the viewer is aware of the stark contrast between this idealized world and the harsh reality of the homeless woman's situation.
+Show the homeless man looking up at the camera, with a pleading expression on his face. The background is a blurred city street, with a focus on the man's desperation. The color palette remains muted, with a focus on the man's emotions.
 
 **Frame**: 
-00:04:48.82 - 00:05:07.98
+00:03:44.72 - 00:04:03.06
 
 **Part of the song**: 
-Outro
+Chorus
 
 **Text**: 
-Paradise (It's just another day for you and me)
-Uh, just think about it (In paradise)
-Paradise (It's just another day for you and me)
-Just think about it (In paradise, para—, paradise)
+(C'mon share your dollar with me)
 
 **Prompt for the image generating model**: 
-Create a cinematic image of the woman, now standing in the midst of the paradise-like environment, looking out of place and disconnected from her surroundings. Her expression is one of sadness and longing, as she gazes out at the viewer with a sense of desperation. The color palette remains vibrant, but the atmosphere is tinged with a sense of melancholy and irony. The camera pans out to reveal the cityscape in the background, with people walking by and ignoring her. The final shot is of the woman's face, with a look of resignation and despair.
+Depict the homeless man sitting on the sidewalk, surrounded by trash and graffiti, looking down at his feet with a hopeless expression. The background is a blurred city street, with a focus on the man's despair. The color palette remains muted, with a focus on the man's emotions.

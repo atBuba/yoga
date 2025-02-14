@@ -361,15 +361,53 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     j = 0
 
     eng_lyrics = eng_lyrics.split('\n')
+    effects = [apply_letter_fly_in]  # Список эффектов
+    
     for i, line in enumerate(ttml_lines):
-        start_time, end_time = ttml_words[j]['start'] - 0.4, ttml_words[j + len(line['text'].split()) - 1]['end']
-        duration_clip= end_time - start_time
-            
-        events.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{eng_lyrics[i]}")
+        start_time, end_time = ttml_words[j]['start'] - 0.4, ttml_words[j + len(line['text'].split()) - 1]['end'] - 0.2
+        effect_func = random.choice(effects)  # Выбираем случайный эффект
+        effect_text = effect_func(eng_lyrics[i], start_time, end_time)  # Применяем эффект
+        events.append(f"{effect_text}")
         j += len(line['text'].split())
 
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(header + "\n".join(events))
+
+# Эффекты:
+def apply_fade_in(text, start_time, end_time):
+    """Эффект появления текста (fade in)"""
+    return f"{{\\alpha&HFF&\\t(0,200,\\alpha&H00&)}}{text}"
+
+def apply_scale_up(text, start_time, end_time):
+    """Эффект увеличения текста (scale up)"""
+    return f"{{\\fscx30\\fscy30\\t(0,200,\\fscx100\\fscy100)}}{text}"
+
+import random
+
+def apply_letter_fly_in(text, start_time=0.0, end_time=0.0, start_x=200, start_y=200, duration=700, delay=0.1):
+    """Эффект появления букв в случайных местах с динамическим перемещением в центр"""
+    result = []
+    screen_width, screen_height = 1280, 720  # Размер экрана
+    current_time = start_time  # Начальное время появления первой буквы
+
+    for i, letter in enumerate(text):
+        if letter.strip():  # Пропускаем пробелы
+            # Случайные начальные координаты (вне экрана)
+            x = random.randint(0, screen_width)
+            y = random.randint(0, screen_height)
+            
+            # Финальные координаты (центр строки)
+            final_x = start_x + i * 20  
+            final_y = start_y
+
+            
+            # Добавляем строку с эффектом в список
+            result.append(f"Dialogue: 0,{format_time(current_time)},{format_time(end_time)},Default,,0,0,0,,{{\\move({x},{y},{final_x},{final_y},0,{duration})}}{letter}")
+
+
+    return "\n".join(result)
+
+
 
 
 def format_time(seconds):
@@ -459,6 +497,7 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
         "-preset", "fast",
         "-y", output_file
     ]
+    print(command)
     
     print(' '.join(command))
     
@@ -506,10 +545,10 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
     for i, dur in enumerate(durations):
         if dur[0]:
             time = get_video_duration(dur[0])
-            if time > 4.0:
+            if time > 3.0:
                 tr = f'tr{i}'
                 over = f'over{i}'
-                delay = duration + durations[i][1] - 2.5  
+                delay = duration + durations[i][1] - 2.0  
                 duration += durations[i][1]
                 filter_complex.append(
                     f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'

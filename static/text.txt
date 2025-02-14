@@ -1,16 +1,359 @@
-Use the entire text carefully. You have to create a slideshow clip for the song, you will receive the lyrics along with timestamps and you will have to divide the song into frames and write a prompt to generate an image on this frame, each frame should not go less than 5 and longer than 7 seconds, you can combine the lines to achieve such a long, but the frame It should not contain lyrics from different parts of the song (the lyrics should be only from the chorus or only from the verse or etc.). The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip, the frames should be continuous, that is, the beginning of the current clip is the end of the previous one. Write a prompt for the model that will generate images for these frames, the images should be connected to each other, the whole clip should reflect the meaning of the song, convey its mood. Describe in detail what people are wearing and how they stand, what colors the image should be in, what mood the image is in, and what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly with the text.
-Please respond in the following format:
-
-**Frame**: (without number)
-timestamp of when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX (the frame should not be less than 5 and longer than 7 seconds)
+**Frame**: 
+00:00:00.00 - 00:00:05.00
 
 **Part of the song**: 
-Print out which part of the song this frame belongs to: verse, chorus, intro, and so on. 
+Intro
 
 **Text**: 
-Print the song sections with which this text will be shown, if this frame will be shown without text, then simply output "-"
+-
 
-**Prompt for the image generating model**:(maximum number of words is 77)
-Specify the style (realistic, cinematic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
-use all the lines of the song, even if they are repeated.
-song lyrics along with timestamps: 
+**Prompt for the image generating model**: 
+Create a cinematic image of a city street in the 2000s, with a gray and blue color palette, conveying a sense of struggle and hardship. A young man, dressed in worn jeans and a faded t-shirt, is walking down the street, looking worried and uncertain about his future.
+
+**Frame**: 
+00:00:05.00 - 00:00:10.30
+
+**Part of the song**: 
+Intro
+
+**Text**: 
+-
+
+**Prompt for the image generating model**: 
+Continue the cinematic style, with the same color palette and mood. The young man is now standing in front of a city skyline, looking out at the towering buildings, symbolizing his feelings of smallness and insignificance.
+
+**Frame**: 
+00:00:10.30 - 00:00:17.86
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now holding a sign that reads "I need a dollar" and is standing on a busy street corner, looking desperate and in need of help.
+
+**Frame**: 
+00:00:17.86 - 00:00:23.36
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Said I need a dollar, dollar, Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now sitting on a bench, looking up at a passerby, with a pleading expression, as if asking for help and sharing his story.
+
+**Frame**: 
+00:00:23.36 - 00:00:29.34
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+-
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now standing up, looking determined, with a city street behind him, symbolizing his resilience and determination to get back on his feet.
+
+**Frame**: 
+00:00:30.56 - 00:00:41.06
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+Bad times are coming and I reap what I done sowed (Hey, hey), Well, let me tell you something, all that glitters ain't gold (Hey, hey)
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing in front of a rundown building, with a worried expression, symbolizing the bad times that are coming. He is holding a small bag of seeds, representing the consequences of his actions.
+
+**Frame**: 
+00:00:41.06 - 00:00:51.40
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+It's been a long old trouble, long old troublesome road, And I'm looking for somebody come and help me carry this load
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now walking down a long, deserted road, with a heavy backpack, symbolizing the weight of his troubles. He is looking up at the sky, as if searching for help.
+
+**Frame**: 
+00:00:51.40 - 00:00:58.30
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Well, I need a dollar, dollar, Dollar, that's what I need
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing in front of a city skyline, holding a sign that reads "I need a dollar", with a determined expression.
+
+**Frame**: 
+00:00:58.30 - 00:01:05.52
+
+**Part of the song**: 
+Break
+
+**Text**: 
+Well, I don't know if I'm walking on solid ground
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now standing on a cliff, looking down at the ground, with a uncertain expression, symbolizing his feelings of instability.
+
+**Frame**: 
+00:01:05.52 - 00:01:11.64
+
+**Part of the song**: 
+Break
+
+**Text**: 
+'Cause everything around me is falling down, And all I want is for someone to help me
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing in front of a crumbling building, with a desperate expression, symbolizing the chaos and destruction around him.
+
+**Frame**: 
+00:01:11.64 - 00:01:17.04
+
+**Part of the song**: 
+Break
+
+**Text**: 
+-
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now sitting on the ground, with his head in his hands, looking defeated and helpless.
+
+**Frame**: 
+00:01:17.04 - 00:01:28.46
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+I had a job but the boss man let me go (He said), I'm sorry, but I won't be needing your help no more (I said)
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing in front of a closed factory door, with a disappointed expression, symbolizing the loss of his job.
+
+**Frame**: 
+00:01:28.46 - 00:01:37.66
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+Please, Mister Boss man I need this job more than you know, But he gave me my last paycheck and he sent me on out the door
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now kneeling in front of the factory door, with a pleading expression, as if begging for his job back.
+
+**Frame**: 
+00:01:38.48 - 00:01:46.18
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar, Dollar, that's what I need
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing on a street corner, holding a sign that reads "I need a dollar", with a determined expression.
+
+**Frame**: 
+00:01:46.18 - 00:01:57.52
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And I need dollar, dollar, Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now sitting on a bench, looking up at a passerby, with a pleading expression, as if asking for help and sharing his story.
+
+**Frame**: 
+00:01:57.52 - 00:02:03.98
+
+**Part of the song**: 
+Break
+
+**Text**: 
+Well, I don't know if I'm walking on solid ground
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing on a cliff, looking down at the ground, with a uncertain expression, symbolizing his feelings of instability.
+
+**Frame**: 
+00:02:04.04 - 00:02:08.74
+
+**Part of the song**: 
+Break
+
+**Text**: 
+'Cause everything around me is crumbling down
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now standing in front of a crumbling building, with a desperate expression, symbolizing the chaos and destruction around him.
+
+**Frame**: 
+00:02:09.02 - 00:02:13.40
+
+**Part of the song**: 
+Break
+
+**Text**: 
+And all I want is for someone to help me
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing in front of a city skyline, with a pleading expression, as if asking for help.
+
+**Frame**: 
+00:02:16.28 - 00:02:20.70
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+What in the world am I gonna do tomorrow?
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now sitting on a bench, looking up at the sky, with a worried expression, symbolizing his uncertainty about the future.
+
+**Frame**: 
+00:02:21.42 - 00:02:25.58
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Is there someone with a dollar I could borrow?
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing on a street corner, looking around, with a hopeful expression, as if searching for someone to help him.
+
+**Frame**: 
+00:02:25.58 - 00:02:29.72
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Who can help me take away my sorrow?
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now sitting on a bench, with his head in his hands, looking defeated and helpless.
+
+**Frame**: 
+00:02:30.66 - 00:02:32.54
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Maybe it's inside the bottle
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now holding a bottle, with a uncertain expression, symbolizing his temptation to escape his problems through drinking.
+
+**Frame**: 
+00:02:33.08 - 00:02:36.30
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+(Maybe it's inside the bottle)
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now looking at the bottle, with a contemplative expression, as if considering the consequences of his actions.
+
+**Frame**: 
+00:02:36.02 - 00:02:45.84
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+I had some good old buddies, names is Whiskey and Wine (Hey, hey), And for my good old buddies I spent my last dime (Hey, hey)
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now sitting in a bar, with a glass of whiskey and a bottle of wine in front of him, symbolizing his attempt to escape his problems through drinking.
+
+**Frame**: 
+00:02:45.84 - 00:02:55.14
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Now Wine is good to me, he help me pass the time, And my good old buddy Whiskey keep me warmer than sunshine (Hey, hey)
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now smiling, with a glass of wine in his hand, symbolizing the temporary comfort and escape he finds in drinking.
+
+**Frame**: 
+00:02:55.76 - 00:03:05.74
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Your mama may have blessed the child that's got his own (Hey, hey), If God has plans for me I hope it ain't written in stone (Hey, hey)
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing in front of a church, with a contemplative expression, symbolizing his hopes and doubts about his future.
+
+**Frame**: 
+00:03:05.74 - 00:03:15.96
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Because I've been working, working myself down to the bone, And I swear on Grandpa's grave I'll be paid when I come home (Hey, hey)
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now standing in front of a factory door, with a determined expression, symbolizing his resolve to work hard and earn a living.
+
+**Frame**: 
+00:03:15.96 - 00:03:25.66
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar, Dollar, that's what I need
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing on a street corner, holding a sign that reads "I need a dollar", with a determined expression.
+
+**Frame**: 
+00:03:25.66 - 00:03:34.70
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**: 
+Maintain the cinematic style and color palette. The young man is now sitting on a bench, looking up at a passerby, with a pleading expression, as if asking for help and sharing his story.
+
+**Frame**: 
+00:03:34.84 - 00:04:03.06
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+(C'mon share your dollar with me, Go 'head, share your dollar with me, C'mon share your dollar, gimme your dollar, Share your dollar with me, C'mon share your dollar with me)
+
+**Prompt for the image generating model**: 
+Continue the cinematic style and color palette. The young man is now standing on a street corner, with a group of people around him, all holding signs that read "Share your dollar", symbolizing the community and solidarity that can help him overcome his struggles.

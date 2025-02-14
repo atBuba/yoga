@@ -13,6 +13,7 @@ from ctc_forced_aligner import (
 import demucs.separate
 import os
 import shutil
+import torchaudio.functional as F
 
 # Создаем Flask-приложение
 app = Flask(__name__)
@@ -61,6 +62,9 @@ def align_audio_text():
 
         # Загружаем аудио и текст
         audio_waveform = load_audio(vocal_path, alignment_model.dtype, alignment_model.device)
+
+        audio_waveform = F.gain(audio_waveform, gain_db=15.0)  # Увеличиваем громкость на 5 dB
+        
         with open(text_path, "r", encoding="utf-8") as f:
             text = f.read().replace("\n", " ").strip()
             text = re.sub(r'\[.*?\]', '', text).strip()
@@ -75,7 +79,7 @@ def align_audio_text():
         tokens_starred, text_starred = preprocess_text(
             text,
             romanize=True,
-            language=language,
+            language='eng',
         )
 
         # Получение выравниваний
@@ -88,13 +92,15 @@ def align_audio_text():
         # Получение временных промежутков для слов
         spans = get_spans(tokens_starred, segments, blank_token)
 
+
+        
         # Постобработка результатов
         word_timestamps = postprocess_results(text_starred, spans, stride, scores)
-
         # Возвращаем результат
         return jsonify({"word_timestamps": word_timestamps})
 
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":

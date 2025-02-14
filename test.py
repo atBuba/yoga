@@ -35,7 +35,7 @@ def process_song(mp3_file, txt_file):
         part = match[1].strip()
         lyrics = match[2].strip()
         prompt = match[3].strip()
-        # translated_prompt = translate_text(prompt)
+        # translated_prompt = translate_text(prompt, language='en')
         # print(translated_prompt)
         # image_lyrics.appned(lyrics)
         prompts_translated.append({"lyrics": lyrics, 'part': part, 'shot': shot, "prompt": prompt, "image_url": [], 'effect': None, 'effects_next': None})
@@ -200,15 +200,15 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     #     print(i)
 
     
-    # with status:
-    #     with st.spinner("Анимация изображений 2/5"):
-    #         for image_path, t , line in zip(images, time, prompts_data):   
-    #             effect = line['effect']
-    #             print(t[1] - t[0])
-    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-    #             if effect:
-    #                 add_effect(video_url, effect)
-    #             videos.append(video_url)
+    with status:
+        with st.spinner("Анимация изображений 2/5"):
+            for image_path, t , line in zip(images, time, prompts_data):   
+                effect = line['effect']
+                print(t[1] - t[0])
+                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+                if effect:
+                    add_effect(video_url, effect)
+                videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
@@ -233,11 +233,11 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         'effect_next/9.mov',  
     ]
 
-    # print(videos)
-    # sleep(10)
-    # with status:
-    #     with st.spinner("Рендеринг видео 3/5"):
-    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    print(videos)
+    sleep(10)
+    with status:
+        with st.spinner("Рендеринг видео 3/5"):
+            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
     with status:
         with st.spinner("Добавление субтитров 4/5"):
             create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
@@ -286,7 +286,7 @@ Print out which part of the song this frame belongs to: verse, chorus, intro, an
 Print the song sections with which this text will be shown, if this frame will be shown without text, then simply output "-"
 
 **Prompt for the image generating model**:(maximum number of words is 77)
-Specify the style (realistic, cinematic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
+Specify the style (realistic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
 use all the lines of the song, even if they are repeated.
 song lyrics along with timestamps: '''
     )
@@ -332,7 +332,7 @@ if st.session_state["current_page"] == "main":
                     model=st.session_state["openai_model"],
                     messages=messages,
                     stream=True,
-                    temperature=0.7,
+                    temperature=0.9,
                     top_p=0.1,
                     max_tokens=8000,
                 )
@@ -499,13 +499,17 @@ elif st.session_state["current_page"] == "upload":
         "Фиолетовая волна" : 'effect_next/6.mov',  
         "Розовая волна" : 'effect_next/7.mov',
         "Белая заморозка" : 'effect_next/8.mov',  
-        "Желтая заморозка" : 'effect_next/9.mov',  
+        "Желтая заморозка" : 'effect_next/9.mov', 
+        "Белый дым" : 'effect_next/10.mov',  
+        "Черный дым" : 'effect_next/11.mov',  
     }
     long_effect = {
         "Черно красный круг" : 'effect_next/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
         "Красно белый жидкий переход" : 'effect_next/vecteezy_red-liquid-transition-green-screen_49115367.mov',
         "Градиентные чернила" : 'effect_next/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
         "Сердечки" : 'effect_next/vecteezy_transitions-love-green-screen_48868982.mov',
+        "Черный дым" : 'effect_next/vecteezy_smoke-transition-green-screen-black_48021329.mov',
+        "Белый дым" : 'effect_next/vecteezy_smoke-transition-green-screen-white_48021329.mov',
     }
 
 
