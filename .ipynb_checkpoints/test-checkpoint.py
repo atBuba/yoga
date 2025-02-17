@@ -104,7 +104,7 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type, language):
+def create_videos(prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language):
     print("НАААЧАААЛИ!!!!")
     status = st.empty()
 
@@ -138,9 +138,8 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
             
         
     subtitles = True
-    font_path = "font/Faberge-Regular.otf"
-    font_fill_color = "white"
-    font_size= 90  
+    
+    font_size= 60  
 
     # path to files 
     audio_path = 'static/mp3_file.mp3'
@@ -174,7 +173,7 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
                     generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
                 else:
                     translate_lyrics = translate_text(text, language)
-                    generate_ass_eng(ttml_words, ttml_lines, translate_lyrics,"static/subtitles.ass", font, selected_color_1, selected_color_2)
+                    generate_ass_eng(ttml_words, ttml_lines, translate_lyrics,"static/subtitles.ass", font, font_path, selected_color_1, selected_color_2, font_size)
                     
     else: 
         ttml_words = parse(txt_files=lyrics_file, word=True)
@@ -200,15 +199,15 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
     #     print(i)
 
     
-    with status:
-        with st.spinner("Анимация изображений 2/5"):
-            for image_path, t , line in zip(images, time, prompts_data):   
-                effect = line['effect']
-                print(t[1] - t[0])
-                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-                if effect:
-                    add_effect(video_url, effect)
-                videos.append(video_url)
+    # with status:
+    #     with st.spinner("Анимация изображений 2/5"):
+    #         for image_path, t , line in zip(images, time, prompts_data):   
+    #             effect = line['effect']
+    #             print(t[1] - t[0])
+    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+    #             if effect:
+    #                 add_effect(video_url, effect)
+    #             videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
@@ -233,11 +232,12 @@ def create_videos(prompts_data, selected_images, txt_file, font, selected_color_
         'effect_next/9.mov',  
     ]
 
-    print(videos)
-    sleep(10)
-    with status:
-        with st.spinner("Рендеринг видео 3/5"):
-            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    # print(videos)
+    # sleep(10)
+    
+    # with status:
+    #     with st.spinner("Рендеринг видео 3/5"):
+    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
     with status:
         with st.spinner("Добавление субтитров 4/5"):
             create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
@@ -262,7 +262,7 @@ client = OpenAI(
 
 # Инициализация состояния
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "Meta-Llama-3.1-405B-Instruct"
+    st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -651,7 +651,7 @@ elif st.session_state["current_page"] == "upload":
         if None in selected_images:
             st.error("Please select an image for all lyrics!")
         else:
-            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, selected_color_1, selected_color_2, audio_type, language)
+            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language)
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:

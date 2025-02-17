@@ -1,5 +1,9 @@
+Certainly! Here is the revised version with each frame lasting between 5 and 7 seconds:
+
+---
+
 **Frame**: 
-00:00:00.00 - 00:00:10.30
+00:00:00.00 - 00:00:05.00
 
 **Part of the song**: 
 Intro
@@ -7,92 +11,169 @@ Intro
 **Text**: 
 -
 
-**Prompt for the image generating model**: 
-Create a realistic image of a homeless man sitting on a sidewalk, surrounded by trash and graffiti, in a city during the Great Depression. He's wearing tattered clothes and a hat, with a hopeless expression on his face. The color palette is muted, with shades of gray, brown, and beige. The mood is somber and desperate.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. A dusty, desolate street with a lone figure walking, dressed in a worn-out suit and hat, carrying a small bag. The sky is overcast, and the buildings are dilapidated, conveying a sense of despair and hardship.
+
+---
 
 **Frame**: 
-00:00:10.30 - 00:00:17.86
+00:00:05.00 - 00:00:12.82
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Well, I need a dollar, dollar
+I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Depict the homeless man holding a cardboard sign with the words "I need a dollar" written on it, as he looks up at passersby with a pleading expression. The background is a blurred city street with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The same figure from the previous frame, now standing in front of a closed shop with a "For Sale" sign. He is looking down at his empty pockets, his face showing desperation and need. The background is a desolate street with a few other downtrodden figures in the distance.
+
+---
 
 **Frame**: 
-00:00:17.86 - 00:00:23.36
+00:00:12.82 - 00:00:19.36
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar
+Well, I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Show the homeless man's face, with a mix of sadness and determination, as he continues to hold out his sign. The background is a close-up of his tattered clothing and the sidewalk beneath him. The color palette remains muted, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is now sitting on a bench in a park, his head in his hands. A passerby, a well-dressed man, is standing in front of him, looking down with a mix of pity and hesitation. The park is empty, with a few bare trees and a distant, dilapidated building. The sky is overcast, and the mood is somber.
+
+---
 
 **Frame**: 
-00:00:23.36 - 00:00:29.34
+00:00:19.36 - 00:00:25.04
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
+Said I need a dollar, dollar
+Dollar, that's what I need
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, with a small crowd of people gathered around him, listening to his story. The background is a blurred city street, with a focus on the man's storytelling. The color palette remains muted, with a hint of hope.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in front of a crowded soup kitchen line. He is looking at the people in the line, some of whom are giving him sympathetic looks. The background is a busy, but poor, neighborhood with makeshift shelters and people gathered in small groups. The mood is one of shared hardship and hope.
+
+---
 
 **Frame**: 
-00:00:30.56 - 00:00:41.06
+00:00:25.04 - 00:00:29.34
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is now sitting on a curb, holding a sign that reads "Need a Dollar." People are walking by, some looking away, others giving him sympathetic glances. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
+
+**Frame**: 
+00:00:30.56 - 00:00:35.60
 
 **Part of the song**: 
 Verse 1
 
 **Text**: 
-Bad times are coming and I reap what I done sowed (Hey, hey), Well, let me tell you something, all that glitters ain't gold (Hey, hey)
+Bad times are coming and I reap what I done sowed (Hey, hey)
 
-**Prompt for the image generating model**: 
-Show the homeless man standing in front of a city skyline, with a dark and ominous cloud looming in the background. He's looking down at his feet, with a regretful expression on his face. The color palette remains muted, with a focus on the man's introspection.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is walking down a long, dusty road, carrying a heavy load on his back. The road stretches into the distance, with a few scattered, dilapidated buildings and a barren landscape. The sky is overcast, and the figure's face shows weariness and determination. The mood is one of struggle and perseverance.
+
+---
 
 **Frame**: 
-00:00:41.06 - 00:00:51.40
+00:00:35.60 - 00:00:41.06
 
 **Part of the song**: 
 Verse 1
 
 **Text**: 
-It's been a long old trouble, long old troublesome road, And I'm looking for somebody come and help me carry this load
+Well, let me tell you something, all that glitters ain't gold (Hey, hey)
 
-**Prompt for the image generating model**: 
-Depict the homeless man walking down a long, deserted road, with a heavy backpack on his shoulders. He's looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's journey.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in front of a dilapidated, once-grand building. The building's facade is cracked and overgrown with weeds. The figure's face shows a mix of disappointment and realization. The sky is overcast, and the mood is one of disillusionment.
+
+---
 
 **Frame**: 
-00:00:51.10 - 00:00:58.30
+00:00:41.06 - 00:00:44.82
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+It's been a long old trouble, long old troublesome road
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing on a cracked, uneven sidewalk, looking up at a crumbling building. The sky is dark and stormy, and the figure's face shows uncertainty and fear. In the background, other buildings are also in disrepair, and a few people are walking by, looking downcast. The mood is one of instability and longing for help.
+
+---
+
+**Frame**: 
+00:00:44.82 - 00:00:51.40
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+And I'm looking for somebody come and help me carry this load
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a crowded street, holding a heavy bag. People are walking by, some giving him sympathetic looks, others ignoring him. The background is a busy, but poor, neighborhood with makeshift shelters and people gathered in small groups. The sky is overcast, and the mood is one of shared hardship and hope.
+
+---
+
+**Frame**: 
+00:00:51.10 - 00:00:55.52
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Well, I need a dollar, dollar
+I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Show the homeless man holding out his sign again, as he looks up at passersby with a pleading expression. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is now standing in front of a closed shop with a "For Sale" sign. He is looking down at his empty pockets, his face showing desperation and need. The background is a desolate street with a few other downtrodden figures in the distance.
+
+---
 
 **Frame**: 
-00:00:58.30 - 00:01:05.52
+00:00:55.52 - 00:00:59.98
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar
+Dollar, that's what I need
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting on a bench in a park, his head in his hands. A passerby, a well-dressed man, is standing in front of him, looking down with a mix of pity and hesitation. The park is empty, with a few bare trees and a distant, dilapidated building. The sky is overcast, and the mood is somber.
+
+---
+
+**Frame**: 
+00:01:01.30 - 00:01:05.52
 
 **Part of the song**: 
 Break
 
 **Text**: 
--
+Well, I don't know if I'm walking on solid ground
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, surrounded by trash and graffiti, looking down at his feet with a hopeless expression. The background is a blurred city street, with a focus on the man's despair. The color palette remains muted, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing on a cracked, uneven sidewalk, looking up at a crumbling building. The sky is dark and stormy, and the figure's face shows uncertainty and fear. In the background, other buildings are also in disrepair, and a few people are walking by, looking downcast. The mood is one of instability and longing for help.
+
+---
 
 **Frame**: 
 00:01:05.52 - 00:01:11.64
@@ -101,10 +182,12 @@ Depict the homeless man sitting on the sidewalk, surrounded by trash and graffit
 Break
 
 **Text**: 
-Well, I don't know if I'm walking on solid ground, 'Cause everything around me is falling down
+'Cause everything around me is falling down
 
-**Prompt for the image generating model**: 
-Show the homeless man standing in front of a city skyline, with a dark and ominous cloud looming in the background. He's looking down at his feet, with a fearful expression on his face. The background is a blurred city street, with a focus on the man's uncertainty.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in the middle of a street, looking up at a crumbling building. The street is empty, and the sky is dark and stormy. The figure's face shows a mix of fear and determination. In the background, other buildings are also in disrepair, and a few people are walking by, looking downcast. The mood is one of instability and longing for help.
+
+---
 
 **Frame**: 
 00:01:11.64 - 00:01:15.52
@@ -115,8 +198,10 @@ Break
 **Text**: 
 And all I want is for someone to help me
 
-**Prompt for the image generating model**: 
-Depict the homeless man looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's longing for help.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing on a curb, holding a sign that reads "Need a Dollar." People are walking by, some looking away, others giving him sympathetic glances. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
 
 **Frame**: 
 00:01:17.04 - 00:01:23.42
@@ -125,22 +210,40 @@ Depict the homeless man looking up at the sky, with a hopeful expression on his 
 Verse 2
 
 **Text**: 
-I had a job but the boss man let me go (He said), I'm sorry, but I won't be needing your help no more (I said)
+I had a job but the boss man let me go (He said)
 
-**Prompt for the image generating model**: 
-Show the homeless man standing in front of a closed factory gate, with a sign that reads "Closed" or "Out of Business". He's looking down at his feet, with a regretful expression on his face. The background is a blurred industrial landscape, with a focus on the man's lost opportunity.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing outside a factory, looking at the closed gates. The boss man, dressed in a suit, is standing at the gate, handing the figure a small envelope. The figure's face shows a mix of disappointment and desperation. The factory is empty and quiet, with a few scattered workers in the background. The sky is overcast, and the mood is one of loss and uncertainty.
+
+---
 
 **Frame**: 
-00:01:23.42 - 00:01:32.60
+00:01:23.42 - 00:01:28.46
 
 **Part of the song**: 
 Verse 2
 
 **Text**: 
-Please, Mister Boss man I need this job more than you know, But he gave me my last paycheck and he sent me on out the door
+I'm sorry, but I won't be needing your help no more (I said)
 
-**Prompt for the image generating model**: 
-Depict the homeless man standing in front of the factory gate, with a pleading expression on his face. The background is a blurred industrial landscape, with a focus on the man's desperation.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing outside the factory, looking at the envelope in his hand. His face shows a mix of disappointment and resignation. The factory is empty and quiet, with a few scattered workers in the background. The sky is overcast, and the mood is one of loss and uncertainty.
+
+---
+
+**Frame**: 
+00:01:28.46 - 00:01:32.60
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+Please, Mister Boss man I need this job more than you know
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing outside the factory, looking up at the boss man with a pleading expression. The boss man is standing at the gate, looking away. The factory is empty and quiet, with a few scattered workers in the background. The sky is overcast, and the mood is one of desperation and hope.
+
+---
 
 **Frame**: 
 00:01:32.60 - 00:01:37.66
@@ -151,32 +254,55 @@ Verse 2
 **Text**: 
 But he gave me my last paycheck and he sent me on out the door
 
-**Prompt for the image generating model**: 
-Show the homeless man walking away from the factory gate, with a defeated expression on his face. The background is a blurred industrial landscape, with a focus on the man's disappointment.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is walking away from the factory, holding the envelope. His face shows a mix of disappointment and determination. The factory is empty and quiet, with a few scattered workers in the background. The sky is overcast, and the mood is one of loss and uncertainty.
+
+---
 
 **Frame**: 
-00:01:38.48 - 00:01:46.18
+00:01:38.48 - 00:01:44.04
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar
+Well, I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Depict the homeless man holding out his sign again, as he looks up at passersby with a pleading expression. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in front of a closed shop with a "For Sale" sign. He is looking down at his empty pockets, his face showing desperation and need. The background is a desolate street with a few other downtrodden figures in the distance.
+
+---
 
 **Frame**: 
-00:01:46.18 - 00:01:52.92
+00:01:44.04 - 00:01:49.12
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Dollar, that's what I need (Hey, hey), And I need dollar, dollar
+Said I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Show the homeless man's face, with a mix of sadness and determination, as he continues to hold out his sign. The background is a close-up of his tattered clothing and the sidewalk beneath him. The color palette remains muted, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting on a bench in a park, his head in his hands. A passerby, a well-dressed man, is standing in front of him, looking down with a mix of pity and hesitation. The park is empty, with a few bare trees and a distant, dilapidated building. The sky is overcast, and the mood is somber.
+
+---
+
+**Frame**: 
+00:01:49.12 - 00:01:52.92
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And I need dollar, dollar
+Dollar, that's what I need
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a crowded street, holding a sign that reads "Need a Dollar." People are walking by, some giving him coins, others looking away. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
 
 **Frame**: 
 00:01:52.92 - 00:01:57.52
@@ -185,10 +311,12 @@ Show the homeless man's face, with a mix of sadness and determination, as he con
 Chorus
 
 **Text**: 
-Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
+And if I share with you my story would you share your dollar with me?
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, with a small crowd of people gathered around him, listening to his story. The background is a blurred city street, with a focus on the man's storytelling. The color palette remains muted, with a hint of hope.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is now sitting on a curb, holding a sign that reads "Need a Dollar." People are walking by, some looking away, others giving him sympathetic glances. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
 
 **Frame**: 
 00:01:57.16 - 00:02:03.98
@@ -197,25 +325,29 @@ Depict the homeless man sitting on the sidewalk, with a small crowd of people ga
 Break
 
 **Text**: 
--
+Well, I don't know if I'm walking on solid ground
 
-**Prompt for the image generating model**: 
-Show the homeless man sitting on the sidewalk, surrounded by trash and graffiti, looking down at his feet with a hopeless expression. The background is a blurred city street, with a focus on the man's despair. The color palette remains muted, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing on a cracked, uneven sidewalk, looking up at a crumbling building. The sky is dark and stormy, and the figure's face shows uncertainty and fear. In the background, other buildings are also in disrepair, and a few people are walking by, looking downcast. The mood is one of instability and longing for help.
+
+---
 
 **Frame**: 
-00:02:04.04 - 00:02:08.74
+00:02:03.98 - 00:02:08.74
 
 **Part of the song**: 
 Break
 
 **Text**: 
-Well, I don't know if I'm walking on solid ground, 'Cause everything around me is crumbling down
+'Cause everything around me is crumbling down
 
-**Prompt for the image generating model**: 
-Depict the homeless man standing in front of a city skyline, with a dark and ominous cloud looming in the background. He's looking down at his feet, with a fearful expression on his face. The background is a blurred city street, with a focus on the man's uncertainty.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in the middle of a street, looking up at a crumbling building. The street is empty, and the sky is dark and stormy. The figure's face shows a mix of fear and determination. In the background, other buildings are also in disrepair, and a few people are walking by, looking downcast. The mood is one of instability and longing for help.
+
+---
 
 **Frame**: 
-00:02:09.02 - 00:02:13.40
+00:02:08.74 - 00:02:13.40
 
 **Part of the song**: 
 Break
@@ -223,8 +355,10 @@ Break
 **Text**: 
 And all I want is for someone to help me
 
-**Prompt for the image generating model**: 
-Show the homeless man looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's longing for help.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing on a curb, holding a sign that reads "Need a Dollar." People are walking by, some looking away, others giving him sympathetic glances. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
 
 **Frame**: 
 00:02:16.28 - 00:02:20.70
@@ -235,11 +369,13 @@ Bridge
 **Text**: 
 What in the world am I gonna do tomorrow?
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, with a calendar or a newspaper in front of him, looking at the date with a worried expression. The background is a blurred city street, with a focus on the man's uncertainty.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a dimly lit room, looking out a small window at a dark, rainy night. The room is sparse, with a few old pieces of furniture and personal items. The figure's face shows a mix of uncertainty and fear. The mood is one of isolation and reflection.
+
+---
 
 **Frame**: 
-00:02:21.42 - 00:02:25.58
+00:02:20.70 - 00:02:25.58
 
 **Part of the song**: 
 Bridge
@@ -247,8 +383,10 @@ Bridge
 **Text**: 
 Is there someone with a dollar I could borrow?
 
-**Prompt for the image generating model**: 
-Show the homeless man looking around at passersby, with a pleading expression on his face. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a crowded street, holding a sign that reads "Need a Dollar." People are walking by, some giving him coins, others looking away. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
 
 **Frame**: 
 00:02:25.58 - 00:02:29.72
@@ -259,11 +397,13 @@ Bridge
 **Text**: 
 Who can help me take away my sorrow?
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, with his head in his hands, looking down at the ground with a sad expression. The background is a blurred city street, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting on a bench in a park, his head in his hands. A passerby, a well-dressed man, is standing in front of him, looking down with a mix of pity and hesitation. The park is empty, with a few bare trees and a distant, dilapidated building. The sky is overcast, and the mood is somber.
+
+---
 
 **Frame**: 
-00:02:30.66 - 00:02:32.54
+00:02:29.72 - 00:02:32.54
 
 **Part of the song**: 
 Bridge
@@ -271,11 +411,13 @@ Bridge
 **Text**: 
 Maybe it's inside the bottle
 
-**Prompt for the image generating model**: 
-Show the homeless man holding a bottle of liquor, with a mix of sadness and temptation on his face. The background is a blurred city street, with a focus on the man's struggle.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a small, dimly lit room, holding a bottle of whiskey. The room is cluttered with old furniture and personal items. The figure's face shows a mix of contentment and weariness. In the background, a small window shows a dark, rainy night. The mood is one of temporary comfort and reflection.
+
+---
 
 **Frame**: 
-00:02:33.08 - 00:02:36.30
+00:02:32.54 - 00:02:36.30
 
 **Part of the song**: 
 Bridge
@@ -283,101 +425,207 @@ Bridge
 **Text**: 
 (Maybe it's inside the bottle)
 
-**Prompt for the image generating model**: 
-Depict the homeless man taking a swig from the bottle, with a look of temporary relief on his face. The background is a blurred city street, with a focus on the man's coping mechanism.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a small, dimly lit room, holding a bottle of whiskey. The room is cluttered with old furniture and personal items. The figure's face shows a mix of contentment and weariness. In the background, a small window shows a dark, rainy night. The mood is one of temporary comfort and reflection.
+
+---
 
 **Frame**: 
-00:02:36.02 - 00:02:45.84
+00:02:36.02 - 00:02:40.84
 
 **Part of the song**: 
 Verse 3
 
 **Text**: 
-I had some good old buddies, names is Whiskey and Wine (Hey, hey), And for my good old buddies I spent my last dime (Hey, hey)
+I had some good old buddies, names is Whiskey and Wine (Hey, hey)
 
-**Prompt for the image generating model**: 
-Show the homeless man sitting on the sidewalk, surrounded by empty bottles and trash, with a regretful expression on his face. The background is a blurred city street, with a focus on the man's past mistakes.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a small, dimly lit room, surrounded by empty bottles of whiskey and wine. The room is cluttered with old furniture and personal items. The figure's face shows a mix of contentment and weariness. In the background, a small window shows a dark, rainy night. The mood is one of temporary comfort and reflection.
+
+---
 
 **Frame**: 
-00:02:45.84 - 00:02:55.14
+00:02:40.84 - 00:02:45.84
 
 **Part of the song**: 
 Verse 3
 
 **Text**: 
-Now Wine is good to me, he help me pass the time, And my good old buddy Whiskey keep me warmer than sunshine (Hey, hey)
+And for my good old buddies I spent my last dime (Hey, hey)
 
-**Prompt for the image generating model**: 
-Depict the homeless man holding a bottle of wine and a bottle of whiskey, with a mix of sadness and comfort on his face. The background is a blurred city street, with a focus on the man's coping mechanisms.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a small, dimly lit room, surrounded by empty bottles of whiskey and wine. The room is cluttered with old furniture and personal items. The figure's face shows a mix of contentment and weariness. In the background, a small window shows a dark, rainy night. The mood is one of temporary comfort and reflection.
+
+---
 
 **Frame**: 
-00:02:55.14 - 00:03:05.74
+00:02:45.84 - 00:02:50.36
 
 **Part of the song**: 
 Verse 3
 
 **Text**: 
-Your mama may have blessed the child that's got his own (Hey, hey), If God has plans for me I hope it ain't written in stone (Hey, hey)
+Now Wine is good to me, he help me pass the time
 
-**Prompt for the image generating model**: 
-Show the homeless man looking up at the sky, with a hopeful expression on his face. The background is a vast, open landscape, with a focus on the man's longing for a better life.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a small, dimly lit room, holding a glass of wine. The room is cluttered with old furniture and personal items. The figure's face shows a mix of contentment and weariness. In the background, a small window shows a dark, rainy night. The mood is one of temporary comfort and reflection.
+
+---
 
 **Frame**: 
-00:03:05.74 - 00:03:15.96
+00:02:50.36 - 00:02:55.14
 
 **Part of the song**: 
 Verse 3
 
 **Text**: 
-Because I've been working, working myself down to the bone, And I swear on Grandpa's grave I'll be paid when I come home (Hey, hey)
+And my good old buddy Whiskey keep me warmer than sunshine (Hey, hey)
 
-**Prompt for the image generating model**: 
-Depict the homeless man standing in front of a city skyline, with a determined expression on his face. The background is a blurred city street, with a focus on the man's resolve.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting in a small, dimly lit room, holding a bottle of whiskey. The room is cluttered with old furniture and personal items. The figure's face shows a mix of contentment and weariness. In the background, a small window shows a dark, rainy night. The mood is one of temporary comfort and reflection.
+
+---
 
 **Frame**: 
-00:03:15.72 - 00:03:25.66
+00:02:55.14 - 00:03:01.20
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Your mama may have blessed the child that's got his own (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a desolate street, looking up at a distant, dilapidated building. The sky is overcast, and the figure's face shows a mix of determination and weariness. The mood is one of resilience and reflection.
+
+---
+
+**Frame**: 
+00:03:01.20 - 00:03:05.74
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+If God has plans for me I hope it ain't written in stone (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a desolate street, looking up at a distant, dilapidated building. The sky is overcast, and the figure's face shows a mix of determination and weariness. The mood is one of resilience and reflection.
+
+---
+
+**Frame**: 
+00:03:05.74 - 00:03:09.92
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Because I've been working, working myself down to the bone
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a desolate street, looking down at his hands, which are calloused and worn. The sky is overcast, and the figure's face shows a mix of determination and weariness. The mood is one of resilience and reflection.
+
+---
+
+**Frame**: 
+00:03:09.92 - 00:03:15.96
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+And I swear on Grandpa's grave I'll be paid when I come home (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a desolate street, looking up at a distant, dilapidated building. The sky is overcast, and the figure's face shows a mix of determination and weariness. The mood is one of resilience and reflection.
+
+---
+
+**Frame**: 
+00:03:15.72 - 00:03:20.64
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Well, I need a dollar, dollar, Dollar, that's what I need (Hey, hey), Said I need a dollar, dollar
+Well, I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Show the homeless man holding out his sign again, as he looks up at passersby with a pleading expression. The background is a blurred city street, with people walking by, ignoring him. The color palette remains muted, with a focus on the man's desperation.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in front of a closed shop with a "For Sale" sign. He is looking down at his empty pockets, his face showing desperation and need. The background is a desolate street with a few other downtrodden figures in the distance.
+
+---
 
 **Frame**: 
-00:03:25.66 - 00:03:34.70
+00:03:20.64 - 00:03:25.66
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-Dollar, that's what I need, And if I share with you my story would you share your dollar with me?
+Said I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, with a small crowd of people gathered around him, listening to his story. The background is a blurred city street, with a focus on the man's storytelling. The color palette remains muted, with a hint of hope.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is sitting on a bench in a park, his head in his hands. A passerby, a well-dressed man, is standing in front of him, looking down with a mix of pity and hesitation. The park is empty, with a few bare trees and a distant, dilapidated building. The sky is overcast, and the mood is somber.
+
+---
 
 **Frame**: 
-00:03:34.70 - 00:03:44.72
+00:03:25.66 - 00:03:30.00
 
 **Part of the song**: 
 Chorus
 
 **Text**: 
-(C'mon share your dollar with me, Go 'head, share your dollar with me, C'mon share your dollar, gimme your dollar, Share your dollar with me)
+Well, I need dollar, dollar
+Dollar, that's what I need
 
-**Prompt for the image generating model**: 
-Show the homeless man looking up at the camera, with a pleading expression on his face. The background is a blurred city street, with a focus on the man's desperation. The color palette remains muted, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a crowded street, holding a sign that reads "Need a Dollar." People are walking by, some giving him coins, others looking away. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
 
 **Frame**: 
-00:03:44.72 - 00:04:03.06
+00:03:30.00 - 00:03:34.70
 
 **Part of the song**: 
 Chorus
+
+**Text**: 
+And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is now sitting on a curb, holding a sign that reads "Need a Dollar." People are walking by, some looking away, others giving him sympathetic glances. The background is a busy street with a few vendors and a market. The sky is overcast, and the mood is one of desperation and hope for help.
+
+---
+
+**Frame**: 
+00:03:34.84 - 00:03:39.72
+
+**Part of the song**: 
+Outro
+
+**Text**: 
+(C'mon share your dollar with me
+Go 'head, share your dollar with me
+C'mon share your dollar, gimme your dollar
+Share your dollar with me)
+
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a quiet, empty street, looking up at the sky. The sky is beginning to clear, and a faint light is visible. The figure's face shows a mix of hope and determination. The background is a desolate street with a few distant, dilapidated buildings. The mood is one of resilience and a glimmer of hope for a better future.
+
+---
+
+**Frame**: 
+00:03:39.72 - 00:04:03.06
+
+**Part of the song**: 
+Outro
 
 **Text**: 
 (C'mon share your dollar with me)
 
-**Prompt for the image generating model**: 
-Depict the homeless man sitting on the sidewalk, surrounded by trash and graffiti, looking down at his feet with a hopeless expression. The background is a blurred city street, with a focus on the man's despair. The color palette remains muted, with a focus on the man's emotions.
+**Prompt for the image generating model**:
+Realistic, moody, sepia tones, 1930s Great Depression era. The figure is standing in a quiet, empty street, looking up at the sky. The sky is beginning to clear, and a faint light is visible. The figure's face shows a mix of hope and determination. The background is a desolate street with a few distant, dilapidated buildings. The mood is one of resilience and a glimmer of hope for a better future.

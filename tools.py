@@ -343,16 +343,18 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         f.write(header + "\n".join(events))
 
 
-def generate_ass_eng(ttml_words, ttml_lines, eng_lyrics, output_file, font, font_color_1, font_color_2):
+def generate_ass_eng(ttml_words, ttml_lines, eng_lyrics, output_file, font, font_path, font_color_1, font_color_2, font_size):
     header = f"""[Script Info]
 Title: Karaoke Lyrics
 ScriptType: v4.00+
+PlayResX: {1280}
+PlayResY: {720}
 Collisions: Normal
 PlayDepth: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,{font},23,&H00{font_color_1},&H00{font_color_2},&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
+Style: Default,{font},{font_size},&H00{font_color_1},&H00{font_color_2},&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -361,12 +363,12 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     j = 0
 
     eng_lyrics = eng_lyrics.split('\n')
-    effects = [apply_letter_fly_in]  # Список эффектов
+    effects = [apply_fade_in, apply_scale_up, apply_letter_fly_in]  # Список эффектов
     
     for i, line in enumerate(ttml_lines):
         start_time, end_time = ttml_words[j]['start'] - 0.4, ttml_words[j + len(line['text'].split()) - 1]['end'] - 0.2
         effect_func = random.choice(effects)  # Выбираем случайный эффект
-        effect_text = effect_func(eng_lyrics[i], start_time, end_time)  # Применяем эффект
+        effect_text = effect_func(eng_lyrics[i], font_size, font_path, start_time, end_time)  # Применяем эффект
         events.append(f"{effect_text}")
         j += len(line['text'].split())
 
@@ -374,38 +376,91 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         f.write(header + "\n".join(events))
 
 # Эффекты:
-def apply_fade_in(text, start_time, end_time):
+def apply_fade_in(text, font_size, font_path, start_time, end_time):
     """Эффект появления текста (fade in)"""
-    return f"{{\\alpha&HFF&\\t(0,200,\\alpha&H00&)}}{text}"
+    return f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{{\\alpha&HFF&\\t(0,200,\\alpha&H00&)}}{text}"
 
-def apply_scale_up(text, start_time, end_time):
+def apply_scale_up(text, font_size, font_path, start_time, end_time):
     """Эффект увеличения текста (scale up)"""
-    return f"{{\\fscx30\\fscy30\\t(0,200,\\fscx100\\fscy100)}}{text}"
+    return f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{{\\fscx30\\fscy30\\t(0,200,\\fscx100\\fscy100)}}{text}"
 
-import random
 
-def apply_letter_fly_in(text, start_time=0.0, end_time=0.0, start_x=200, start_y=200, duration=700, delay=0.1):
-    """Эффект появления букв в случайных местах с динамическим перемещением в центр"""
+def get_text_width(text, font_path="Arial.ttf", font_size=48):
+    """Возвращает ширину текста в пикселях, используя PIL (универсальный метод)"""
+    font = ImageFont.truetype(font_path, font_size)
+
+    # Создаем временное изображение для рендеринга текста
+    image = Image.new("RGB", (1000, 200))  
+    draw = ImageDraw.Draw(image)
+
+    # Получаем границы текста
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]  # Вычисляем ширину
+
+    return text_width
+
+def apply_letter_fly_in(text, font_size, font_path, start_time=0.0, end_time=0.0, screen_width=1280, screen_height=720, duration=400):
+    """Эффект появления букв в случайных местах с изменением траектории и ускорением"""
     result = []
-    screen_width, screen_height = 1280, 720  # Размер экрана
-    current_time = start_time  # Начальное время появления первой буквы
+    margin_bottom = 20  # Отступ от низа экрана
+    letter_spacing = get_text_width('p', font_path, font_size)  # Расстояние между буквами
+    line_height = font_size  # Высота строки
 
-    for i, letter in enumerate(text):
-        if letter.strip():  # Пропускаем пробелы
-            # Случайные начальные координаты (вне экрана)
-            x = random.randint(0, screen_width)
-            y = random.randint(0, screen_height)
-            
-            # Финальные координаты (центр строки)
-            final_x = start_x + i * 20  
-            final_y = start_y
+    lines = split_text_into_lines(text, screen_width, letter_spacing)  # Автоперенос строк
+    num_lines = len(lines)
+    
+    for line_index, line in enumerate(lines):
+        text_width = get_text_width(line, font_path, font_size)  # Ширина строки
+        start_x = (screen_width - text_width) // 2  # Центрируем строку
+        start_y = screen_height - margin_bottom - (num_lines - 1 - line_index) * line_height  # Центр внизу
 
-            
-            # Добавляем строку с эффектом в список
-            result.append(f"Dialogue: 0,{format_time(current_time)},{format_time(end_time)},Default,,0,0,0,,{{\\move({x},{y},{final_x},{final_y},0,{duration})}}{letter}")
 
+
+        final_x = start_x
+        final_y = start_y
+        
+        for i, letter in enumerate(line):
+            if letter.strip():  # Пропускаем пробелы
+                # Случайные начальные координаты (вне экрана)
+                x = random.randint(100, screen_width - 100)
+                y = random.randint(100, screen_height - 100)
+
+                # Финальные координатыяё
+                
+
+                # Добавляем эффект ускорения и кривой траектории
+                effect = f"{{\\move({x},{y},{final_x},{final_y},0,{duration})\\t(0,{duration},0.5}}"
+
+                # Добавляем строку с эффектом
+                result.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{effect}{letter}")
+                final_x += get_text_width(letter, font_path, font_size)
+            else: 
+                final_x += 10
 
     return "\n".join(result)
+
+
+def split_text_into_lines(text, max_width, letter_spacing):
+    """Разбивает текст на строки, учитывая максимальную ширину"""
+    words = text.split()
+    lines = []
+    current_line = ""
+    current_width = 0
+
+    for word in words:
+        word_width = len(word) * letter_spacing  # Ширина слова
+        if current_width + word_width > max_width:  # Перенос строки
+            lines.append(current_line.strip())
+            current_line = word
+            current_width = word_width
+        else:
+            current_line += " " + word
+            current_width += word_width + letter_spacing  # Добавляем пробел
+
+    if current_line:
+        lines.append(current_line.strip())
+
+    return lines
 
 
 
