@@ -11,6 +11,7 @@ import re
 from datetime import timedelta
 import subprocess
 from time import sleep
+from fontTools.ttLib import TTFont
 
 
 # token for yandex translate 
@@ -363,7 +364,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     j = 0
 
     eng_lyrics = eng_lyrics.split('\n')
-    effects = [apply_fade_in, apply_scale_up, apply_letter_fly_in]  # Список эффектов
+    effects = [apply_fade_in, apply_scale_up, apply_word_fade_in, apply_word_fly_in, apply_letter_fly_in]  # Список эффектов
     
     for i, line in enumerate(ttml_lines):
         start_time, end_time = ttml_words[j]['start'] - 0.4, ttml_words[j + len(line['text'].split()) - 1]['end'] - 0.2
@@ -384,33 +385,135 @@ def apply_scale_up(text, font_size, font_path, start_time, end_time):
     """Эффект увеличения текста (scale up)"""
     return f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{{\\fscx30\\fscy30\\t(0,200,\\fscx100\\fscy100)}}{text}"
 
+def apply_word_fade_in(text, font_size, font_path, start_time, end_time, screen_width=1280, screen_height=720, duration=200):
+    """Эффект плавного появления каждого слова с правильным выравниванием"""
+    result = []
+    margin_bottom = 10  # Отступ от низа экрана
+    glyph_widths_px = get_glyph_widths_in_pixels(font_path, font_size)  # Расстояние между буквами
+    line_height = font_size  # Высота строки
 
-def get_text_width(text, font_path="Arial.ttf", font_size=48):
-    """Возвращает ширину текста в пикселях, используя PIL (универсальный метод)"""
-    font = ImageFont.truetype(font_path, font_size)
+    lines = split_text_into_lines(text, screen_width - 40, glyph_widths_px)  # Автоперенос строк
+    num_lines = len(lines)
+    
+    delay_step = 0.7 * (end_time - start_time) / max(len(text.split()), 1) 
 
-    # Создаем временное изображение для рендеринга текста
-    image = Image.new("RGB", (1000, 200))  
-    draw = ImageDraw.Draw(image)
+    for line_index, line in enumerate(lines):
+        text_line, width  = line 
+        text_width = width  # Ширина строки
+        start_x = (screen_width - text_width) // 2  # Центрируем строку
+        start_y = screen_height - margin_bottom - (num_lines - 1 - line_index) * line_height  # Центр внизу
 
-    # Получаем границы текста
-    bbox = draw.textbbox((0, 0), text, font=font)
-    text_width = bbox[2] - bbox[0]  # Вычисляем ширину
 
-    return text_width
+
+        final_x = start_x
+        final_y = start_y
+
+        current_word = ""
+        word_witdh = 0
+
+        for i, letter in enumerate(text_line + " "):
+            if letter.strip():  # Пропускаем пробелы
+                word_witdh += glyph_widths_px[letter]
+                current_word += letter
+
+            else: 
+                 # Добавляем эффект ускорения и кривой траектории
+                effect = f"{{\\pos({start_x + word_witdh // 2},{final_y})\\alpha&HFF&\\t(0,{duration},\\alpha&H00&)}}"
+                result.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{effect}{current_word}")
+                start_time += delay_step
+                
+                current_word = ""
+                word_witdh += glyph_widths_px[" "]
+                start_x += word_witdh
+                word_witdh = 0
+                
+
+    return "\n".join(result)
+
+
+def apply_word_fly_in(text, font_size, font_path, start_time, end_time, screen_width=1280, screen_height=720, duration=400):
+    """Эффект появления букв в случайных местах с изменением траектории и ускорением"""
+    result = []
+    margin_bottom = 10  # Отступ от низа экрана
+    glyph_widths_px = get_glyph_widths_in_pixels(font_path, font_size)  # Расстояние между буквами
+    line_height = font_size  # Высота строки
+
+    lines = split_text_into_lines(text, screen_width - 40, glyph_widths_px)  # Автоперенос строк
+    num_lines = len(lines)
+    
+    directions = ["left", "right", "top", "bottom"]
+    
+    for line_index, line in enumerate(lines):
+        text_line, width  = line 
+        text_width = width  # Ширина строки
+        start_x = (screen_width - text_width) // 2  # Центрируем строку
+        start_y = screen_height - margin_bottom - (num_lines - 1 - line_index) * line_height  # Центр внизу
+
+
+
+        final_x = start_x
+        final_y = start_y
+
+        current_word = ""
+        word_witdh = 0
+        
+        for i, letter in enumerate(text_line + " "):
+            if letter.strip():  # Пропускаем пробелы
+                word_witdh += glyph_widths_px[letter]
+                current_word += letter
+
+            else: 
+                direction = random.choice(directions)
+        
+                if direction == "left":
+                    x, y = -100, start_y
+                elif direction == "right":
+                    x, y = screen_width + 100, start_y
+                elif direction == "top":
+                    x, y = start_x, -50
+                else:  # bottom
+                    x, y = start_x, screen_height + 50
+                    
+                 # Добавляем эффект ускорения и кривой траектории
+                effect = f"{{\\move({x},{y},{start_x + word_witdh // 2},{final_y},0,{duration})\\t(0,{duration},1}}"
+                result.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{effect}{current_word}")
+                current_word = ""
+                word_witdh += glyph_widths_px[" "]
+                start_x += word_witdh
+                word_witdh = 0
+                
+
+    return "\n".join(result)
+    
+    
+    glyph_widths_px = get_glyph_widths_in_pixels(font_path, font_size)
+
+    for i, word in enumerate(words):
+        
+
+        final_x = start_x
+        final_y = start_y
+
+        effect = f"{{\\move({x},{y},{final_x},{final_y},0,{duration})}}"
+        result.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{effect}{word}")
+
+        start_x += glyph_widths_px.get(word, font_size) + 10  # Смещаем вправо
+
+    return "\n".join(result)
 
 def apply_letter_fly_in(text, font_size, font_path, start_time=0.0, end_time=0.0, screen_width=1280, screen_height=720, duration=400):
     """Эффект появления букв в случайных местах с изменением траектории и ускорением"""
     result = []
-    margin_bottom = 20  # Отступ от низа экрана
-    letter_spacing = get_text_width('p', font_path, font_size)  # Расстояние между буквами
+    margin_bottom = 10  # Отступ от низа экрана
+    glyph_widths_px = get_glyph_widths_in_pixels(font_path, font_size)  # Расстояние между буквами
     line_height = font_size  # Высота строки
 
-    lines = split_text_into_lines(text, screen_width, letter_spacing)  # Автоперенос строк
+    lines = split_text_into_lines(text, screen_width - 40, glyph_widths_px)  # Автоперенос строк
     num_lines = len(lines)
     
     for line_index, line in enumerate(lines):
-        text_width = get_text_width(line, font_path, font_size)  # Ширина строки
+        text_line, width  = line 
+        text_width = width  # Ширина строки
         start_x = (screen_width - text_width) // 2  # Центрируем строку
         start_y = screen_height - margin_bottom - (num_lines - 1 - line_index) * line_height  # Центр внизу
 
@@ -419,7 +522,7 @@ def apply_letter_fly_in(text, font_size, font_path, start_time=0.0, end_time=0.0
         final_x = start_x
         final_y = start_y
         
-        for i, letter in enumerate(line):
+        for i, letter in enumerate(text_line):
             if letter.strip():  # Пропускаем пробелы
                 # Случайные начальные координаты (вне экрана)
                 x = random.randint(100, screen_width - 100)
@@ -429,41 +532,69 @@ def apply_letter_fly_in(text, font_size, font_path, start_time=0.0, end_time=0.0
                 
 
                 # Добавляем эффект ускорения и кривой траектории
-                effect = f"{{\\move({x},{y},{final_x},{final_y},0,{duration})\\t(0,{duration},0.5}}"
+                effect = f"{{\\move({x},{y},{start_x + glyph_widths_px[letter] // 2},{final_y},0,{duration})\\t(0,{duration},0.5}}"
 
                 # Добавляем строку с эффектом
                 result.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{effect}{letter}")
-                final_x += get_text_width(letter, font_path, font_size)
+                start_x += glyph_widths_px[letter]
             else: 
-                final_x += 10
+                start_x += glyph_widths_px[" "]
 
     return "\n".join(result)
 
 
-def split_text_into_lines(text, max_width, letter_spacing):
+def get_glyph_widths_in_pixels(font_path, font_size_px=16):
+    """Возвращает ширину каждого символа в пикселях."""
+    font = TTFont(font_path)
+    hmtx = font["hmtx"]  # Таблица горизонтальных метрик
+    cmap = font.getBestCmap()  # Таблица соответствия символов и глифов
+    units_per_em = font["head"].unitsPerEm  # Количество единиц на em
+
+    glyph_widths_px = {}
+    for char_code, glyph_name in cmap.items():
+        width_units, _ = hmtx[glyph_name]  # Ширина в em-единицах
+        width_px = round((width_units / units_per_em) * font_size_px)  # Перевод в пиксели
+        glyph_widths_px[chr(char_code)] = width_px
+
+    return glyph_widths_px
+
+
+
+
+def split_text_into_lines(text, max_width, glyph_widths_px):
     """Разбивает текст на строки, учитывая максимальную ширину"""
-    words = text.split()
+
     lines = []
-    current_line = ""
+    text = list(text + ' ')
+
+    current_word = ""
+    current_line = "" 
+
+    word_width = 0
     current_width = 0
 
-    for word in words:
-        word_width = len(word) * letter_spacing  # Ширина слова
-        if current_width + word_width > max_width:  # Перенос строки
-            lines.append(current_line.strip())
-            current_line = word
-            current_width = word_width
-        else:
-            current_line += " " + word
-            current_width += word_width + letter_spacing  # Добавляем пробел
+    for character in text:
+        if character != " ":
+            current_word += character
+            word_width += glyph_widths_px[character]
+        else: 
+            if current_width + word_width > max_width:  # Перенос строки
+                lines.append([current_line.strip(), current_width])
+                current_line = current_word
+                current_width = word_width
+                current_word = ""
+                word_width = 0
+            else:
+                current_line += " " + current_word
+                current_width += word_width + glyph_widths_px[" "] 
+                current_word = ""
+                word_width = 0
+                 
 
     if current_line:
-        lines.append(current_line.strip())
+        lines.append([current_line.strip(), current_width])
 
     return lines
-
-
-
 
 def format_time(seconds):
     td = timedelta(seconds=float(seconds))
@@ -473,6 +604,10 @@ def format_time(seconds):
     minutes, seconds = divmod(remainder, 60)
     seconds, milliseconds = divmod(seconds, 1)
     milliseconds = round(milliseconds, 3)  # округляем до 3 знаков после запятой
+
+    # Форматируем время с часами, минутами, секундами и миллисекундами
+    return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
+
 
     # Форматируем время с часами, минутами, секундами и миллисекундами
     return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
