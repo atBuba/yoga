@@ -199,15 +199,15 @@ def create_videos(prompts_data, selected_images, txt_file, font, font_path, sele
     #     print(i)
 
     
-    # with status:
-    #     with st.spinner("Анимация изображений 2/5"):
-    #         for image_path, t , line in zip(images, time, prompts_data):   
-    #             effect = line['effect']
-    #             print(t[1] - t[0])
-    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-    #             if effect:
-    #                 add_effect(video_url, effect)
-    #             videos.append(video_url)
+    with status:
+        with st.spinner("Анимация изображений 2/5"):
+            for image_path, t , line in zip(images, time, prompts_data):   
+                effect = line['effect']
+                print(t[1] - t[0])
+                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+                if effect:
+                    add_effect(video_url, effect)
+                videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
@@ -235,9 +235,9 @@ def create_videos(prompts_data, selected_images, txt_file, font, font_path, sele
     # print(videos)
     # sleep(10)
     
-    # with status:
-    #     with st.spinner("Рендеринг видео 3/5"):
-    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    with status:
+        with st.spinner("Рендеринг видео 3/5"):
+            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
     with status:
         with st.spinner("Добавление субтитров 4/5"):
             create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
@@ -273,7 +273,8 @@ if "current_page" not in st.session_state:
 # Устанавливаем роль модели (скрыто от пользователя)
 if "role_message" not in st.session_state:
     st.session_state.role_message = (
-        '''Use the entire text carefully. You have to create a slideshow clip for the song, you will receive the lyrics along with timestamps and you will have to divide the song into frames and write a prompt to generate an image on this frame, each frame should not go less than 5 and longer than 7 seconds, you can combine the lines to achieve such a long, but the frame It should not contain lyrics from different parts of the song (the lyrics should be only from the chorus or only from the verse or etc.). The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip, the frames should be continuous, that is, the beginning of the current clip is the end of the previous one. Write a prompt for the model that will generate images for these frames, the images should be connected to each other, the whole clip should reflect the meaning of the song, convey its mood. Describe in detail what people are wearing and how they stand, what colors the image should be in, what mood the image is in, and what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly with the text.
+        ''' 
+    Use the entire text carefully. You have to create a slideshow clip for the song, you will receive the lyrics along with timestamps and you will have to divide the song into frames and write a prompt to generate an image on this frame, each frame should not go less than 5 and longer than 7 seconds, you can combine the lines to achieve such a long, but the frame It should not contain lyrics from different parts of the song (the lyrics should be only from the chorus or only from the verse or etc.). The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip, the frames should be continuous, that is, the beginning of the current clip is the end of the previous one. Write a prompt for the model that will generate images for these frames, the images should be connected to each other, the whole clip should reflect the meaning of the song, convey its mood. Describe in detail what people are wearing and how they stand, what colors the image should be in, what mood the image is in, and what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly with the text.
 Please respond in the following format:
 
 **Frame**: (without number)
@@ -332,7 +333,7 @@ if st.session_state["current_page"] == "main":
                     model=st.session_state["openai_model"],
                     messages=messages,
                     stream=True,
-                    temperature=0.9,
+                    temperature=0.1,
                     top_p=0.1,
                     max_tokens=8000,
                 )
@@ -468,6 +469,7 @@ elif st.session_state["current_page"] == "upload":
         st.session_state.prompts_data.extend(new_prompts)
 
     effects = {
+        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
         'Без эффекта' : None,
         'Звезды' : 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
         'Снег' : 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
@@ -482,6 +484,7 @@ elif st.session_state["current_page"] == "upload":
         'Белый' : 'effects/vecteezy_light-leaks-light-white.mov',
         'Фиолетовый' : 'effects/vecteezy_light-leaks-purple.mov',
         'Летучие мыши' : 'effects/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
+        
     }
 
     effects_next = {

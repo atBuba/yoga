@@ -1,16 +1,632 @@
-Use the entire text carefully. You have to create a slideshow clip for the song, you will receive the lyrics along with timestamps and you will have to divide the song into frames and write a prompt to generate an image on this frame, each frame should not go less than 5 and longer than 7 seconds, you can combine the lines to achieve such a long, but the frame It should not contain lyrics from different parts of the song (the lyrics should be only from the chorus or only from the verse or etc.). The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip, the frames should be continuous, that is, the beginning of the current clip is the end of the previous one. Write a prompt for the model that will generate images for these frames, the images should be connected to each other, the whole clip should reflect the meaning of the song, convey its mood. Describe in detail what people are wearing and how they stand, what colors the image should be in, what mood the image is in, and what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly with the text.
-Please respond in the following format:
+Certainly! Let's break down the song into frames that are each 5-7 seconds long, ensuring that the lyrics and images are continuous and convey the mood and meaning of the song.
 
-**Frame**: (without number)
-timestamp of when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX (the frame should not be less than 5 and longer than 7 seconds)
+**Frame**: 
+00:00:00.00 - 00:00:10.30
 
 **Part of the song**: 
-Print out which part of the song this frame belongs to: verse, chorus, intro, and so on. 
+Intro
 
 **Text**: 
-Print the song sections with which this text will be shown, if this frame will be shown without text, then simply output "-"
+-
 
-**Prompt for the image generating model**:(maximum number of words is 77)
-Specify the style (realistic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
-use all the lines of the song, even if they are repeated.
-song lyrics along with timestamps: 
+**Prompt for the image generating model**:
+Realistic, moody, dark, sepia tones, 1930s Great Depression era. A dusty, desolate street in a small town, with abandoned buildings and a few people walking with hunched shoulders, looking weary and hopeless. The sky is overcast, and the scene is quiet and somber.
+
+---
+
+**Frame**: 
+00:00:10.30 - 00:00:14.84
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. A man in a worn-out suit, standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:00:15.20 - 00:00:19.36
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The same man, now standing in front of a small, run-down house, holding the "Need a Dollar" sign. His face is filled with desperation, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:00:20.28 - 00:00:25.04
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Said I need a dollar, dollar
+Dollar, that's what I need
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding the "Need a Dollar" sign. His face is filled with desperation, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:00:25.04 - 00:00:29.34
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is sitting on a bench, looking down at his hands. He is holding a small, tattered notebook, and his expression is one of deep sorrow and hope. The background shows a few people passing by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:00:30.56 - 00:00:35.60
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+Bad times are coming and I reap what I done sowed (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is walking down a long, dusty road, carrying a heavy sack over his shoulder. The road stretches into the distance, with a few dilapidated buildings and a barren landscape. His face is tired and determined, and the sky is overcast, adding to the sense of struggle and hardship.
+
+---
+
+**Frame**: 
+00:00:35.62 - 00:00:41.06
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+Well, let me tell you something, all that glitters ain't gold (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a small, run-down house, looking at a closed door with a "Closed" sign. His face is filled with disappointment and despair, and he is holding a small envelope with his last paycheck. The background shows a few workers leaving the factory, some with sympathetic glances, others with indifference.
+
+---
+
+**Frame**: 
+00:00:41.06 - 00:00:44.82
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+It's been a long old trouble, long old troublesome road
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing on a desolate street, looking up at a crumbling building. His face is filled with uncertainty and fear, and his hands are clasped together as if in prayer. The background shows a few people walking by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:00:44.84 - 00:00:51.40
+
+**Part of the song**: 
+Verse 1
+
+**Text**: 
+And I'm looking for somebody come and help me carry this load
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a small, run-down house, looking at a closed door with a "Closed" sign. His face is filled with disappointment and despair, and he is holding a small envelope with his last paycheck. The background shows a few workers leaving the factory, some with sympathetic glances, others with indifference.
+
+---
+
+**Frame**: 
+00:00:51.10 - 00:00:55.52
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:00:55.64 - 00:00:59.98
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar
+Dollar, that's what I need
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a small, run-down house, holding the "Need a Dollar" sign. His face is filled with desperation, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:01:01.30 - 00:01:05.52
+
+**Part of the song**: 
+Break
+
+**Text**: 
+Well, I don't know if I'm walking on solid ground
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is standing in the middle of a desolate street, looking up at a crumbling building. His face is filled with uncertainty and fear, and his hands are clasped together as if in prayer. The background shows a few people walking by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:01:05.52 - 00:01:11.64
+
+**Part of the song**: 
+Break
+
+**Text**: 
+'Cause everything around me is falling down
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a crumbling building, looking at the debris around him. His face is filled with despair and hopelessness, and the background shows a few people walking by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:01:11.64 - 00:01:15.52
+
+**Part of the song**: 
+Break
+
+**Text**: 
+And all I want is for someone to help me
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is sitting on a bench, looking down at his hands. He is holding a small, tattered notebook, and his expression is one of deep sorrow and hope. The background shows a few people passing by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:01:17.04 - 00:01:23.42
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+I had a job but the boss man let me go (He said)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a factory, looking at a closed door with a "Closed" sign. His face is filled with disappointment and despair, and he is holding a small envelope with his last paycheck. The background shows a few workers leaving the factory, some with sympathetic glances, others with indifference.
+
+---
+
+**Frame**: 
+00:01:23.42 - 00:01:28.46
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+I'm sorry, but I won't be needing your help no more (I said)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in front of the factory, looking at the closed door. His face is filled with disappointment and despair, and he is holding a small envelope with his last paycheck. The background shows a few workers leaving the factory, some with sympathetic glances, others with indifference.
+
+---
+
+**Frame**: 
+00:01:28.46 - 00:01:32.60
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+Please, Mister Boss man I need this job more than you know
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in front of the factory, looking at the closed door. His face is filled with desperation and hope, and he is holding a small envelope with his last paycheck. The background shows a few workers leaving the factory, some with sympathetic glances, others with indifference.
+
+---
+
+**Frame**: 
+00:01:32.62 - 00:01:37.66
+
+**Part of the song**: 
+Verse 2
+
+**Text**: 
+But he gave me my last paycheck and he sent me on out the door
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is walking away from the factory, holding a small envelope with his last paycheck. His face is filled with disappointment and despair, and the background shows a few workers leaving the factory, some with sympathetic glances, others with indifference.
+
+---
+
+**Frame**: 
+00:01:38.48 - 00:01:44.04
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:01:44.04 - 00:01:49.12
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Said I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a small, run-down house, holding the "Need a Dollar" sign. His face is filled with desperation, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:01:49.12 - 00:01:52.92
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And I need dollar, dollar
+Dollar, that's what I need
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:01:52.92 - 00:01:57.52
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is sitting on a bench, looking down at his hands. He is holding a small, tattered notebook, and his expression is one of deep sorrow and hope. The background shows a few people passing by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:01:57.16 - 00:02:03.98
+
+**Part of the song**: 
+Break
+
+**Text**: 
+Well, I don't know if I'm walking on solid ground
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is standing in the middle of a desolate street, looking up at a crumbling building. His face is filled with uncertainty and fear, and his hands are clasped together as if in prayer. The background shows a few people walking by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:02:04.04 - 00:02:08.74
+
+**Part of the song**: 
+Break
+
+**Text**: 
+'Cause everything around me is crumbling down
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a crumbling building, looking at the debris around him. His face is filled with despair and hopelessness, and the background shows a few people walking by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:02:08.74 - 00:02:13.40
+
+**Part of the song**: 
+Break
+
+**Text**: 
+And all I want is for someone to help me
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is sitting on a bench, looking down at his hands. He is holding a small, tattered notebook, and his expression is one of deep sorrow and hope. The background shows a few people passing by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:02:16.28 - 00:02:20.70
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+What in the world am I gonna do tomorrow?
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in a dimly lit room, looking out of a window. His face is filled with uncertainty and fear, and the background shows a desolate street and a few people walking by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:02:21.42 - 00:02:25.58
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Is there someone with a dollar I could borrow?
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in a dimly lit room, looking at a small, tattered notebook. His face is filled with hope and desperation, and the background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:25.58 - 00:02:29.72
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Who can help me take away my sorrow?
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting on a bench, looking down at his hands. He is holding a small, tattered notebook, and his expression is one of deep sorrow and hope. The background shows a few people passing by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:02:30.66 - 00:02:32.54
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+Maybe it's inside the bottle
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, holding a bottle of whiskey. His face is filled with sorrow and resignation, and he is looking down at the bottle. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:33.08 - 00:02:36.30
+
+**Part of the song**: 
+Bridge
+
+**Text**: 
+(Maybe it's inside the bottle)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, holding a bottle of whiskey. His face is filled with sorrow and resignation, and he is looking down at the bottle. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:36.02 - 00:02:40.84
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+I had some good old buddies, names is Whiskey and Wine (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, surrounded by empty bottles of whiskey and wine. His face is filled with a mix of sorrow and determination, and he is holding a small, tattered photo of his family. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:40.84 - 00:02:45.84
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+And for my good old buddies I spent my last dime (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, surrounded by empty bottles of whiskey and wine. His face is filled with a mix of sorrow and determination, and he is holding a small, tattered photo of his family. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:45.84 - 00:02:50.36
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Now Wine is good to me, he help me pass the time
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, holding a glass of wine. His face is filled with a mix of sorrow and determination, and he is looking down at the glass. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:50.36 - 00:02:55.14
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+And my good old buddy Whiskey keep me warmer than sunshine (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, holding a bottle of whiskey. His face is filled with a mix of sorrow and determination, and he is looking down at the bottle. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:02:55.76 - 00:03:01.20
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Your mama may have blessed the child that's got his own (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, holding a small, tattered photo of his family. His face is filled with a mix of sorrow and determination, and he is looking down at the photo. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:03:01.20 - 00:03:05.74
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+If God has plans for me I hope it ain't written in stone (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is sitting in a dimly lit room, holding a small, tattered photo of his family. His face is filled with a mix of sorrow and determination, and he is looking up at the ceiling. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:03:05.74 - 00:03:09.92
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+Because I've been working, working myself down to the bone
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in a small, run-down house, looking at a wall covered with old photographs and mementos. His face is filled with a mix of sorrow and determination, and he is holding a small, tattered photo of his family. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:03:09.92 - 00:03:15.96
+
+**Part of the song**: 
+Verse 3
+
+**Text**: 
+And I swear on Grandpa's grave I'll be paid when I come home (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, somber, dark, sepia tones, 1930s Great Depression era. The man is standing in a small, run-down house, looking at a wall covered with old photographs and mementos. His face is filled with a mix of sorrow and determination, and he is holding a small, tattered photo of his family. The background shows a few personal items, such as a worn-out hat and a pair of work boots, emphasizing his struggle and hope.
+
+---
+
+**Frame**: 
+00:03:15.72 - 00:03:20.64
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:03:20.74 - 00:03:25.66
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Said I need a dollar, dollar
+Dollar, that's what I need (Hey, hey)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing in front of a small, run-down house, holding the "Need a Dollar" sign. His face is filled with desperation, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:03:25.70 - 00:03:30.00
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+Well, I need dollar, dollar
+Dollar, that's what I need
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference.
+
+---
+
+**Frame**: 
+00:03:30.00 - 00:03:34.70
+
+**Part of the song**: 
+Chorus
+
+**Text**: 
+And if I share with you my story would you share your dollar with me?
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is sitting on a bench, looking down at his hands. He is holding a small, tattered notebook, and his expression is one of deep sorrow and hope. The background shows a few people passing by, some looking away, others with sympathetic glances.
+
+---
+
+**Frame**: 
+00:03:34.84 - 00:03:39.72
+
+**Part of the song**: 
+Outro
+
+**Text**: 
+(C'mon share your dollar with me
+Go 'head, share your dollar with me
+C'mon share your dollar, gimme your dollar
+Share your dollar with me)
+
+**Prompt for the image generating model**:
+Realistic, intense, dark, sepia tones, 1930s Great Depression era. The man is standing on a street corner, holding a sign that reads "Need a Dollar." His face is gaunt and desperate, and he is looking directly at the camera. The background shows a few people passing by, some with pity, others with indifference. The scene is a final plea for help and a reflection on his journey.
+
+---
+
+**Frame**: 
+00:03:39.88 - 00:04:03.06
+
+**Part of the song**: 
+Outro
+
+**Text**: 
+(C'mon share your dollar with me
+Go 'head, share your dollar with me
+C'mon share your dollar, gimme your dollar
+Share your dollar with me)
+
+**Prompt for the image generating model**:
+Realistic, emotional, dark, sepia tones, 1930s Great Depression era. The man is standing in the middle of a desolate street, looking up at the sky. His face is filled with a mix of hope and resignation, and he is holding a small, tattered notebook. The background shows a few people walking by, some with pity, others with indifference. The scene is a final plea for help and a reflection on his journey.

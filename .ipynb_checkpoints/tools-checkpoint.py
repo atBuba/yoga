@@ -733,6 +733,7 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
 
     duration = 0 
     for i, dur in enumerate(durations):
+        
         if dur[0]:
             time = get_video_duration(dur[0])
             if time > 3.0:
