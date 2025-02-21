@@ -12,6 +12,7 @@ from datetime import timedelta
 import subprocess
 from time import sleep
 from fontTools.ttLib import TTFont
+from test import adiou_to_time_text
 
 
 # token for yandex translate 
@@ -608,10 +609,6 @@ def format_time(seconds):
     # Форматируем время с часами, минутами, секундами и миллисекундами
     return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
 
-
-    # Форматируем время с часами, минутами, секундами и миллисекундами
-    return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
-
 def  create_subtitles_2(input_video, subtitles_file, output_video):
     command = [
             "ffmpeg",
@@ -978,3 +975,166 @@ def adjust_video_duration(video_path, required_duration):
         # Trim to required duration
         extended_clip = clip.subclip(0, required_duration)
     return extended_clip
+
+def create_lyrics(text):
+
+    pattern = re.compile(r"(\[.*?\])\s*(.*?)(?=\n\[|\Z)", re.DOTALL)
+
+    parsed_lyrics = [
+        {"text": line.strip(), "section": match[0].strip("[]")}
+        for match in pattern.findall(text)
+        for line in match[1].strip().split("\n") if line.strip()
+    ]
+    
+    lyrics = ""
+    
+    # Вывод результата
+    for item in parsed_lyrics:
+        lyrics += item["text"] + "\n"
+    
+    audio_path = 'static/mp3_file.mp3'
+    vocal_path = 'static/vocal.mp3'
+    no_vocal_path = 'static/no_vocal.mp3'
+    
+    lyrics_file = 'static/lyrics.txt'
+    
+    with open(lyrics_file, "w", encoding="utf-8") as file:
+        file.write(lyrics + "\n")  
+    
+    
+    words_timestamps  = adiou_to_time_text(audio_path, lyrics_file)
+    
+    start, end = 0.0, 0.0
+    
+    number_word = 0
+    
+    for item in parsed_lyrics:
+        start = words_timestamps[number_word]['start']
+            
+        end = words_timestamps[number_word + len(item['text'].split()) - 1]['end']
+    
+        number_word += len(item['text'].split())   
+    
+        item['start'] = start 
+        item["end"] = end
+
+    
+    frames = []
+
+
+    if parsed_lyrics[0]['end']  > 5.0:
+        first_frame = {
+            'start' : 0.0,
+            'end' : parsed_lyrics[0]['end'],
+            'text' : '-',
+            'section' : '[intro]',
+        }
+        number_line = 0
+    else:
+        first_frame = {
+            'start' : parsed_lyrics[0]['start'],
+            'end' : parsed_lyrics[0]['end'],
+            'text' : parsed_lyrics[0]['text'],
+            'section' : parsed_lyrics[0]['section'],
+        }
+        number_line = 1
+    
+    frame_start = first_frame['start']
+    frame_end = first_frame['end']
+    frame_text = first_frame['text']
+    frame_section = first_frame['section']
+    
+    while number_line < len(parsed_lyrics):
+    
+        if ((frame_end - frame_start) > 10.0) and (frame_text == '-'):
+            div = 2
+            while ((frame_end - frame_start) / (div + 1)) > 5.0:
+                div += 1
+            dur = (frame_end - frame_start) / (div)
+            for i in range(div):
+                frames.append({
+                    'start' : frame_start + i * dur,
+                    'end' : frame_start + (i + 1) * dur,
+                    'text' : frame_text,
+                    'section' : frame_section,
+                })
+                
+            if parsed_lyrics[number_line]['start'] - frame_end < 5.0: 
+                frame_start = parsed_lyrics[number_line]['start'] 
+                frame_end = parsed_lyrics[number_line]['end']
+                frame_text = parsed_lyrics[number_line]['text']
+                frame_section = parsed_lyrics[number_line]['section']
+    
+                number_line += 1
+            else: 
+                frame_end = parsed_lyrics[number_line]['start']
+                frame_text = '-'
+                frame_section = '[break]'
+            
+                
+        elif ((frame_end - frame_start) < 5.0) and (frame_text != '-'):
+            if frame_section == parsed_lyrics[number_line]['section']:
+                frame_end = parsed_lyrics[number_line]['end']
+                frame_text += '\n' + parsed_lyrics[number_line]['text']
+                number_line += 1
+            else: 
+                frames.append({
+                    'start' : frame_start,
+                    'end' : frame_end,
+                    'text' : frame_text,
+                    'section' : frame_section,
+                })
+    
+                frame_start = frame_end
+    
+                if parsed_lyrics[number_line]['start'] - frame_end < 5.0: 
+                    frame_end = parsed_lyrics[number_line]['end']
+                    frame_text = parsed_lyrics[number_line]['text']
+                    frame_section = parsed_lyrics[number_line]['section']
+    
+                    number_line += 1
+                else: 
+                    frame_end = parsed_lyrics[number_line]['start']
+                    frame_text = '-'
+                    frame_section = '[break]'
+    
+        else:
+            frames.append({
+                'start' : frame_start,
+                'end' : frame_end,
+                'text' : frame_text,
+                'section' : frame_section,
+            })
+    
+            frame_start = frame_end
+    
+            if parsed_lyrics[number_line]['start'] - frame_end < 5.0: 
+                frame_end = parsed_lyrics[number_line]['end']
+                frame_text = parsed_lyrics[number_line]['text']
+                frame_section = parsed_lyrics[number_line]['section']
+    
+                number_line += 1
+            else: 
+                frame_end = parsed_lyrics[number_line]['start']
+                frame_text = '-'
+                frame_section = '[break]'
+    
+    frames.append({
+        'start' : frame_start,
+        'end' : frame_end,
+        'text' : frame_text,
+        'section' : frame_section,
+    })
+
+    full_respones = '' 
+
+    for item in frames:
+        full_respones += format_time(item['start']) + ','
+        full_respones += format_time(item['end']) + ','
+        full_respones += item['text'] + ','
+        full_respones += item['section'] + '\n'
+
+    return full_respones
+
+
+

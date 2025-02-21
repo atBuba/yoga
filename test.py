@@ -22,7 +22,7 @@ def process_song(mp3_file, txt_file):
         f.write(text)
     
     # Parse the response into a structured format
-    pattern = r"\*\*Frame\*\*:\s+(.+?)\n\n\*\*Part of the song\*\*:\s+(.+?)\n\n\*\*Text\*\*:\s+(.+?)\n\n\*\*Prompt for the image generating model\*\*:\s+(.+?)(?=\n\n|\Z)"
+    pattern = r"\*\*Frame\*\*:\s+(.+?)\n\*\*Part of the song\*\*:\s+(.+?)\n\*\*Text\*\*:\s+(.+?)\n\*\*Prompt for the image generating model\*\*:\s+(.+?)(?=\n\n|\Z)"
 
     # pattern = r"\#\#\#\# Строчки песни:\s+(.+?)\n\n\*\*Промт для модели генерирующей изображения\*\*:\s+(.+?)(?=\n\n|\Z)"
     matches = re.findall(pattern, text, re.S)
@@ -199,15 +199,15 @@ def create_videos(prompts_data, selected_images, txt_file, font, font_path, sele
     #     print(i)
 
     
-    with status:
-        with st.spinner("Анимация изображений 2/5"):
-            for image_path, t , line in zip(images, time, prompts_data):   
-                effect = line['effect']
-                print(t[1] - t[0])
-                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-                if effect:
-                    add_effect(video_url, effect)
-                videos.append(video_url)
+    # with status:
+    #     with st.spinner("Анимация изображений 2/5"):
+    #         for image_path, t , line in zip(images, time, prompts_data):   
+    #             effect = line['effect']
+    #             print(t[1] - t[0])
+    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+    #             if effect:
+    #                 add_effect(video_url, effect)
+    #             videos.append(video_url)
     
     # create_slideshow(videos, ttml_words, ttml_lines, font=font, font_color=font_fill_color, output_path = output_video_avi, addSubtitles=subtitles, font_size=font_size)
     print('create_video')
@@ -235,9 +235,9 @@ def create_videos(prompts_data, selected_images, txt_file, font, font_path, sele
     # print(videos)
     # sleep(10)
     
-    with status:
-        with st.spinner("Рендеринг видео 3/5"):
-            concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
+    # with status:
+    #     with st.spinner("Рендеринг видео 3/5"):
+    #         concatenate_videos(videos, output_video_avi, overlay_videos, short_overlay_videos, effects_next)
     with status:
         with st.spinner("Добавление субтитров 4/5"):
             create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
@@ -274,22 +274,21 @@ if "current_page" not in st.session_state:
 if "role_message" not in st.session_state:
     st.session_state.role_message = (
         ''' 
-    Use the entire text carefully. You have to create a slideshow clip for the song, you will receive the lyrics along with timestamps and you will have to divide the song into frames and write a prompt to generate an image on this frame, each frame should not go less than 5 and longer than 7 seconds, you can combine the lines to achieve such a long, but the frame It should not contain lyrics from different parts of the song (the lyrics should be only from the chorus or only from the verse or etc.). The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip, the frames should be continuous, that is, the beginning of the current clip is the end of the previous one. Write a prompt for the model that will generate images for these frames, the images should be connected to each other, the whole clip should reflect the meaning of the song, convey its mood. Describe in detail what people are wearing and how they stand, what colors the image should be in, what mood the image is in, and what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly with the text.
+    Use the entire text carefully. You need to create a slideshow clip for the song, you will receive the lyrics along with timestamps, write a hint to create an image in this frame. The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip. Write a hint for the model that will generate images for these frames. The images should be connected to each other, and the entire clip should reflect the meaning of the song and convey its mood. Describe in detail what people are wearing and how they behave, in what colors the image should be, in what mood it should be and in what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly in accordance with the text.
 Please respond in the following format:
 
-**Frame**: (without number)
-timestamp of when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX (the frame should not be less than 5 and longer than 7 seconds)
+**Frame**: (without a number)
+a timestamp indicating when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX 
 
 **Part of the song**: 
 Print out which part of the song this frame belongs to: verse, chorus, intro, and so on. 
 
 **Text**: 
-Print the song sections with which this text will be shown, if this frame will be shown without text, then simply output "-"
+Print out the fragments of the song in which this text will be displayed, if this frame will be displayed without text, then simply print "-"
 
-**Prompt for the image generating model**:(maximum number of words is 77)
+**Prompt for the image generating model**: (maximum number of words - 77)
 Specify the style (realistic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
-use all the lines of the song, even if they are repeated.
-song lyrics along with timestamps: '''
+The lyrics along with the timestamps are: '''
     )
 
 # Добавляем роль модели в историю сообщений только для запроса
@@ -304,32 +303,44 @@ if len(st.session_state.messages) == 0:
 if st.session_state["current_page"] == "main":
     st.title("Создание слайд-шоу для песни")
     
-    # Отображение истории сообщений
-    for message in st.session_state.messages:
-        if message["role"] != "system":  # Исключаем системное сообщение
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-
-    # Ввод пользователя
-    if user_input := st.chat_input("Введите ваш вопрос или текст..."):
-        # Добавляем сообщение пользователя в историю
-        
-        st.session_state.messages.append({"role": "user", "content": user_input})
-        with st.chat_message("user"):
-            st.markdown(user_input)
-
-        # Отправляем запрос модели
+    # Загрузка аудиофайла
+    mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
+    if mp3_file is not None:
+        with open("static/mp3_file.mp3", "wb") as f:
+            f.write(mp3_file.read())
+            
+    # Загрузка текстового файла
+    txt_file = st.file_uploader("Upload a TXT file with lyrics", type=["txt"])
+    if txt_file is not None:
+        text = txt_file.read().decode("utf-8")
+    
+    # Когда оба файла загружены, отправляем текст модели
+    if txt_file and len(st.session_state.messages) == 0:
         with st.chat_message("assistant"):
             with st.spinner("Qwen2.5-72B is generating a response..."):
-                # Формируем историю чата для отправки модели
+                response = ""
+                response_container = st.empty()
+
+                lyrics = create_lyrics(text)
+
+                st.session_state.role_message += lyrics
+                
+                if len(st.session_state.messages) == 0:
+                    st.session_state.messages.append({
+                        "role": "system", 
+                        "content": st.session_state.role_message
+                    })
+
+                    st.session_state.messages.append({
+                            "role": "user", 
+                            "content": lyrics
+                    })
+                
                 messages = [
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
                 ]
-
-                # Генерация ответа с потоковой передачей
-                response = ""
-                response_container = st.empty()
+                
                 stream = client.chat.completions.create(
                     model=st.session_state["openai_model"],
                     messages=messages,
@@ -338,15 +349,55 @@ if st.session_state["current_page"] == "main":
                     top_p=0.1,
                     max_tokens=8000,
                 )
-
+                
                 for chunk in stream:
                     if chunk.choices:
                         token = chunk.choices[0].delta.content
                         response += token
                         response_container.markdown(response)
 
-                # Добавляем финальный ответ в историю
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                # Сохраняем ответ модели в истории
+                st.session_state["messages"].append({"role": "assistant", "content": response})
+    
+    # Отображение истории сообщений
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Обычный чат после загрузки файлов
+    if txt_file:
+        if user_input := st.chat_input("Введите ваш вопрос или текст..."):
+            st.session_state.messages.append({"role": "user", "content": user_input})
+            with st.chat_message("user"):
+                st.markdown(user_input)
+    
+            with st.chat_message("assistant"):
+                with st.spinner("Qwen2.5-72B is generating a response..."):
+                    response = ""
+                    response_container = st.empty()
+                    
+                    messages = [
+                        {"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages
+                    ]
+                    
+                    stream = client.chat.completions.create(
+                        model=st.session_state["openai_model"],
+                        messages=messages,
+                        stream=True,
+                        temperature=0.1,
+                        top_p=0.1,
+                        max_tokens=8000,
+                    )
+                    
+                    for chunk in stream:
+                        if chunk.choices:
+                            token = chunk.choices[0].delta.content
+                            response += token
+                            response_container.markdown(response)
+                    
+                    st.session_state.messages.append({"role": "assistant", "content": response})
+
     
     # Кнопка для перехода на страницу загрузки MP3-файла
     if st.button("Перейти к загрузке MP3-файла"):
@@ -470,7 +521,6 @@ elif st.session_state["current_page"] == "upload":
         st.session_state.prompts_data.extend(new_prompts)
 
     effects = {
-        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
         'Без эффекта' : None,
         'Звезды' : 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
         'Снег' : 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
@@ -485,7 +535,7 @@ elif st.session_state["current_page"] == "upload":
         'Белый' : 'effects/vecteezy_light-leaks-light-white.mov',
         'Фиолетовый' : 'effects/vecteezy_light-leaks-purple.mov',
         'Летучие мыши' : 'effects/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
-        
+        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
     }
 
     effects_next = {
@@ -665,4 +715,6 @@ elif st.session_state["current_page"] == "upload":
     if st.button("Вернуться на главную"):
         st.session_state["current_page"] = "main"
         st.rerun()
+
+    
         
