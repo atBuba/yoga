@@ -26,7 +26,7 @@ def initialize_model():
     global alignment_model, alignment_tokenizer
     # device = "cuda" if torch.cuda.is_available() else "cpu"
     device = "cuda"
-    dtype = torch.float16 if device == "cuda" else torch.float32
+    dtype = torch.float32 if device == "cuda" else torch.float32
     alignment_model, alignment_tokenizer = load_alignment_model(device, dtype=dtype)
 
 # Инициализируем модель при запуске сервера
@@ -63,7 +63,7 @@ def align_audio_text():
         # Загружаем аудио и текст
         audio_waveform = load_audio(vocal_path, alignment_model.dtype, alignment_model.device)
 
-        audio_waveform = F.gain(audio_waveform, gain_db=15.0)  # Увеличиваем громкость на 5 dB
+        audio_waveform = F.gain(audio_waveform, gain_db=40.0)  # Увеличиваем громкость на 5 dB
         
         with open(text_path, "r", encoding="utf-8") as f:
             text = f.read().replace("\n", " ").strip()
@@ -79,7 +79,7 @@ def align_audio_text():
         tokens_starred, text_starred = preprocess_text(
             text,
             romanize=True,
-            language='eng',
+            language='rus',
         )
 
         # Получение выравниваний
@@ -104,4 +104,4 @@ def align_audio_text():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=7000)
+    app.run(host="0.0.0.0", port=7000, debug=True)
