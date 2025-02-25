@@ -979,7 +979,8 @@ def adjust_video_duration(video_path, required_duration):
 def create_lyrics(text):
 
     pattern = re.compile(r"(\[.*?\])\s*(.*?)(?=\n\[|\Z)", re.DOTALL)
-
+    text = re.sub(r'\(.*?\)', '', text)
+    
     parsed_lyrics = [
         {"text": line.strip(), "section": match[0].strip("[]")}
         for match in pattern.findall(text)
@@ -1022,7 +1023,7 @@ def create_lyrics(text):
     frames = []
 
 
-    if parsed_lyrics[0]['end']  > 5.0:
+    if parsed_lyrics[0]['start']  > 5.0:
         first_frame = {
             'start' : 0.0,
             'end' : parsed_lyrics[0]['end'],
@@ -1132,7 +1133,7 @@ def create_lyrics(text):
         full_respones += format_time(item['start']) + ','
         full_respones += format_time(item['end']) + ','
         full_respones += item['text'] + ','
-        full_respones += item['section'] + '\n'
+        full_respones += item['section'] + '\n\n'
 
     return full_respones
 

@@ -311,76 +311,46 @@ if st.session_state["current_page"] == "main":
             
     # Загрузка текстового файла
     txt_file = st.file_uploader("Upload a TXT file with lyrics", type=["txt"])
-    if txt_file is not None:
+    if txt_file is not None and len(st.session_state.messages) == 1:
         text = txt_file.read().decode("utf-8")
-    
-    # Когда оба файла загружены, отправляем текст модели
-    if txt_file and len(st.session_state.messages) == 0:
-        with st.chat_message("assistant"):
-            with st.spinner("Qwen2.5-72B is generating a response..."):
-                response = ""
-                response_container = st.empty()
+        response = ""
+        response_container = st.empty()
 
-                lyrics = create_lyrics(text)
+        lyrics = create_lyrics(text)
 
-                st.session_state.role_message += lyrics
-                
-                if len(st.session_state.messages) == 0:
-                    st.session_state.messages.append({
-                        "role": "system", 
-                        "content": st.session_state.role_message
-                    })
+        st.session_state.role_message += lyrics
+        
+        st.session_state.messages.append({
+                "role": "user", 
+                "content": lyrics
+        })
 
-                    st.session_state.messages.append({
-                            "role": "user", 
-                            "content": lyrics
-                    })
-                
-                messages = [
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ]
-                
-                stream = client.chat.completions.create(
-                    model=st.session_state["openai_model"],
-                    messages=messages,
-                    stream=True,
-                    temperature=0.1,
-                    top_p=0.1,
-                    max_tokens=8000,
-                )
-                
-                for chunk in stream:
-                    if chunk.choices:
-                        token = chunk.choices[0].delta.content
-                        response += token
-                        response_container.markdown(response)
-
-                # Сохраняем ответ модели в истории
-                st.session_state["messages"].append({"role": "assistant", "content": response})
-    
     # Отображение истории сообщений
     for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        if message["role"] != "system":  # Исключаем системное сообщение
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+    
     
     # Обычный чат после загрузки файлов
     if txt_file:
-        if user_input := st.chat_input("Введите ваш вопрос или текст..."):
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            with st.chat_message("user"):
-                st.markdown(user_input)
+        if user_input := st.chat_input("Введите ваш вопрос или текст...") or len(st.session_state.messages) == 2:
+            if len(st.session_state.messages) != 2:
+                st.session_state.messages.append({"role": "user", "content": user_input})
+                with st.chat_message("user"):
+                    st.markdown(user_input)
     
             with st.chat_message("assistant"):
+                response_container = st.empty()
+                
                 with st.spinner("Qwen2.5-72B is generating a response..."):
                     response = ""
-                    response_container = st.empty()
                     
                     messages = [
                         {"role": m["role"], "content": m["content"]}
                         for m in st.session_state.messages
                     ]
-                    
+
                     stream = client.chat.completions.create(
                         model=st.session_state["openai_model"],
                         messages=messages,
@@ -394,7 +364,7 @@ if st.session_state["current_page"] == "main":
                         if chunk.choices:
                             token = chunk.choices[0].delta.content
                             response += token
-                            response_container.markdown(response)
+                            response_container.write(response)
                     
                     st.session_state.messages.append({"role": "assistant", "content": response})
 
@@ -505,7 +475,7 @@ elif st.session_state["current_page"] == "upload":
         st.session_state.prompts_data = []
 
     # Generate Images Button
-    if txt_file and st.button("Generate Images"):
+    if st.button("Generate Images"):
         # Process files
         prompts_data = process_song(mp3_file, txt_file)
         
@@ -521,6 +491,7 @@ elif st.session_state["current_page"] == "upload":
         st.session_state.prompts_data.extend(new_prompts)
 
     effects = {
+        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
         'Без эффекта' : None,
         'Звезды' : 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
         'Снег' : 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
@@ -535,7 +506,8 @@ elif st.session_state["current_page"] == "upload":
         'Белый' : 'effects/vecteezy_light-leaks-light-white.mov',
         'Фиолетовый' : 'effects/vecteezy_light-leaks-purple.mov',
         'Летучие мыши' : 'effects/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
-        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
+        
+        'Желты летающие частици' : 'effects/vecteezy_gradient-background-from-brown-to-black-with-transparent_1794889.mov',
     }
 
     effects_next = {
