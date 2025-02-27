@@ -42,10 +42,18 @@ def align_audio_text():
         language = data.get("language", "iso")
         print(audio_path, text_path, language)
 
-        demucs.separate.main(["--mp3", "--two-stems", "vocals", "-n", "mdx_extra", audio_path])
+        demucs.separate.main([
+            "--mp3", "--two-stems", "vocals",
+            "-n", "mdx_extra_q",
+            "--overlap", "0.8",
+            "--shifts", "3",
+            "--device", "cuda",
+            audio_path
+        ])
+
         
         # Пути к входным и выходным файлам
-        output_folder = "separated/mdx_extra/mp3_file"
+        output_folder = "separated/mdx_extra_q/mp3_file"
         static_folder = "static"
         
         # Создание папки static, если её нет
@@ -104,4 +112,4 @@ def align_audio_text():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=7000, debug=True)
+    app.run(host="0.0.0.0", port=7000)

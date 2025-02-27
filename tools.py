@@ -13,7 +13,7 @@ import subprocess
 from time import sleep
 from fontTools.ttLib import TTFont
 from test import adiou_to_time_text
-
+import streamlit as st
 
 # token for yandex translate 
 IAM_TOKEN = 'AQVNzbPNKEeoixhfHLFZavVdM66AJ23Ow4zFkKwQ'
@@ -660,7 +660,7 @@ def add_effect(video, effect):
 
 
 # Функция для создания команды FFmpeg
-def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_videos, effects_next, fade_duration=0.2):
+def concatenate_videos(video_files, output_file, effects_next, fade_duration=0.2):
     print('Создание видео со склейкой и эффектом появления (fade in)')
     
     filter_complex_parts = []
@@ -705,7 +705,7 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
             dd += float(video_duration)
             
     if len(durations):
-        apply_chromakey_with_overlays(output_file, overlay_videos, short_overlay_videos, durations,)
+        apply_chromakey_with_overlays(output_file, durations,)
 
 
 def get_video_duration(video_file):
@@ -715,7 +715,7 @@ def get_video_duration(video_file):
 
 
 
-def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_videos, durations):
+def apply_chromakey_with_overlays(base_video, durations):
     # Выходное видео сохраняется с тем же именем
     temp_file = "videos/temp.mp4"
 
@@ -1026,14 +1026,14 @@ def create_lyrics(text):
     if parsed_lyrics[0]['start']  > 5.0:
         first_frame = {
             'start' : 0.0,
-            'end' : parsed_lyrics[0]['end'],
+            'end' : parsed_lyrics[0]['start'],
             'text' : '-',
             'section' : '[intro]',
         }
         number_line = 0
     else:
         first_frame = {
-            'start' : parsed_lyrics[0]['start'],
+            'start' : 0.0,
             'end' : parsed_lyrics[0]['end'],
             'text' : parsed_lyrics[0]['text'],
             'section' : parsed_lyrics[0]['section'],
@@ -1137,5 +1137,43 @@ def create_lyrics(text):
 
     return full_respones
 
+def create_text_image(text, font_path, font_size=24):
+        '''A function for creating an image with text'''
+        try:
+            # Загружаем шрифт
+            font = ImageFont.truetype(font_path, font_size)
+        except Exception as e:
+            st.error(f"Ошибка загрузки шрифта: {e}")
+            return None
+        
+        # Определяем размер текста
+        image_width = 1050
+        image_height = 100
+        
+        # Создаем изображение
+        img = Image.new('RGB', (image_width, image_height), color=(255, 255, 255))
+        draw = ImageDraw.Draw(img)
+        
+        # Рисуем текст
+        draw.text((10, 10), text, font=font, fill=(0, 0, 0))
+        return img
 
+def process_song(model_response):
+    """Process song text and generate structured prompts."""
+    
+     # Преобразуйте ответ в структурированный формат
+    pattern = r"\*\*Frame\*\*:\s+(.+?)\n\*\*Part of the song\*\*:\s+(.+?)\n\*\*Text\*\*:\s+(.+?)\n\*\*Prompt for the image generating model\*\*:\s+(.+?)(?=\n\n|\Z)"
+    matches = re.findall(pattern, model_response, re.S)
+
+    
+    prompts_translated = []
+    for match in matches:
+        shot = match[0].strip()
+        part = match[1].strip()
+        lyrics = match[2].strip()
+        prompt = match[3].strip()
+        prompts_translated.append({"lyrics": lyrics, 'part': part, 'shot': shot, "prompt": prompt, "image_url": [], 'effect': None, 'effects_next': None})
+
+    return prompts_translated
+    
 
