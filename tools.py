@@ -12,7 +12,7 @@ from datetime import timedelta
 import subprocess
 from time import sleep
 from fontTools.ttLib import TTFont
-from test import adiou_to_time_text
+from test import *
 import streamlit as st
 import shutil
 
@@ -1181,7 +1181,7 @@ def process_song(model_response):
 class Video:
     """Video object"""
 
-    def __init__(prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language):
+    def __init__(self, prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language):
         self.selected_images = selected_images
         self.txt_file = txt_file
         self.font = font
@@ -1213,36 +1213,36 @@ class Video:
                 
         self.time = time
         self.effects_next = effects_next
-        self.effects = effect
+        self.effects = effects
         self.videos = []
 
         self.video_path = "video/video.mp4"
         self.video_with_audio_path = "video/video_with_audio.mp4"
 
-    def get_video_duration(video_file):
-        """Get video duration"""
-        result = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", video_file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return float(result.stdout)
+        self.audio = Audio("static/mp3_file.mp3")
         
-    def create():
+    def create(self, new_videos=True):
         """Create video from images"""
-        for image_path, t , effect in zip(self.selected_images, self.time, self.effects):  
-
-            payload = {
-                'image_path': image_path,
-                'duration': t[1] - t[0]
-            }
-            response = requests.post("http://127.0.0.1:6000/process_images", json=payload)
-            video_url = response.json().get('video_url')
+        if new_videos:
+            self.videos = []
+            for image_path, t , effect in zip(self.selected_images, self.time, self.effects):  
     
-            if effect:
-                add_effect(video_url, effect)
-            self.videos.append(video_url)
+                payload = {
+                    'image_path': image_path,
+                    'duration': t[1] - t[0]
+                }
+                response = requests.post("http://127.0.0.1:6000/process_images", json=payload)
+                video_url = response.json().get('video_url')
+        
+                if effect:
+                    add_effect(video_url, effect)
+                self.videos.append(video_url)
 
             
      
         filter_complex_parts = []
         input_files = []
+        fade_duration = 0.2
         
         for i, video in enumerate(self.videos):
             input_files.extend(["-i", video])
@@ -1250,8 +1250,8 @@ class Video:
                 f"[{i}:v]fade=t=in:st=0:d={fade_duration}[v{i}]"
             )
         
-        video_streams = "".join(f"[v{i}]" for i in range(len(video_files)))
-        filter_complex = ";".join(filter_complex_parts) + f";{video_streams}concat=n={len(video_files)}:v=1:a=0[outv]"
+        video_streams = "".join(f"[v{i}]" for i in range(len(self.videos)))
+        filter_complex = ";".join(filter_complex_parts) + f";{video_streams}concat=n={len(self.videos)}:v=1:a=0[outv]"
         
         command = [
             "ffmpeg",
@@ -1268,10 +1268,10 @@ class Video:
     
         effect_next_time = []
         dd = 0
-        for i in range(len(video_files) - 1):
-            video_duration = get_video_duration(video_files[i])
-            if effects_next[i]: 
-                effect_next_time.append([effects_next[i], dd + float(video_duration)])    
+        for i in range(len(self.videos) - 1):
+            video_duration = get_video_duration(self.videos[i])
+            if self.effects_next[i]: 
+                effect_next_time.append([self.effects_next[i], dd + float(video_duration)])    
                 dd = 0
                 
             else: 
@@ -1338,41 +1338,44 @@ class Video:
         
             os.replace(temp_file, self.video_path)
 
-        def add_audio(audio_path):
-            command = [
-                'ffmpeg', 
-                '-i', self.video_path,      # Видео файл
-                '-i', audio_path,      # Обрезанный аудио файл
-                '-c:v', 'copy',        # Копирование видео без изменений
-                '-c:a', 'aac',         # Используем кодек AAC для аудио
-                '-strict', 'experimental',  # Для использования нестандартных кодеков
-                '-y',                  # Перезаписываем файл без подтверждения
-                self.video_with_audio_path,  # Выходной файл
-            ]
-            
-            # Запускаем команду
-            subprocess.run(command)       
+    def add_subtitels(self, subtitels_path):
+        temp_file = "video/temp.mp4"
+        command = [
+            "ffmpeg",
+            "-i", self.video_path,
+            "-vf", f"ass={subtitels_path}",
+            '-y',
+            temp_file,
+        ]
 
-        def add_subtitels(subtitels_path):
-            temp_file = "videos/temp.mp4"
-            command = [
-                "ffmpeg",
-                "-i", self.video_path,
-                "-vf", f"ass={subtitels_path}",
-                '-y',
-                'video/temp_video.mp4',
-            ]
-            
-            os.replace(temp_file, self.video_path)
-            
-            # Запуск команды FFmpeg
-            subprocess.run(command, check=True) 
+        # Запуск команды FFmpeg
+        subprocess.run(command, check=True)
+        
+        os.replace(temp_file, self.video_path)
+    
+        
+    def add_audio(self, audio_path=None):
+        if audio_path:
+            self.audio = Audio(audio_path)
+        command = [
+            'ffmpeg', 
+            '-i', self.video_path,      # Видео файл
+            '-i', self.audio.path,      # Обрезанный аудио файл
+            '-c:v', 'copy',        # Копирование видео без изменений
+            '-c:a', 'aac',         # Используем кодек AAC для аудио
+            '-strict', 'experimental',  # Для использования нестандартных кодеков
+            '-y',                  # Перезаписываем файл без подтверждения
+            self.video_with_audio_path,  # Выходной файл
+        ]
+        
+        # Запускаем команду
+        subprocess.run(command)       
                 
         
 class Subtitles:
     """Subtitles object"""
     
-    def __init__(audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size):
+    def __init__(self, audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size):
         self.ttml_words = adiou_to_time_text(audio_path, lyrics_file)
 
         with open(lyrics_file, "r", encoding="utf-8") as f:
@@ -1384,7 +1387,7 @@ class Subtitles:
         self.lyrics = text
         self.translate_lyrics = ""
         
-        self.output_file = "static/subtitles.ass"
+        self.path = "static/subtitles.ass"
         self.font = font
         self.font_path = font_path
         self.font_color_1 = font_color_1
@@ -1392,7 +1395,7 @@ class Subtitles:
         self.font_size = font_size
         
 
-    def create():
+    def create(self):
         header = f"""[Script Info]
 Title: Karaoke Lyrics
 ScriptType: v4.00+
@@ -1414,11 +1417,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         if self.translate_lyrics == "":
             for line in lines:
-                start_time, end_time = self.ttml_words[j]['start'] - 0.4, self.ttml_words[j + len(line['text'].split()) - 1]['end']
+                start_time, end_time = self.ttml_words[j]['start'] - 0.4, self.ttml_words[j + len(line.split()) - 1]['end']
                 duration_clip= end_time - start_time
                     
                 karaoke_line = ""
-                for i in range(j, j + len(line['text'].split())):
+                for i in range(j, j + len(line.split())):
                     if i != j:
                         duration = (self.ttml_words[i]['end'] - self.ttml_words[i - 1]['end']) * 100  # duration in centiseconds
                         karaoke_line += f"{{\\kf{int(duration)}}}{self.ttml_words[i]['text']} "               
@@ -1427,30 +1430,35 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                         karaoke_line += f"{{\\fad(400,0)\\an2\\kf{int(duration)}}}{self.ttml_words[i]['text']} "
         
                 events.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{karaoke_line.strip()}")
-                j += len(line['text'].split())
+                j += len(line.split())
         
-            with open(self.output_file, "w", encoding="utf-8") as f:
+            with open(self.path, "w", encoding="utf-8") as f:
                 f.write(header + "\n".join(events))
 
         else:
-            translate_lyrics = translate_lyrics.split('\n')
+            print(self.translate_lyrics)
+            translate_lyrics = self.translate_lyrics.split('\n')
             effects = [apply_fade_in, apply_scale_up, apply_word_fade_in, apply_word_fly_in, apply_letter_fly_in]  # Список эффектов
             
             for i, line in enumerate(lines):
-                start_time, end_time = self.ttml_words[j]['start'] - 0.4, self.ttml_words[j + len(line['text'].split()) - 1]['end'] - 0.2
+                start_time, end_time = self.ttml_words[j]['start'] - 0.4, self.ttml_words[j + len(line.split()) - 1]['end'] - 0.2
                 effect_func = random.choice(effects)  # Выбираем случайный эффект
                 effect_text = effect_func(translate_lyrics[i], self.font_size, self.font_path, start_time, end_time)  # Применяем эффект
                 events.append(f"{effect_text}")
-                j += len(line['text'].split())
+                j += len(line.split())
         
-            with open(self.output_file, "w", encoding="utf-8") as f:
+            with open(self.path, "w", encoding="utf-8") as f:
                 f.write(header + "\n".join(events))
 
-    def translate(language):
+    def translate(self, language):
         self.translate_lyrics = translate_text(self.lyrics, language)
         self.select_language = language
         
-
+class Audio:
+    """Audio object"""
+    
+    def __init__(self, path):
+        self.path = path
 
 
 

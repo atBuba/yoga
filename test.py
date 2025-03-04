@@ -67,7 +67,7 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language):
+def button_create_videos(prompts_data, selected_images, font, font_path, font_color_1, font_color_2, audio_type, language):
     print("НАААЧАААЛИ!!!!")
     status = st.empty()
 
@@ -76,81 +76,41 @@ def create_videos(prompts_data, selected_images, font, font_path, selected_color
     vocal_path = 'static/vocal.mp3' # файл вокала песни
     no_vocal_path = 'static/no_vocal.mp3' # файл инструментала песни 
 
-    output_video_avi = 'video/final_video.mp4' # клип без аудио и субтитров 
-    output_video_mp4 = 'video/final_video_with_audio_1.mp4' # финальный клип с аудио и субтитрами 
-
     lyrics_file = 'static/lyrics.txt' # файл с текстом песни 
 
     font_size= 60  # размер шрифта 
     
-    images = selected_images # список выбранных изображений 
-    videos = [] # список сгенерированных видео по изобржаниям
-    time = [] # список временных меток кадров 
-    effects_next = [] # список выбранных эффектов поверх видео 
     
-    # Перевод времени из формата XX:XX:XX в секунды 
-    for i in range(len(prompts_data)):
-        effects_next.append(prompts_data[i]['effects_next'])
-        t = prompts_data[i]['shot'].split('-') 
-        if i == 0:
-            start = t[0].split(':')
-            end = t[1].split(':')
-            start_second = float(start[0]) * 3600 + float(start[1]) * 60 + float(start[2])
-            end_second = float(end[0]) * 3600 + float(end[1]) * 60 + float(end[2])
-            time.append([start_second, end_second])
-        else:
-            end = t[1].split(':')
-            end_second = float(end[0]) * 3600 + float(end[1]) * 60 + float(end[2])
-            time.append([time[i-1][1], end_second])
-
     # Созадние файла с субтитрами 
     with status:    
-        with st.spinner("Создание субтитров 1/5"): 
-            ttml_words = adiou_to_time_text(audio_path, lyrics_file)
-            ttml_lines = parse(txt_files=lyrics_file)
-            ttml_two_lines = parse(txt_files=lyrics_file, two_lines=True)
-    
-            with open(lyrics_file, "r", encoding="utf-8") as f:
-                text = f.read()
-            text_language = detect_language(text[:999:]) 
-            print(text_language)
-            if language == text_language:
-                generate_ass(ttml_words, ttml_lines, "static/subtitles.ass", font, selected_color_1, selected_color_2)
-            else:
-                translate_lyrics = translate_text(text, language)
-                generate_ass_eng(ttml_words, ttml_lines, translate_lyrics,"static/subtitles.ass", font, font_path, selected_color_1, selected_color_2, font_size) 
+        with st.spinner("Создание субтитров 1/4"): 
+            subtitels = Subtitles(audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size)
+            if language != subtitels.text_language:
+                subtitels.translate(language)
+            subtitels.create()
                 
     # Созадние видео из изображений 
     with status:
-        with st.spinner("Анимация изображений 2/5"):
-            for image_path, t , line in zip(images, time, prompts_data):   
-                effect = line['effect']
-                print(t[1] - t[0])
-                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-                if effect:
-                    add_effect(video_url, effect)
-                videos.append(video_url)
+        with st.spinner("Создания видео 2/4"):
+            video = Video(prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language)
+            video.create(new_videos=True)
                 
-    # Объединение всех видео в одно с применением переходов
-    with status:
-        with st.spinner("Рендеринг видео 3/5"):
-            concatenate_videos(videos, output_video_avi, effects_next)
-            
     # Добавление субтитров на видео 
     with status:
-        with st.spinner("Добавление субтитров 4/5"):
-            create_subtitles_2(output_video_avi, "static/subtitles.ass", output_video_mp4)
+        with st.spinner("Добавление субтитров 3/4"):
+            print(subtitels.path)
+            video.add_subtitels(subtitels.path)
             
     # Добавления аудио к видео 
     with status:
-        with st.spinner("Добавление аудио файла к видео 5/5"):
+        with st.spinner("Добавление аудио файла к видео 4/4"):
             if audio_type == 'Плюс-фонограмма':
-                add_audio_to_video('video/temp_video.mp4', audio_path, output_video_mp4)
+                video.add_audio(audio_path)
             elif audio_type == 'Минус-фонограмма':
-                add_audio_to_video('video/temp_video.mp4', no_vocal_path, output_video_mp4)
+                video.add_audio(no_vocal_path)
 
 
-    return output_video_mp4
+    return video.video_with_audio_path
     
 
 # Загрузка модели Sambanova
@@ -367,8 +327,9 @@ elif st.session_state["current_page"] == "upload":
     # Список эффектов, накладываемых поверх видео 
     effects = {
         'Без эффекта' : None,
-        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
         'Звезды' : 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
+        
+        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
         'Снег' : 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
         'Листопад' : 'effects/ezyZip.mov', 
         'Искры' : 'effects/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mov',
@@ -563,7 +524,7 @@ elif st.session_state["current_page"] == "upload":
             st.error("Please select an image for all lyrics!")
         else:
             # Генерация и отображение видео 
-            video_url = create_videos(st.session_state.prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language)
+            video_url = button_create_videos(st.session_state.prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language)
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:
