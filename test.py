@@ -67,7 +67,7 @@ def adiou_to_time_text(audio_path, text_path):
         return None
 
 
-def create_videos(prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language):
+def create_videos(prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language):
     print("НАААЧАААЛИ!!!!")
     status = st.empty()
 
@@ -120,21 +120,21 @@ def create_videos(prompts_data, selected_images, txt_file, font, font_path, sele
                 translate_lyrics = translate_text(text, language)
                 generate_ass_eng(ttml_words, ttml_lines, translate_lyrics,"static/subtitles.ass", font, font_path, selected_color_1, selected_color_2, font_size) 
                 
-    # # Созадние видео из изображений 
-    # with status:
-    #     with st.spinner("Анимация изображений 2/5"):
-    #         for image_path, t , line in zip(images, time, prompts_data):   
-    #             effect = line['effect']
-    #             print(t[1] - t[0])
-    #             video_url = create_video(image_path=image_path, duration=t[1] - t[0])
-    #             if effect:
-    #                 add_effect(video_url, effect)
-    #             videos.append(video_url)
+    # Созадние видео из изображений 
+    with status:
+        with st.spinner("Анимация изображений 2/5"):
+            for image_path, t , line in zip(images, time, prompts_data):   
+                effect = line['effect']
+                print(t[1] - t[0])
+                video_url = create_video(image_path=image_path, duration=t[1] - t[0])
+                if effect:
+                    add_effect(video_url, effect)
+                videos.append(video_url)
                 
-    # # Объединение всех видео в одно с применением переходов
-    # with status:
-    #     with st.spinner("Рендеринг видео 3/5"):
-    #         concatenate_videos(videos, output_video_avi, effects_next)
+    # Объединение всех видео в одно с применением переходов
+    with status:
+        with st.spinner("Рендеринг видео 3/5"):
+            concatenate_videos(videos, output_video_avi, effects_next)
             
     # Добавление субтитров на видео 
     with status:
@@ -186,7 +186,7 @@ Print out which part of the song this frame belongs to: verse, chorus, intro, an
 Print out the fragments of the song in which this text will be displayed, if this frame will be displayed without text, then simply print "-"
 
 **Prompt for the image generating model**: (maximum number of words - 77)
-Specify the style (realistic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
+Specify the style (Cinematic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
 The lyrics along with the timestamps are: '''
     )
 
@@ -563,7 +563,7 @@ elif st.session_state["current_page"] == "upload":
             st.error("Please select an image for all lyrics!")
         else:
             # Генерация и отображение видео 
-            video_url = create_videos(st.session_state.prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language)
+            video_url = create_videos(st.session_state.prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language)
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:
