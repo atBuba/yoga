@@ -10,10 +10,101 @@ from streamlit_image_select import image_select
 from datetime import datetime
 from time import sleep
 from PIL import Image, ImageDraw, ImageFont
+import json
+import shutil
 
+# Функции для работы с состоянием и проектом
+def create_project_folder():
+    """Создает уникальную папку проекта на основе даты и времени."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    project_folder = f"project_{timestamp}"
+    os.makedirs(project_folder, exist_ok=True)
+    return project_folder
 
+def save_state(state, filename="state.json", project_folder=None):
+    """Сохраняет состояние приложения в JSON-файл внутри папки проекта."""
+    if project_folder:
+        filename = os.path.join(project_folder, filename)
+    with open(filename, "w", encoding="utf-8") as f:
+        state_to_save = {
+            "openai_model": state["openai_model"],
+            "messages": state["messages"],
+            "current_page": state["current_page"],
+            "prompts_data": state["prompts_data"],
+            "project_folder": state.get("project_folder", ""),
+        }
+        json.dump(state_to_save, f, ensure_ascii=False, indent=4)
 
-def generate_image_for_prompt(prompt):
+def load_state(filename="state.json", project_folder=None):
+    """Загружает состояние приложения из JSON-файла."""
+    if project_folder:
+        filename = os.path.join(project_folder, filename)
+    if os.path.exists(filename):
+        with open(filename, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
+def copy_file_to_project(src_path, project_folder, new_name=None):
+    """Копирует файл в папку проекта с возможностью переименования."""
+    if not os.path.exists(src_path):
+        return None
+    if not new_name:
+        new_name = os.path.basename(src_path)
+    dest_path = os.path.join(project_folder, new_name)
+    shutil.copy2(src_path, dest_path)
+    return dest_path
+
+# Инициализация состояния
+if "project_folder" not in st.session_state:
+    # Проверяем, есть ли сохраненные проекты
+    existing_projects = [d for d in os.listdir() if d.startswith("project_")]
+    if existing_projects:
+        selected_project = st.sidebar.selectbox("Выберите существующий проект или создайте новый", ["Создать новый"] + existing_projects)
+        if selected_project == "Создать новый":
+            st.session_state["project_folder"] = create_project_folder()
+        else:
+            st.session_state["project_folder"] = selected_project
+    else:
+        st.session_state["project_folder"] = create_project_folder()
+
+    initial_state = load_state(project_folder=st.session_state["project_folder"])
+    if initial_state:
+        for key, value in initial_state.items():
+            st.session_state[key] = value
+    else:
+        st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
+        st.session_state.messages = []
+        st.session_state["current_page"] = "main"
+        st.session_state.prompts_data = []
+
+if "role_message" not in st.session_state:
+    st.session_state.role_message = (
+        ''' 
+    Use the entire text carefully. You need to create a slideshow clip for the song, you will receive the lyrics along with timestamps, write a hint to create an image in this frame. The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip. Write a hint for the model that will generate images for these frames. The images should be connected to each other, and the entire clip should reflect the meaning of the song and convey its mood. Describe in detail what people are wearing and how they behave, in what colors the image should be, in what mood it should be and in what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly in accordance with the text.
+    Please respond in the following format:
+
+    **Frame**: (without a number)
+    a timestamp indicating when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX 
+
+    **Part of the song**: 
+    Print out which part of the song this frame belongs to: verse, chorus, intro, and so on. 
+
+    **Text**: 
+    Print out the fragments of the song in which this text will be displayed, if this frame will be displayed without text, then simply print "-"
+
+    **Prompt for the image generating model**: (maximum number of words - 77)
+    Specify the style (Realistic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
+    The lyrics along with the timestamps are: '''
+    )
+
+# Загрузка модели Sambanova
+client = OpenAI(
+    api_key="c28b215f-2bf4-4f13-a5ac-bf9d0389d24f",
+    base_url="https://api.sambanova.ai/v1",
+)
+
+# Функции генерации
+def generate_image_for_prompt(prompt, project_folder):
     """Send a request to the Flask app to generate an image for a prompt."""
     FLASK_API_URL = "http://localhost:5000/generate"
     payload = {
@@ -22,235 +113,161 @@ def generate_image_for_prompt(prompt):
         "height": 720,
         "width": 1280,
         "guidance_scale": 3.5,
-        "num_inference_steps": 25, 
-        "seed": random.randint(0, 2**32 - 1), 
+        "num_inference_steps": 25,
+        "seed": random.randint(0, 2**32 - 1),
     }
     try:
         response = requests.post(FLASK_API_URL, json=payload)
         response_data = response.json()
         if response_data.get("success"):
-            return response_data["image_url"]
+            image_url = response_data["image_url"]
+            # Копируем изображение в папку проекта
+            new_image_path = os.path.join(project_folder, f"images/{os.path.basename(image_url)}")
+            shutil.copy2(image_url, new_image_path)
+            return new_image_path
         else:
             return f"Error: {response_data.get('error', 'Unknown error')}"
     except Exception as e:
         return f"Error: {str(e)}"
-    
-def create_video(image_path, duration):
 
+def create_video(image_path, duration, project_folder):
+    """Create video from image."""
     payload = {
         'image_path': image_path,
         'duration': duration
     }
-
     response = requests.post("http://127.0.0.1:6000/process_images", json=payload)
-
     if response.status_code == 200:
         video_url = response.json().get('video_url')
-        return video_url
+        # Копируем видео в папку проекта
+        new_video_path = os.path.join(project_folder, f"video_{os.path.basename(video_url)}")
+        shutil.copy2(video_url, new_video_path)
+        return new_video_path
     else:
         return None
 
-def adiou_to_time_text(audio_path, text_path):
-
+def adiou_to_time_text(audio_path, text_path, project_folder):
+    """Align audio to text timestamps."""
     payload = {
         'audio_path': audio_path,
         'text_path': text_path,
         'language': 'iso',
     }
-
     response = requests.post("http://127.0.0.1:7000/align", json=payload)
-
     if response.status_code == 200:
         video_url = response.json().get('word_timestamps')
         return video_url
     else:
         return None
 
-
-def button_create_videos(prompts_data, selected_images, font, font_path, font_color_1, font_color_2, audio_type, language):
-    print("НАААЧАААЛИ!!!!")
+def button_create_videos(prompts_data, selected_images, font, font_path, font_color_1, font_color_2, audio_type, language, project_folder):
+    """Create video with subtitles and audio."""
+    print("НАААЧААЛИ!!!!")
     status = st.empty()
 
-    # Файлы 
-    audio_path = 'static/mp3_file.mp3' # файл песни 
-    vocal_path = 'static/vocal.mp3' # файл вокала песни
-    no_vocal_path = 'static/no_vocal.mp3' # файл инструментала песни 
+    # Копируем аудиофайлы в папку проекта
+    audio_path = copy_file_to_project('static/mp3_file.mp3', project_folder, "mp3_file.mp3")
+    vocal_path = copy_file_to_project('static/vocal.mp3', project_folder, "vocal.mp3")
+    no_vocal_path = copy_file_to_project('static/no_vocal.mp3', project_folder, "no_vocal.mp3")
+    lyrics_file = copy_file_to_project('static/lyrics.txt', project_folder, "lyrics.txt")
 
-    lyrics_file = 'static/lyrics.txt' # файл с текстом песни 
+    font_size = 60
 
-    font_size= 60  # размер шрифта 
-    
-    
-    # Созадние файла с субтитрами 
-    with status:    
-        with st.spinner("Создание субтитров 1/4"): 
+    with status:
+        with st.spinner("Создание субтитров 1/4"):
             subtitels = Subtitles(audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size)
             if language != subtitels.text_language:
                 subtitels.translate(language)
             subtitels.create()
-                
-    # Созадние видео из изображений 
+            subtitels_path = os.path.join(project_folder, "subtitles.srt")
+            shutil.move(subtitels.path, subtitels_path)
+
     with status:
         with st.spinner("Создания видео 2/4"):
-            video = Video(prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language)
+            video = Video(prompts_data, selected_images, lyrics_file, font, font_path, font_color_1, font_color_2, audio_type, language)
             video.create(new_videos=True)
-                
-    # Добавление субтитров на видео 
+
     with status:
         with st.spinner("Добавление субтитров 3/4"):
-            print(subtitels.path)
-            video.add_subtitels(subtitels.path)
-            
-    # Добавления аудио к видео 
+            print(subtitels_path)
+            video.add_subtitels(subtitels_path)
+
     with status:
         with st.spinner("Добавление аудио файла к видео 4/4"):
             if audio_type == 'Плюс-фонограмма':
                 video.add_audio(audio_path)
             elif audio_type == 'Минус-фонограмма':
                 video.add_audio(no_vocal_path)
+            final_video_path = os.path.join(project_folder, "final_video.mp4")
+            shutil.move(video.video_with_audio_path, final_video_path)
 
-
-    return video.video_with_audio_path
-    
-
-# Загрузка модели Sambanova
-client = OpenAI(
-    api_key="c28b215f-2bf4-4f13-a5ac-bf9d0389d24f",
-    base_url="https://api.sambanova.ai/v1",
-)
-
-# Инициализация состояний
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-if "current_page" not in st.session_state:
-    st.session_state["current_page"] = "main"  # Устанавливаем начальную страницу
-
-# Устанавливаем роль модели (скрыто от пользователя)
-if "role_message" not in st.session_state:
-    st.session_state.role_message = (
-        ''' 
-    Use the entire text carefully. You need to create a slideshow clip for the song, you will receive the lyrics along with timestamps, write a hint to create an image in this frame. The frames that will be shown at the moment when there is no text should simply convey the atmosphere of the clip. Write a hint for the model that will generate images for these frames. The images should be connected to each other, and the entire clip should reflect the meaning of the song and convey its mood. Describe in detail what people are wearing and how they behave, in what colors the image should be, in what mood it should be and in what style. The main characters should look the same in all images, the style of the entire slideshow should be the same, the color palette of all images should be the same, specify at what time or historical period the action takes place, all images should have the same period. The frames that will be shown with the text should convey what is said in these lines, these frames should be shown strictly in accordance with the text.
-Please respond in the following format:
-
-**Frame**: (without a number)
-a timestamp indicating when this frame will be shown in the format XX:XX:XX.XX - XX:XX:XX.XX 
-
-**Part of the song**: 
-Print out which part of the song this frame belongs to: verse, chorus, intro, and so on. 
-
-**Text**: 
-Print out the fragments of the song in which this text will be displayed, if this frame will be displayed without text, then simply print "-"
-
-**Prompt for the image generating model**: (maximum number of words - 77)
-Specify the style (Cinematic), the mood, in which colors the image should be executed, the time or historical period in which the events take place, then describe what should be depicted in the picture, what the characters are wearing.
-The lyrics along with the timestamps are: '''
-    )
-
-if "prompts_data" not in st.session_state:
-        st.session_state.prompts_data = []
-
-
-
+    save_state(st.session_state, project_folder=st.session_state["project_folder"])
+    return final_video_path
 
 # Логика страниц
 if st.session_state["current_page"] == "main":
     st.title("Создание слайд-шоу для песни")
     
-    # Загрузка аудиофайла
     mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
     if mp3_file is not None:
-        with open("static/mp3_file.mp3", "wb") as f:
+        audio_path = os.path.join(st.session_state["project_folder"], "mp3_file.mp3")
+        with open(audio_path, "wb") as f:
             f.write(mp3_file.read())
             
-    # Загрузка текстового файла
     txt_file = st.file_uploader("Upload a TXT file with lyrics", type=["txt"])
     if txt_file is not None and len(st.session_state.messages) == 0:
         text = txt_file.read().decode("utf-8")
-        
+        lyrics_file = os.path.join(st.session_state["project_folder"], "lyrics.txt")
+        with open(lyrics_file, "w", encoding="utf-8") as f:
+            f.write(text)
         lyrics = create_lyrics(text)
+        st.session_state.messages.append({"role": "system", "content": st.session_state.role_message})
+        st.session_state.messages.append({"role": "user", "content": lyrics})
 
-        # Добавление роли модели 
-        st.session_state.messages.append({
-            "role": "system", 
-            "content": st.session_state.role_message
-        })
-
-        # Добавление временных меток кадров (от лица пользователя)
-        st.session_state.messages.append({
-                "role": "user", 
-                "content": lyrics
-        })
-
-    # Отображение истории сообщений
     for message in st.session_state.messages:
-        if message["role"] != "system":  # Исключаем системное сообщение
+        if message["role"] != "system":
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
-    
-    
-    # Обычный чат после загрузки файлов
+
     if txt_file:
         if user_input := st.chat_input("Введите ваш вопрос или текст...") or len(st.session_state.messages) == 2:
-
-            # Отображение сообщений пользователя 
             if len(st.session_state.messages) != 2:
                 st.session_state.messages.append({"role": "user", "content": user_input})
                 with st.chat_message("user"):
                     st.markdown(user_input)
             
-            # Отоброжения ответа модели 
             with st.chat_message("assistant"):
                 response_container = st.empty()
-
-                messages = [
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ]
-                
+                messages = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
                 with st.spinner("Qwen2.5-72B is generating a response..."):
                     response = ""
-
                     stream = client.chat.completions.create(
                         model=st.session_state["openai_model"],
                         messages=messages,
                         stream=True,
-                        temperature=0.1,
-                        top_p=0.1,
+                        temperature=0.8,
+                        top_p=0.8,
                         max_tokens=8000,
                     )
-                    
                     for chunk in stream:
                         if chunk.choices:
                             token = chunk.choices[0].delta.content
                             response += token
                             response_container.write(response)
-                    
                     st.session_state.messages.append({"role": "assistant", "content": response})
 
-    
-    # Кнопка для перехода на страницу загрузки MP3-файла
     if st.button("Перейти к загрузке MP3-файла"):
         st.session_state["current_page"] = "upload"
-        st.rerun() 
+        st.rerun()
 
 elif st.session_state["current_page"] == "upload":
-    # Streamlit App
     st.title("MP3 & Lyrics Image Generator")
 
-    
-    # Получение последненго овтета модели 
-    model_response  = st.session_state.messages[-1]["content"]
-
-    # Сохранения ответа файла (для удобства)
-    with open("static/text.txt", "w", encoding="utf-8") as f:
+    model_response = st.session_state.messages[-1]["content"]
+    with open(os.path.join(st.session_state["project_folder"], "text.txt"), "w", encoding="utf-8") as f:
         f.write(model_response)
-    txt_file = "static/text.txt"
+    txt_file = os.path.join(st.session_state["project_folder"], "text.txt")
 
-    # Выбор цвета субтитров(вторичный цвет - цвет в который изначально красится текст, первичиный цвет в который перекрашивается текст когда произносится конкретное слово)
     col1, col2 = st.columns([1, 1])
     with col1:
         selected_color_1 = st.color_picker("Выберите первичный цвет субтитров:", "#ad6109")[1::]
@@ -258,137 +275,107 @@ elif st.session_state["current_page"] == "upload":
     with col2:
         selected_color_2 = st.color_picker("Выберите вторичный цвет субтитров:", "#C99457")[1::]
         selected_color_2 = selected_color_2[4::] + selected_color_2[2:4:] + selected_color_2[:2:]
-        
-    
-    # Список шрифтов и их путей
+
     fonts_path = {
         'Balkara Free Condensed - npoekmu.me': 'font/ofont.ru_BalkaraCondensed.ttf',
         'Manrope': 'font/ofont.ru_Manrope.ttf',
         'Kaph': 'font/ofont.ru_Kaph.ttf',
         'BOWLER': 'font/ofont.ru_Bowler.ttf',
         'Handelson Five_CYR': 'font/18035.otf',
-        'Garamond' : 'font/Garamond-Garamond-Regular.ttf', 
+        'Garamond': 'font/Garamond-Garamond-Regular.ttf',
         'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf',
     }
 
-    # Список языков для субтитров
     languages = {
-        'Русский' : 'ru',
-        'Английский' : 'en',
-        'Китайский' : 'zh',
+        'Русский': 'ru',
+        'Английский': 'en',
+        'Китайский': 'zh',
     }
-    
-    # Список вида фонограмм 
+
     phonograms = [
-        'Плюс-фонограмма', 
+        'Плюс-фонограмма',
         'Минус-фонограмма',
     ]
 
-    # Выбор языка 
-    language = st.selectbox('Выбрите язык субтитров', list(languages.keys()))
+    language = st.selectbox('Выберите язык субтитров', list(languages.keys()))
     language = languages[language]
-    
-    # Выбор шрифта
-    # Для китайского языка подходят только конкретный шрфиты 
+
     if language == 'zh':
         font = st.selectbox("Выберите шрифт:", list({'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf'}.keys()))
     else:
         font = st.selectbox("Выберите шрифт:", list(fonts_path.keys()))
     font_path = fonts_path.get(font)
-    
-    #Выбор вида фонограммы 
-    audio_type = st.selectbox(
-        "Выберите вид фонограммы:",
-        phonograms,
-    )
-    
 
-    # Создаем изображение с текстом
+    audio_type = st.selectbox("Выберите вид фонограммы:", phonograms)
+
     if font_path:
-        sample_text = "Съешь ещё этих мягких французских булок, да выпей чаю" 
+        sample_text = "Съешь ещё этих мягких французских булок, да выпей чаю"
         img = create_text_image(sample_text, font_path)
         st.image(img, use_container_width=True)
     else:
         st.error("Шрифт не найден!")
 
-
-    # Кнопка генерации изображения 
     if st.button("Generate Images"):
         prompts_data = process_song(model_response)
-        
-        new_prompts = []
-        st.session_state.prompts_data = []
-        for prompt_entry in prompts_data:
-            if prompt_entry not in st.session_state.prompts_data:
-                new_prompts.append(prompt_entry)
-
+        new_prompts = [p for p in prompts_data if p not in st.session_state.prompts_data]
         st.session_state.prompts_data.extend(new_prompts)
 
-    # Список эффектов, накладываемых поверх видео 
     effects = {
-        'Без эффекта' : None,
-        'Звезды' : 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov', 
-        
-        'Старая камера' : 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
-        'Снег' : 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov', 
-        'Листопад' : 'effects/ezyZip.mov', 
-        'Искры' : 'effects/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mov',
-        'Кот' : 'effects/Green-Screen-Happy-Happy-Happy-Cat-Meme.mov',
-        'Облака' : 'effects/vecteezy_4k-alpha-channel-render-fly-through-the-realistic-procedural_720p.mov',
-        'Дождевые облака' : 'effects/vecteezy_free-download-rain-clouds-stock-video-clip_6529321.mov',
-        'Солнечные лучи' : 'effects/vecteezy_light-leak-of-blue-lens-flare-in-the-background-light_38190348.mov',
-        'Зеленый' : 'effects/vecteezy_light-leaks-light-green.mov',
-        'Красный' : 'effects/vecteezy_light-leaks-light-red.mov',
-        'Белый' : 'effects/vecteezy_light-leaks-light-white.mov',
-        'Фиолетовый' : 'effects/vecteezy_light-leaks-purple.mov',
-        'Летучие мыши' : 'effects/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
-        'Желты летающие частици' : 'effects/vecteezy_gradient-background-from-brown-to-black-with-transparent_1794889.mov',
+        'Звезды': 'effects/vecteezy_million-gold-star-and-dark-triangel-flying-and-faded-on-the_15452899.mov',
+        'Без эффекта': None,
+        'Молнии': 'effects/vecteezy_the-thunderbolt-effect-in-black-background_27118256.mov',
+        'Старая камера': 'effects/vecteezy_flickering-super-8-film-projector-perfect-for-transparent_9902616.mov',
+        'Снег': 'effects/vecteezy_snowfall-overlay-on-green-screen-background-realistic_16108103.mov',
+        'Листопад': 'effects/ezyZip.mov',
+        'Искры': 'effects/vecteezy_fire-flame-particle-animation-green-screen-video_24397594.mov',
+        'Кот': 'effects/Green-Screen-Happy-Happy-Happy-Cat-Meme.mov',
+        'Облака': 'effects/vecteezy_4k-alpha-channel-render-fly-through-the-realistic-procedural_720p.mov',
+        'Дождевые облака': 'effects/vecteezy_free-download-rain-clouds-stock-video-clip_6529321.mov',
+        'Солнечные лучи': 'effects/vecteezy_light-leak-of-blue-lens-flare-in-the-background-light_38190348.mov',
+        'Зеленый': 'effects/vecteezy_light-leaks-light-green.mov',
+        'Красный': 'effects/vecteezy_light-leaks-light-red.mov',
+        'Белый': 'effects/vecteezy_light-leaks-light-white.mov',
+        'Фиолетовый': 'effects/vecteezy_light-leaks-purple.mov',
+        'Летучие мыши': 'effects/vecteezy_the-glowing-midnight-bats-in-black-screen_52182187.mov',
+        'Желтые летающие частицы': 'effects/vecteezy_gradient-background-from-brown-to-black-with-transparent_1794889.mov',
     }
 
-    # Список видов переходов 
     effects_next = {
-        'Без эффекта' : 0,
-        'Короткий' : 2, 
-        'Длинный' : 1,         
+        'Без эффекта': 0,
+        'Короткий': 2,
+        'Длинный': 1,
     }
 
-    # Список коротких переходов между кадрами 
     short_effect = {
-        "Красная капля" : 'effect_next/1.mov',
-        "Черная капля" : 'effect_next/2.mov',
-        "Фиолетовая капля " : 'effect_next/3.mov',
-        "Белая капля" : 'effect_next/4.mov',  
-        "Синяя волна" : 'effect_next/5.mov',  
-        "Фиолетовая волна" : 'effect_next/6.mov',  
-        "Розовая волна" : 'effect_next/7.mov',
-        "Белая заморозка" : 'effect_next/8.mov',  
-        "Желтая заморозка" : 'effect_next/9.mov', 
-        "Белый дым" : 'effect_next/10.mov',  
-        "Черный дым" : 'effect_next/11.mov',  
+        "Красная капля": 'effect_next/1.mov',
+        "Черная капля": 'effect_next/2.mov',
+        "Фиолетовая капля": 'effect_next/3.mov',
+        "Белая капля": 'effect_next/4.mov',
+        "Синяя волна": 'effect_next/5.mov',
+        "Фиолетовая волна": 'effect_next/6.mov',
+        "Розовая волна": 'effect_next/7.mov',
+        "Белая заморозка": 'effect_next/8.mov',
+        "Желтая заморозка": 'effect_next/9.mov',
+        "Белый дым": 'effect_next/10.mov',
+        "Черный дым": 'effect_next/11.mov',
     }
 
-    # Список длинных переходов между кадрами 
     long_effect = {
-        "Черно красный круг" : 'effect_next/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
-        "Красно белый жидкий переход" : 'effect_next/vecteezy_red-liquid-transition-green-screen_49115367.mov',
-        "Градиентные чернила" : 'effect_next/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
-        "Сердечки" : 'effect_next/vecteezy_transitions-love-green-screen_48868982.mov',
-        "Черный дым" : 'effect_next/vecteezy_smoke-transition-green-screen-black_48021329.mov',
-        "Белый дым" : 'effect_next/vecteezy_smoke-transition-green-screen-white_48021329.mov',
+        "Черно-красный круг": 'effect_next/vecteezy_2-color-liquid-black-and-red-transition-green-screen_49115368.mov',
+        "Красно-белый жидкий переход": 'effect_next/vecteezy_red-liquid-transition-green-screen_49115367.mov',
+        "Градиентные чернила": 'effect_next/vecteezy_transition-ink-gradient-color-green-screen-free_48868911.mov',
+        "Сердечки": 'effect_next/vecteezy_transitions-love-green-screen_48868982.mov',
+        "Черный дым": 'effect_next/vecteezy_smoke-transition-green-screen-black_48021329.mov',
+        "Белый дым": 'effect_next/vecteezy_smoke-transition-green-screen-white_48021329.mov',
     }
 
-    # Количество изображений для каждого кадра 
     number_images = 1
-    
-    # Отображаем и генерируем изображения для каждого кадра
+
     if st.session_state.prompts_data:
         st.write("# Generated Images")
-
-        # Переменная для отслеживания смены части песни
-        previous_part = '' 
+        previous_part = ''
 
         for i, entry in enumerate(st.session_state.prompts_data):
-        
             lyrics = entry["lyrics"]
             part = entry["part"]
             shot = entry["shot"]
@@ -401,139 +388,120 @@ elif st.session_state["current_page"] == "upload":
                 previous_part = part
 
             col1, col2 = st.columns([5, 1])
-
-            # Отображение части песни, текста кадра, времнной метки кадра, промпта для генерации изображения и изображения, из которых нужно будет выбрать пользователю 
-            with col1: 
+            with col1:
                 st.write(f"**Part:** {part}")
                 st.write(f"**Lyrics:** {lyrics}")
                 user_shot = st.text_area(
-                    '**Prompt**', 
-                    value=f"{shot}", 
-                    height=68 , 
+                    '**Shot**',
+                    value=f"{shot}",
+                    height=68,
                     key=f'user_shot_{i}',
                 )
                 user_prompt = st.text_area(
-                    '**Prompt**', 
-                    value=f"{prompt}", 
-                    height=150, 
+                    '**Prompt**',
+                    value=f"{prompt}",
+                    height=150,
                     key=f'user_input_{i}',
                 )
 
-                # отоброжение уже сгенерированных изобржаений, нужно того что бы при перезагрузки изображения каждый раз не перегенировались 
-                if image_urls != []:
+                if image_urls:
                     img = image_select("", image_urls)
-                    st.session_state[f"selected_image_{i}"] = img 
+                    st.session_state[f"selected_image_{i}"] = img
                 else:
-                    # генерация изображений 
-                    for _ in range(number_images): 
+                    for _ in range(number_images):
                         with st.spinner(f"Generating image"):
-                            image_url = generate_image_for_prompt(prompt)
-                            if image_url.startswith("static/"):
-                                entry["image_url"].append(image_url)
-                            else:
-                                st.error(image_url)
-                    img = image_select("Выберите изобаржение", entry["image_url"])
-                    st.session_state[f"selected_image_{i}"] = img 
+                            image_url = generate_image_for_prompt(prompt, st.session_state["project_folder"])
+                            
+                            entry["image_url"].append(image_url)
+    
+                    img = image_select("Выберите изображение", entry["image_url"])
+                    st.session_state[f"selected_image_{i}"] = img
 
-                #выбор изображения 
                 selected_image = st.session_state.get(f"selected_image_{i}", None)
                 if selected_image:
                     st.success("Selected image:")
                     st.image(selected_image)
-                    
-            # Отображение выбора эффекта, накладываемого на кадр, эффекта перехода на следующий кадр, кнопка перегенерировать     
+
             with col2:
-                # выбор эффекта 
                 selected_effect = st.selectbox(
                     "Выберите эффект:",
                     list(effects.keys()),
                     key=f"effect_{i}",
                 )
-    
-                # Обновление выбранного эффекта в prompts_data
                 entry['effect'] = effects[selected_effect]
 
-                # Выбор вида эффекта перехода на следующий слайд 
-                selected_effect = st.selectbox(
+                selected_effect_next = st.selectbox(
                     "Выберите эффект переключения на следующие видео:",
                     list(effects_next.keys()),
                     key=f"effect_next_{i}",
                 )
-                
-                # Долгие эффекты переходов
-                if selected_effect == "Длинный": 
+
+                if selected_effect_next == "Длинный":
                     effect_type = st.selectbox(
                         "Выберите эффект переключения на следующие видео:",
                         list(long_effect.keys()),
                         key=f"effect_next_long{i}",
                     )
                     entry['effects_next'] = long_effect[effect_type]
-
-                # Быстрые эффекты перехода 
-                elif selected_effect == "Короткий":
+                elif selected_effect_next == "Короткий":
                     effect_type = st.selectbox(
                         "Выберите эффект переключения на следующие видео:",
                         list(short_effect.keys()),
                         key=f"effect_next_short{i}",
                     )
-
                     entry['effects_next'] = short_effect[effect_type]
-                else: 
+                else:
                     entry['effects_next'] = None
-                
-                # Кнопка перегенерировать 
-                if st.button("Перегенерировать", key=f'button_{i}'):
-                    
-                    entry["image_url"] = [] 
 
-                    # Проверяем изменен ли промпт 
-                    if user_prompt != prompt: 
+                if st.button("Перегенерировать", key=f'button_{i}'):
+                    if user_prompt != prompt:
                         entry["prompt"] = user_prompt
                         prompt = user_prompt
-
-                    # Генерация новых изображений 
-                    for _ in range(number_images): # количество изображений для одного кадра 
+                    for _ in range(number_images):
                         with st.spinner(f"Generating image"):
-                            image_url = generate_image_for_prompt(prompt)
+                            image_url = generate_image_for_prompt(prompt, st.session_state["project_folder"])
                             if image_url.startswith("static/"):
                                 entry["image_url"].append(image_url)
                             else:
                                 st.error(image_url)
-                                
                     st.session_state[f"selected_image_{i}"] = None
                     st.rerun()
 
-            # проверяем изменина ли временная метка кадра
-            if user_shot != shot: 
+            if user_shot != shot:
                 entry["shot"] = user_shot
-                shot = user_shot 
-            
-            st.write('---')
-        
-    # Кнопка генерации видео по выбранным изобаржениям 
-    if st.button("Generate Video with Selected Images"):
+                shot = user_shot
 
-        # Выбранные изображения 
-        selected_images = [
-            st.session_state.get(f"selected_image_{idx}")
-            for idx in range(len(st.session_state.prompts_data))
-        ]
-    
-        # Проверяем, что все изображения выбраны
+            st.write('---')
+
+    if st.button("Generate Video with Selected Images"):
+        selected_images = [st.session_state.get(f"selected_image_{idx}") for idx in range(len(st.session_state.prompts_data))]
         if None in selected_images:
             st.error("Please select an image for all lyrics!")
         else:
-            # Генерация и отображение видео 
-            video_url = button_create_videos(st.session_state.prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language)
+            video_url = button_create_videos(st.session_state.prompts_data, selected_images, font, font_path, selected_color_1, selected_color_2, audio_type, language, st.session_state["project_folder"])
             if video_url and not video_url.startswith("Error"):
                 st.video(video_url)
             else:
                 st.error(f"Failed to create video: {video_url}")
 
-    # Кнопка перехода на главную страницу 
+    if st.button("Сохранить и выйти"):
+        save_state(st.session_state, project_folder=st.session_state["project_folder"])
+        st.stop()
+
     if st.button("Вернуться на главную"):
         st.session_state["current_page"] = "main"
         st.rerun()
 
-    
+    if st.button("Очистить состояние"):
+        if os.path.exists(st.session_state["project_folder"]):
+            shutil.rmtree(st.session_state["project_folder"])
+        st.session_state.clear()
+        st.session_state["project_folder"] = create_project_folder()
+        st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
+        st.session_state.messages = []
+        st.session_state["current_page"] = "main"
+        st.session_state.prompts_data = []
+        st.rerun()
+
+
         

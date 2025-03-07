@@ -991,8 +991,11 @@ def create_lyrics(text):
     lyrics = ""
     
     # Вывод результата
-    for item in parsed_lyrics:
-        lyrics += item["text"] + "\n"
+    for i, item in enumerate(parsed_lyrics):
+        if i + 1 != len(parsed_lyrics):
+            lyrics += item["text"] + "\n"
+        else:
+            lyrics += item["text"]
     
     audio_path = 'static/mp3_file.mp3'
     vocal_path = 'static/vocal.mp3'
@@ -1001,7 +1004,7 @@ def create_lyrics(text):
     lyrics_file = 'static/lyrics.txt'
     
     with open(lyrics_file, "w", encoding="utf-8") as file:
-        file.write(lyrics + "\n")  
+        file.write(lyrics)  
     
     
     words_timestamps  = adiou_to_time_text(audio_path, lyrics_file)
@@ -1284,7 +1287,7 @@ class Video:
             temp_file = "videos/temp.mp4"
         
             filter_complex = []
-            inputs = [f'-i {base_video}']
+            inputs = [f'-i {self.video_path}']
             for i, dur in enumerate(effect_next_time):
                 if dur[0]:
                     inputs.append(f'-i {dur[0]}')
@@ -1463,18 +1466,3 @@ class Audio:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    

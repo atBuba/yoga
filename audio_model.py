@@ -38,6 +38,7 @@ def align_audio_text():
         # Получаем файлы из запроса
         data = request.get_json()
         audio_path = data.get("audio_path")
+        folder_name = os.path.basename(os.path.dirname(audio_path))
         text_path = data.get("text_path")
         language = data.get("language", "iso")
         print(audio_path, text_path, language)
@@ -54,24 +55,21 @@ def align_audio_text():
         
         # Пути к входным и выходным файлам
         output_folder = "separated/mdx_extra_q/mp3_file"
-        static_folder = "static"
         
-        # Создание папки static, если её нет
-        os.makedirs(static_folder, exist_ok=True)
         
         # Перемещение файлов
-        shutil.move(os.path.join(output_folder, "vocals.mp3"), os.path.join(static_folder, "vocal.mp3"))
-        shutil.move(os.path.join(output_folder, "no_vocals.mp3"), os.path.join(static_folder, "no_vocal.mp3"))
+        shutil.move(os.path.join(output_folder, "vocals.mp3"), os.path.join(folder_name, "vocal.mp3"))
+        shutil.move(os.path.join(output_folder, "no_vocals.mp3"), os.path.join(folder_name, "no_vocal.mp3"))
 
-        vocal_path = 'static/vocal.mp3'
-        no_vocal_path = 'static/no_vocal.mp3'
+        vocal_path =  os.path.join(folder_name, "vocal.mp3")
+        no_vocal_path = os.path.join(folder_name, "no_vocal.mp3")
         
 
 
         # Загружаем аудио и текст
         audio_waveform = load_audio(vocal_path, alignment_model.dtype, alignment_model.device)
 
-        audio_waveform = F.gain(audio_waveform, gain_db=40.0)  # Увеличиваем громкость на 5 dB
+        audio_waveform = F.gain(audio_waveform, gain_db=20.0)  # Увеличиваем громкость на 5 dB
         
         with open(text_path, "r", encoding="utf-8") as f:
             text = f.read().replace("\n", " ").strip()
@@ -112,4 +110,4 @@ def align_audio_text():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=7000)
+    app.run(host="0.0.0.0", port=7000, debug=True)
