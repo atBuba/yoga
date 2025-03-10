@@ -47,7 +47,7 @@ def align_audio_text():
             "--mp3", "--two-stems", "vocals",
             "-n", "mdx_extra_q",
             "--overlap", "0.8",
-            "--shifts", "3",
+            "--shifts", "1",
             "--device", "cuda",
             audio_path
         ])

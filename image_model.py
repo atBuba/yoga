@@ -23,6 +23,9 @@ print("Загрузка модели...")
 pipe = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-dev", torch_dtype=torch.bfloat16)
 # pipe = torch.compile(pipe)
 pipe.enable_model_cpu_offload()  # Экономия VRAM, если GPU ограничен
+
+# pipe.load_lora_weights("ByteDance/Hyper-SD", weight_name="Hyper-FLUX.1-dev-8steps-lora.safetensors")
+# pipe.fuse_lora(scale=01.25)
 print("Модель загружена.")
 
 def query(payload):

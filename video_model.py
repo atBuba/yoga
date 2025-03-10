@@ -38,36 +38,30 @@ def process_images():
     payload = request.get_json()
     image_path = payload.get('image_path', '')
     duration = float(payload.get('duration', 0))
-    print(image_path)
+    project_folder = payload.get('project_folder', '')
     
     # Ensure the temp videos folder exists
-    temp_videos_folder = 'videos'
-    if not os.path.exists(temp_videos_folder):
-        os.makedirs(temp_videos_folder)
-    
-    # List to hold video file paths
-    video_files = []
-    
-    # Process each image
-    img_path = image_path  # Ensure img_path is defined correctly
+    videos_folder  = os.path.join(project_folder, 'videos')
+    if not os.path.exists(videos_folder):
+        os.makedirs(videos_folder)
     
     # Create a unique output video file name
-    img_name = os.path.basename(img_path)
-    video_name = os.path.join(temp_videos_folder, f"{os.path.splitext(img_name)[0]}.mp4")
-    video_files.append(video_name)
+    image_name = os.path.basename(image_path)
+    video_name = os.path.join(videos_folder, f"{os.path.splitext(image_name)[0]}.mp4")
+
     
     # Randomly select an animation
     selected_animation = random.choice(animation_options)()
     
     # Create scene instance
     scene = MyAnimationScene(animation=selected_animation, backend="headless")
-    scene.input(image=img_path)
+    scene.input(image=image_path)
     scene.main(
         output=video_name,
         fps=30,
         time=duration
     )
-    print(f"Processed {img_path} with animation {type(selected_animation).__name__} and saved to {video_name}")
+    print(f"Processed {image_path} with animation {type(selected_animation).__name__} and saved to {video_name}")
     
     
     return jsonify({'video_url': video_name })

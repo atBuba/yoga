@@ -977,7 +977,7 @@ def adjust_video_duration(video_path, required_duration):
         extended_clip = clip.subclip(0, required_duration)
     return extended_clip
 
-def create_lyrics(text):
+def create_lyrics(text, audio_path, lyrics_file):
 
     pattern = re.compile(r"(\[.*?\])\s*(.*?)(?=\n\[|\Z)", re.DOTALL)
     text = re.sub(r'\(.*?\)', '', text)
@@ -997,17 +997,12 @@ def create_lyrics(text):
         else:
             lyrics += item["text"]
     
-    audio_path = 'static/mp3_file.mp3'
-    vocal_path = 'static/vocal.mp3'
-    no_vocal_path = 'static/no_vocal.mp3'
-    
-    lyrics_file = 'static/lyrics.txt'
     
     with open(lyrics_file, "w", encoding="utf-8") as file:
         file.write(lyrics)  
     
     
-    words_timestamps  = adiou_to_time_text(audio_path, lyrics_file)
+    words_timestamps  = audio_to_time_text(audio_path, lyrics_file)
     
     start, end = 0.0, 0.0
     
@@ -1184,7 +1179,7 @@ def process_song(model_response):
 class Video:
     """Video object"""
 
-    def __init__(self, prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language):
+    def __init__(self, prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language, project_folder):
         self.selected_images = selected_images
         self.txt_file = txt_file
         self.font = font
@@ -1219,10 +1214,12 @@ class Video:
         self.effects = effects
         self.videos = []
 
-        self.video_path = "video/video.mp4"
-        self.video_with_audio_path = "video/video_with_audio.mp4"
+        self.project_folder = project_folder
 
-        self.audio = Audio("static/mp3_file.mp3")
+        self.video_path = os.path.join(project_folder, "video/video.mp4")
+        self.video_with_audio_path = os.path.join(project_folder,"video/video_with_audio.mp4")
+
+        self.audio = Audio(os.path.join(project_folder,"mp3_file.mp3"))
         
     def create(self, new_videos=True):
         """Create video from images"""
@@ -1232,7 +1229,8 @@ class Video:
     
                 payload = {
                     'image_path': image_path,
-                    'duration': t[1] - t[0]
+                    'duration': t[1] - t[0],
+                    'project_folder': self.project_folder,
                 }
                 response = requests.post("http://127.0.0.1:6000/process_images", json=payload)
                 video_url = response.json().get('video_url')
@@ -1378,8 +1376,8 @@ class Video:
 class Subtitles:
     """Subtitles object"""
     
-    def __init__(self, audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size):
-        self.ttml_words = adiou_to_time_text(audio_path, lyrics_file)
+    def __init__(self, audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size, path):
+        self.ttml_words = audio_to_time_text(audio_path, lyrics_file)
 
         with open(lyrics_file, "r", encoding="utf-8") as f:
             text = f.read()
@@ -1390,7 +1388,7 @@ class Subtitles:
         self.lyrics = text
         self.translate_lyrics = ""
         
-        self.path = "static/subtitles.ass"
+        self.path = path
         self.font = font
         self.font_path = font_path
         self.font_color_1 = font_color_1
