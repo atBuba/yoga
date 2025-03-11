@@ -21,7 +21,12 @@ def create_project_folder():
     images_folder = os.path.join(project_folder, "images")
     videos_folder = os.path.join(project_folder, "videos")
     video_folder = os.path.join(project_folder, "video")
+    audio_folder = os.path.join(project_folder, "audio")
     os.makedirs(project_folder, exist_ok=True)
+    os.makedirs(images_folder, exist_ok=True)
+    os.makedirs(videos_folder, exist_ok=True)
+    os.makedirs(video_folder, exist_ok=True)
+    os.makedirs(audio_folder, exist_ok=True)
     return project_folder
 
 def save_state(state, filename="state.json", project_folder=None):
@@ -72,15 +77,36 @@ if "prompts_data" not in st.session_state:
 if "final_video" not in st.session_state:
     st.session_state["final_video"] = None
 
+# Инициализация selected_project в st.session_state
+if "selected_project" not in st.session_state:
+    st.session_state["selected_project"] = None
+
 # Sidebar для выбора проекта
 st.sidebar.title("Проекты")
 existing_projects = [d for d in os.listdir() if d.startswith("project_")]
-selected_project = st.sidebar.selectbox("Выберите проект", ["Создать новый"] + existing_projects, index=None, placeholder="Выберите проект...", label_visibility="collapsed")
 
-# Обновление project_folder и загрузка состояния
+# Определяем index для st.selectbox на основе текущего выбранного проекта
+if st.session_state["selected_project"] == "Создать новый":
+    index = 0  # "Создать новый" — первый элемент списка
+elif st.session_state["selected_project"] in existing_projects:
+    index = existing_projects.index(st.session_state["selected_project"]) + 1  # +1 из-за "Создать новый"
+else:
+    index = None
+
+selected_project = st.sidebar.selectbox(
+    "Выберите проект",
+    ["Создать новый"] + existing_projects,
+    index=index,
+    placeholder="Выберите проект...",
+    label_visibility="collapsed"
+)
+
+# Обновление project_folder и selected_project
 if selected_project:
     if selected_project == "Создать новый":
-        st.session_state["project_folder"] = create_project_folder()
+        new_project_folder = create_project_folder()
+        st.session_state["project_folder"] = new_project_folder
+        st.session_state["selected_project"] = new_project_folder  # Сохраняем новый проект как выбранный
         # Инициализация состояния для нового проекта
         st.session_state["openai_model"] = "Qwen2.5-72B-Instruct"
         st.session_state.messages = []
@@ -89,6 +115,7 @@ if selected_project:
         st.session_state["final_video"] = None
     elif selected_project != st.session_state["project_folder"]:
         st.session_state["project_folder"] = selected_project
+        st.session_state["selected_project"] = selected_project  # Обновляем выбранный проект
         initial_state = load_state(project_folder=st.session_state["project_folder"])
         if initial_state:
             for key, value in initial_state.items():
@@ -100,7 +127,7 @@ if selected_project:
             st.session_state["current_page"] = "main"
             st.session_state.prompts_data = []
             st.session_state["final_video"] = None
-
+            
 # Инициализация role_message, если его нет
 if "role_message" not in st.session_state:
     st.session_state.role_message = (
@@ -188,9 +215,9 @@ def button_create_videos(prompts_data, selected_images, font, font_path, font_co
     print("НАААЧААЛИ!!!!")
     status = st.empty()
 
-    audio_path = os.path.join(project_folder, "mp3_file.mp3")
-    vocal_path = os.path.join(project_folder, "vocal.mp3")
-    no_vocal_path = os.path.join(project_folder, "no_vocal.mp3")
+    audio_path = os.path.join(project_folder, "audio/mp3_file.mp3")    
+    vocal_path = os.path.join(project_folder, "audio/vocal.mp3")
+    no_vocal_path = os.path.join(project_folder, "audio/no_vocal.mp3")
     lyrics_file = os.path.join(project_folder, "lyrics.txt")
 
     font_size = 60
@@ -236,7 +263,7 @@ else:
         
         mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
         if mp3_file is not None:
-            audio_path = os.path.join(st.session_state["project_folder"], "mp3_file.mp3")
+            audio_path = os.path.join(st.session_state["project_folder"], "audio/mp3_file.mp3")
             with open(audio_path, "wb") as f:
                 f.write(mp3_file.read())
                 
@@ -295,9 +322,6 @@ else:
         os.makedirs(images_folder, exist_ok=True)
         
         model_response = st.session_state.messages[-1]["content"]
-        with open(os.path.join(st.session_state["project_folder"], "text.txt"), "w", encoding="utf-8") as f:
-            f.write(model_response)
-        txt_file = os.path.join(st.session_state["project_folder"], "text.txt")
 
         col1, col2 = st.columns([1, 1])
         with col1:

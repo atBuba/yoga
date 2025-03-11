@@ -38,7 +38,7 @@ def align_audio_text():
         # Получаем файлы из запроса
         data = request.get_json()
         audio_path = data.get("audio_path")
-        folder_name = os.path.basename(os.path.dirname(audio_path))
+        folder_name = os.path.dirname(audio_path)
         text_path = data.get("text_path")
         language = data.get("language", "iso")
         print(audio_path, text_path, language)
@@ -56,13 +56,12 @@ def align_audio_text():
         # Пути к входным и выходным файлам
         output_folder = "separated/mdx_extra_q/mp3_file"
         
-        
-        # Перемещение файлов
-        shutil.move(os.path.join(output_folder, "vocals.mp3"), os.path.join(folder_name, "vocal.mp3"))
-        shutil.move(os.path.join(output_folder, "no_vocals.mp3"), os.path.join(folder_name, "no_vocal.mp3"))
-
         vocal_path =  os.path.join(folder_name, "vocal.mp3")
         no_vocal_path = os.path.join(folder_name, "no_vocal.mp3")
+        
+        # Перемещение файлов
+        shutil.move(os.path.join(output_folder, "vocals.mp3"), vocal_path)
+        shutil.move(os.path.join(output_folder, "no_vocals.mp3"), no_vocal_path) 
         
 
 
