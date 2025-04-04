@@ -259,6 +259,16 @@ if st.session_state["project_folder"] is None:
     st.warning("Пожалуйста, выберите проект или создайте новый в боковой панели.")
 else:
     if st.session_state["current_page"] == "main":
+
+        video_type = st.selectbox(
+            "Выбирите вид Lyrics-виде",
+            ("с изоражениями", "без изображений"),
+        )
+
+        if video_type == "без изображений":
+            st.session_state["current_page"] = "only-text"
+            st.rerun()
+        
         st.title("Создание слайд-шоу для песни")
         
         mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
@@ -507,6 +517,135 @@ else:
         if st.button("Вернуться на главную"):
             st.session_state["current_page"] = "main"
             st.rerun()
+
+
+    elif st.session_state["current_page"] == "only-text":
+        video_type = st.selectbox(
+            "Выбирите вид Lyrics-виде",
+            ("с изоражениями", "без изображений"),
+        )
+
+        if video_type == "c изображений":
+            st.session_state["current_page"] = "main"
+            st.rerun()
+        
+        st.title("Создание слайд-шоу для песни")
+        
+        mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
+        if mp3_file is not None:
+            audio_path = os.path.join(st.session_state["project_folder"], "audio/mp3_file.mp3")
+            with open(audio_path, "wb") as f:
+                f.write(mp3_file.read())
+                
+        txt_file = st.file_uploader("Upload a TXT file with lyrics", type=["txt"])
+        if txt_file is not None:
+            text = txt_file.read().decode("utf-8")
+            lyrics_file = os.path.join(st.session_state["project_folder"], "lyrics.txt") 
+
+            pattern = re.compile(r"(\[.*?\])\s*(.*?)(?=\n\[|\Z)", re.DOTALL)
+            text = re.sub(r'\(.*?\)', '', text)
+            
+            parsed_lyrics = [
+                {"text": line.strip(), "section": match[0].strip("[]")}
+                for match in pattern.findall(text)
+                for line in match[1].strip().split("\n") if line.strip()
+            ]
+            
+            lyrics = ""
+            
+            # Вывод результата
+            for i, item in enumerate(parsed_lyrics):
+                if i + 1 != len(parsed_lyrics):
+                    lyrics += item["text"] + "\n"
+                else:
+                    lyrics += item["text"]
+        
+            with open(lyrics_file, "w", encoding="utf-8") as f:
+                f.write(lyrics)
+
+        fonts_path = {
+            'Balkara Free Condensed - npoekmu.me': 'font/ofont.ru_BalkaraCondensed.ttf',
+            'Manrope': 'font/ofont.ru_Manrope.ttf',
+            'Kaph': 'font/ofont.ru_Kaph.ttf',
+            'BOWLER': 'font/ofont.ru_Bowler.ttf',
+            'Handelson Five_CYR': 'font/18035.otf',
+            'Garamond': 'font/Garamond-Garamond-Regular.ttf',
+            'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf',
+        }
+
+        languages = {
+            'Русский': 'ru',
+            'Английский': 'en',
+            'Китайский': 'zh',
+        }
+        
+        phonograms = ['Плюс-фонограмма', 'Минус-фонограмма']
+
+        language = st.selectbox('Выберите язык субтитров', list(languages.keys()))
+        language = languages[language]
+
+        if language == 'zh':
+            font = st.selectbox("Выберите шрифт:", list({'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf'}.keys()))
+        else:
+            font = st.selectbox("Выберите шрифт:", list(fonts_path.keys()))
+        font_path = fonts_path.get(font)
+
+        audio_type = st.selectbox("Выберите вид фонограммы:", phonograms)
+
+        if font_path:
+            sample_text = "Съешь ещё этих мягких французских булок, да выпей чаю"
+            img = create_text_image(sample_text, font_path)
+            st.image(img, use_container_width=True)
+        else:
+            st.error("Шрифт не найден!")
+
+        font_color_1 = "#FFFFFF"
+        font_color_2 = "#FFFFFF" 
+        font_size = 48
+
+        subtitels_path = os.path.join(st.session_state["project_folder"], "subtitles.srt")
+                
+        if st.button("Создать файл с субтитрами") and mp3_file and txt_file:
+            subtitels = Subtitles(audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size, subtitels_path)
+            if language != subtitels.text_language:
+                subtitels.translate(language)
+                
+            subtitels.create_srt()
+
+        if os.path.exists(subtitels_path):
+            # Чтение содержимого файла
+            with open(subtitels_path, "r", encoding="utf-8") as f:
+                srt_content = f.read()
+            
+            # Отображение содержимого файла .srt в текстовом поле для редактирования
+            edited_srt = st.text_area("Редактировать субтитры (.srt)", srt_content, height=300)
+            
+            # Кнопка для сохранения изменений
+            if st.button("Сохранить изменения"):
+                with open(subtitels_path, "w", encoding="utf-8") as f:
+                    f.write(edited_srt)
+
+        if st.button("Создать видео"):
+            manim_script_path = "/yoga/lyrics_speaker.py"  # Укажите путь к вашему Manim-скрипту
+            video_output_path = os.path.join(st.session_state["project_folder"], "video.mp4")
+            print(subtitels_path)
+            # Запускаем Manim для создания видео
+            try:
+                subprocess.run([
+                    "manim", manim_script_path, subtitels_path,
+                    # "-o", video_output_path,
+                    # "--format=mp4"
+                ], check=True)
+        
+                # Проверяем, создано ли видео
+                if os.path.exists(video_output_path):
+                    st.success("Видео успешно создано!")
+                    st.video(video_output_path)
+                else:
+                    st.error("Не удалось создать видео.")
+            except subprocess.CalledProcessError:
+                st.error("Ошибка при запуске Manim. Убедитесь, что Manim установлен и путь к скрипту верный.")
+       
 
 # Кнопки в sidebar
 if st.sidebar.button("Сохранить и выйти"):

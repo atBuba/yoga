@@ -1396,7 +1396,7 @@ class Subtitles:
         self.font_size = font_size
         
 
-    def create(self):
+    def create_ass(self):
         header = f"""[Script Info]
 Title: Karaoke Lyrics
 ScriptType: v4.00+
@@ -1450,6 +1450,60 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         
             with open(self.path, "w", encoding="utf-8") as f:
                 f.write(header + "\n".join(events))
+
+                
+    def create_srt(self):
+        # Вспомогательная функция для форматирования времени в формат .srt
+        def format_srt_time(seconds):
+            hours = int(seconds // 3600)
+            minutes = int((seconds % 3600) // 60)
+            secs = int(seconds % 60)
+            millis = int((seconds - int(seconds)) * 1000)
+            return f"{hours:02}:{minutes:02}:{secs:02},{millis:03}"
+    
+        # Разделяем оригинальные тексты на строки
+        original_lines = self.lyrics.split("\n")
+        
+        # Если есть переведённые тексты, используем их; иначе используем оригинальные
+        if self.translate_lyrics != "":
+            translated_lines = self.translate_lyrics.split("\n")
+        else:
+            translated_lines = original_lines
+    
+        # Инициализируем переменные
+        subtitle_number = 1  # Порядковый номер субтитра
+        j = 0  # Индекс слова в self.ttml_words
+        srt_entries = []  # Список записей .srt
+    
+        # Проходим по каждой строке оригинальных текстов
+        for i, line in enumerate(original_lines):
+            print(line)
+            words = line.split()  # Разделяем строку на слова
+            num_words = len(words)
+    
+            # Время начала — время первого слова, время конца — время последнего слова
+            start_time = self.ttml_words[j]['start']
+            end_time = self.ttml_words[j + num_words - 1]['end']
+            
+            # Текст субтитра: берём переведённую строку, если есть, иначе оригинальную
+            subtitle_text = translated_lines[i].strip()  # Убираем лишние пробелы
+    
+            # Форматируем время
+            start_str = format_srt_time(start_time)
+            end_str = format_srt_time(end_time)
+    
+            # Создаём запись в формате .srt
+            srt_entry = f"{subtitle_number}\n{start_str} --> {end_str}\n{subtitle_text}\n"
+            srt_entries.append(srt_entry)
+    
+            # Увеличиваем счётчики
+            subtitle_number += 1
+            j += num_words
+    
+        # Записываем все записи в файл
+        with open(self.path, "w", encoding="utf-8") as f:
+            f.write("\n".join(srt_entries))
+                
 
     def translate(self, language):
         self.translate_lyrics = translate_text(self.lyrics, language)

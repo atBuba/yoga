@@ -12,7 +12,9 @@ from datetime import timedelta
 import subprocess
 from time import sleep
 from fontTools.ttLib import TTFont
-
+from test import *
+import streamlit as st
+import shutil
 
 # token for yandex translate 
 IAM_TOKEN = 'AQVNzbPNKEeoixhfHLFZavVdM66AJ23Ow4zFkKwQ'
@@ -608,10 +610,6 @@ def format_time(seconds):
     # Форматируем время с часами, минутами, секундами и миллисекундами
     return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
 
-
-    # Форматируем время с часами, минутами, секундами и миллисекундами
-    return f"{int(hours):0>2}:{int(minutes):0>2}:{int(seconds):0>2}.{int(milliseconds * 1000):03}"[:-1:]
-
 def  create_subtitles_2(input_video, subtitles_file, output_video):
     command = [
             "ffmpeg",
@@ -663,7 +661,7 @@ def add_effect(video, effect):
 
 
 # Функция для создания команды FFmpeg
-def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_videos, effects_next, fade_duration=0.2):
+def concatenate_videos(video_files, output_file, effects_next, fade_duration=0.2):
     print('Создание видео со склейкой и эффектом появления (fade in)')
     
     filter_complex_parts = []
@@ -708,7 +706,7 @@ def concatenate_videos(video_files, output_file, overlay_videos, short_overlay_v
             dd += float(video_duration)
             
     if len(durations):
-        apply_chromakey_with_overlays(output_file, overlay_videos, short_overlay_videos, durations,)
+        apply_chromakey_with_overlays(output_file, durations,)
 
 
 def get_video_duration(video_file):
@@ -718,7 +716,7 @@ def get_video_duration(video_file):
 
 
 
-def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_videos, durations):
+def apply_chromakey_with_overlays(base_video, durations):
     # Выходное видео сохраняется с тем же именем
     temp_file = "videos/temp.mp4"
 
@@ -733,7 +731,6 @@ def apply_chromakey_with_overlays(base_video, overlay_videos, short_overlay_vide
 
     duration = 0 
     for i, dur in enumerate(durations):
-        
         if dur[0]:
             time = get_video_duration(dur[0])
             if time > 3.0:
@@ -979,3 +976,545 @@ def adjust_video_duration(video_path, required_duration):
         # Trim to required duration
         extended_clip = clip.subclip(0, required_duration)
     return extended_clip
+
+def create_lyrics(text, audio_path, lyrics_file):
+
+    pattern = re.compile(r"(\[.*?\])\s*(.*?)(?=\n\[|\Z)", re.DOTALL)
+    text = re.sub(r'\(.*?\)', '', text)
+    
+    parsed_lyrics = [
+        {"text": line.strip(), "section": match[0].strip("[]")}
+        for match in pattern.findall(text)
+        for line in match[1].strip().split("\n") if line.strip()
+    ]
+    
+    lyrics = ""
+    
+    # Вывод результата
+    for i, item in enumerate(parsed_lyrics):
+        if i + 1 != len(parsed_lyrics):
+            lyrics += item["text"] + "\n"
+        else:
+            lyrics += item["text"]
+    
+    
+    with open(lyrics_file, "w", encoding="utf-8") as file:
+        file.write(lyrics)  
+    
+    
+    words_timestamps  = audio_to_time_text(audio_path, lyrics_file)
+    
+    start, end = 0.0, 0.0
+    
+    number_word = 0
+    
+    for item in parsed_lyrics:
+        start = words_timestamps[number_word]['start']
+            
+        end = words_timestamps[number_word + len(item['text'].split()) - 1]['end']
+    
+        number_word += len(item['text'].split())   
+    
+        item['start'] = start 
+        item["end"] = end
+
+    
+    frames = []
+
+
+    if parsed_lyrics[0]['start']  > 5.0:
+        first_frame = {
+            'start' : 0.0,
+            'end' : parsed_lyrics[0]['start'],
+            'text' : '-',
+            'section' : '[intro]',
+        }
+        number_line = 0
+    else:
+        first_frame = {
+            'start' : 0.0,
+            'end' : parsed_lyrics[0]['end'],
+            'text' : parsed_lyrics[0]['text'],
+            'section' : parsed_lyrics[0]['section'],
+        }
+        number_line = 1
+    
+    frame_start = first_frame['start']
+    frame_end = first_frame['end']
+    frame_text = first_frame['text']
+    frame_section = first_frame['section']
+    
+    while number_line < len(parsed_lyrics):
+    
+        if ((frame_end - frame_start) > 10.0) and (frame_text == '-'):
+            div = 2
+            while ((frame_end - frame_start) / (div + 1)) > 5.0:
+                div += 1
+            dur = (frame_end - frame_start) / (div)
+            for i in range(div):
+                frames.append({
+                    'start' : frame_start + i * dur,
+                    'end' : frame_start + (i + 1) * dur,
+                    'text' : frame_text,
+                    'section' : frame_section,
+                })
+                
+            if parsed_lyrics[number_line]['start'] - frame_end < 5.0: 
+                frame_start = parsed_lyrics[number_line]['start'] 
+                frame_end = parsed_lyrics[number_line]['end']
+                frame_text = parsed_lyrics[number_line]['text']
+                frame_section = parsed_lyrics[number_line]['section']
+    
+                number_line += 1
+            else: 
+                frame_end = parsed_lyrics[number_line]['start']
+                frame_text = '-'
+                frame_section = '[break]'
+            
+                
+        elif ((frame_end - frame_start) < 5.0) and (frame_text != '-'):
+            if frame_section == parsed_lyrics[number_line]['section']:
+                frame_end = parsed_lyrics[number_line]['end']
+                frame_text += '\n' + parsed_lyrics[number_line]['text']
+                number_line += 1
+            else: 
+                frames.append({
+                    'start' : frame_start,
+                    'end' : frame_end,
+                    'text' : frame_text,
+                    'section' : frame_section,
+                })
+    
+                frame_start = frame_end
+    
+                if parsed_lyrics[number_line]['start'] - frame_end < 5.0: 
+                    frame_end = parsed_lyrics[number_line]['end']
+                    frame_text = parsed_lyrics[number_line]['text']
+                    frame_section = parsed_lyrics[number_line]['section']
+    
+                    number_line += 1
+                else: 
+                    frame_end = parsed_lyrics[number_line]['start']
+                    frame_text = '-'
+                    frame_section = '[break]'
+    
+        else:
+            frames.append({
+                'start' : frame_start,
+                'end' : frame_end,
+                'text' : frame_text,
+                'section' : frame_section,
+            })
+    
+            frame_start = frame_end
+    
+            if parsed_lyrics[number_line]['start'] - frame_end < 5.0: 
+                frame_end = parsed_lyrics[number_line]['end']
+                frame_text = parsed_lyrics[number_line]['text']
+                frame_section = parsed_lyrics[number_line]['section']
+    
+                number_line += 1
+            else: 
+                frame_end = parsed_lyrics[number_line]['start']
+                frame_text = '-'
+                frame_section = '[break]'
+    
+    frames.append({
+        'start' : frame_start,
+        'end' : frame_end,
+        'text' : frame_text,
+        'section' : frame_section,
+    })
+
+    full_respones = '' 
+
+    for item in frames:
+        full_respones += format_time(item['start']) + ','
+        full_respones += format_time(item['end']) + ','
+        full_respones += item['text'] + ','
+        full_respones += item['section'] + '\n\n'
+
+    return full_respones
+
+def create_text_image(text, font_path, font_size=24):
+        '''A function for creating an image with text'''
+        try:
+            # Загружаем шрифт
+            font = ImageFont.truetype(font_path, font_size)
+        except Exception as e:
+            st.error(f"Ошибка загрузки шрифта: {e}")
+            return None
+        
+        # Определяем размер текста
+        image_width = 1050
+        image_height = 100
+        
+        # Создаем изображение
+        img = Image.new('RGB', (image_width, image_height), color=(255, 255, 255))
+        draw = ImageDraw.Draw(img)
+        
+        # Рисуем текст
+        draw.text((10, 10), text, font=font, fill=(0, 0, 0))
+        return img
+
+def process_song(model_response):
+    """Process song text and generate structured prompts."""
+    
+     # Преобразуйте ответ в структурированный формат
+    pattern = r"\*\*Frame\*\*:\s+(.+?)\n\*\*Part of the song\*\*:\s+(.+?)\n\*\*Text\*\*:\s+(.+?)\n\*\*Prompt for the image generating model\*\*:\s+(.+?)(?=\n\n|\Z)"
+    matches = re.findall(pattern, model_response, re.S)
+
+    
+    prompts_translated = []
+    for match in matches:
+        shot = match[0].strip()
+        part = match[1].strip()
+        lyrics = match[2].strip()
+        prompt = match[3].strip()
+        prompts_translated.append({"lyrics": lyrics, 'part': part, 'shot': shot, "prompt": prompt, "image_url": [], 'effect': None, 'effects_next': None})
+
+    return prompts_translated
+
+
+class Video:
+    """Video object"""
+
+    def __init__(self, prompts_data, selected_images, txt_file, font, font_path, selected_color_1, selected_color_2, audio_type, language, project_folder):
+        self.selected_images = selected_images
+        self.txt_file = txt_file
+        self.font = font
+        self.font_path = font_path
+        self.selected_color_1 = selected_color_1
+        self.selected_color_2 = selected_color_2
+        self.audio_type = audio_type
+        self.language = language
+
+        time = [] # список временных меток кадров 
+        effects_next = [] # список выбранных эффектов перехода на следующее видео 
+        effects = [] # список выбранных эффектов поверх видео 
+        
+        # Перевод времени из формата XX:XX:XX в секунды и получение название эффекта перехода 
+        for i in range(len(prompts_data)):
+            effects_next.append(prompts_data[i]['effects_next'])
+            effects.append(prompts_data[i]['effect'])
+            t = prompts_data[i]['shot'].split('-') 
+            if i == 0:
+                start = t[0].split(':')
+                end = t[1].split(':')
+                start_second = float(start[0]) * 3600 + float(start[1]) * 60 + float(start[2])
+                end_second = float(end[0]) * 3600 + float(end[1]) * 60 + float(end[2])
+                time.append([start_second, end_second])
+            else:
+                end = t[1].split(':')
+                end_second = float(end[0]) * 3600 + float(end[1]) * 60 + float(end[2])
+                time.append([time[i-1][1], end_second])
+                
+        self.time = time
+        self.effects_next = effects_next
+        self.effects = effects
+        self.videos = []
+
+        self.project_folder = project_folder
+
+        self.video_path = os.path.join(project_folder, "video/video.mp4")
+        self.video_with_audio_path = os.path.join(project_folder,"video/video_with_audio.mp4")
+
+        self.audio = Audio(os.path.join(project_folder,"mp3_file.mp3"))
+        
+    def create(self, new_videos=True):
+        """Create video from images"""
+        if new_videos:
+            self.videos = []
+            for image_path, t , effect in zip(self.selected_images, self.time, self.effects):  
+    
+                payload = {
+                    'image_path': image_path,
+                    'duration': t[1] - t[0],
+                    'project_folder': self.project_folder,
+                }
+                response = requests.post("http://127.0.0.1:6000/process_images", json=payload)
+                video_url = response.json().get('video_url')
+        
+                if effect:
+                    add_effect(video_url, effect)
+                self.videos.append(video_url)
+
+            
+     
+        filter_complex_parts = []
+        input_files = []
+        fade_duration = 0.2
+        
+        for i, video in enumerate(self.videos):
+            input_files.extend(["-i", video])
+            filter_complex_parts.append(
+                f"[{i}:v]fade=t=in:st=0:d={fade_duration}[v{i}]"
+            )
+        
+        video_streams = "".join(f"[v{i}]" for i in range(len(self.videos)))
+        filter_complex = ";".join(filter_complex_parts) + f";{video_streams}concat=n={len(self.videos)}:v=1:a=0[outv]"
+        
+        command = [
+            "ffmpeg",
+            *input_files,
+            "-filter_complex", filter_complex,
+            "-map", "[outv]",  
+            "-c:v", "libx264",
+            "-preset", "fast",
+            "-y", self.video_path
+        ]
+
+        # объединяем короткие видео в одно с эффектом Fade-in
+        subprocess.run(command, shell=False, check=True)
+    
+        effect_next_time = []
+        dd = 0
+        for i in range(len(self.videos) - 1):
+            video_duration = get_video_duration(self.videos[i])
+            if self.effects_next[i]: 
+                effect_next_time.append([self.effects_next[i], dd + float(video_duration)])    
+                dd = 0
+                
+            else: 
+                dd += float(video_duration)
+
+        # добавление эффектов переходов 
+        if len(effect_next_time):
+    
+            # Выходное видео сохраняется с тем же именем
+            temp_file = "videos/temp.mp4"
+        
+            filter_complex = []
+            inputs = [f'-i {self.video_path}']
+            for i, dur in enumerate(effect_next_time):
+                if dur[0]:
+                    inputs.append(f'-i {dur[0]}')
+        
+            
+            overlay_streams = []
+        
+            duration = 0 
+            for i, dur in enumerate(effect_next_time):
+                if dur[0]:
+                    time = get_video_duration(dur[0])
+                    if time > 3.0:
+                        tr = f'tr{i}'
+                        over = f'over{i}'
+                        delay = duration + effect_next_time[i][1] - 2.0  
+                        duration += dueffect_next_timerations[i][1]
+                        filter_complex.append(
+                            f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
+                        )
+                        overlay_streams.append(tr)
+                    else:
+                        tr = f'tr{i}'
+                        over = f'over{i}'
+                        delay = duration + effect_next_time[i][1] - 0.6
+                        duration += effect_next_time[i][1]
+                        filter_complex.append(
+                            f'[{i+1}:v]setpts=PTS+{delay}/TB[{tr}]'
+                        )
+                        overlay_streams.append(tr)   
+                    
+            base = '[0:v]'
+            for i, over in enumerate(overlay_streams):
+                output = f'base{i+1}' if i < len(overlay_streams) - 1 else 'v'
+                filter_complex.append(f'{base}[{over}]overlay[{output}]')
+                base = f'[{output}]'
+            
+            filter_complex_str = '; '.join(filter_complex)
+            
+            command = [
+                'ffmpeg',
+                *inputs,
+                '-filter_complex', f'"{filter_complex_str}"',
+                '-map', '[v]',
+                '-c:v', 'libx264',
+                '-c:a', 'aac',
+                '-preset', 'fast',
+                '-y', temp_file  # Перезаписываем исходный файл
+            ]
+            
+            subprocess.run(' '.join(command), shell=True)
+        
+            os.replace(temp_file, self.video_path)
+
+    def add_subtitels(self, subtitels_path):
+        temp_file = "video/temp.mp4"
+        command = [
+            "ffmpeg",
+            "-i", self.video_path,
+            "-vf", f"ass={subtitels_path}",
+            '-y',
+            temp_file,
+        ]
+
+        # Запуск команды FFmpeg
+        subprocess.run(command, check=True)
+        
+        os.replace(temp_file, self.video_path)
+    
+        
+    def add_audio(self, audio_path=None):
+        if audio_path:
+            self.audio = Audio(audio_path)
+        command = [
+            'ffmpeg', 
+            '-i', self.video_path,      # Видео файл
+            '-i', self.audio.path,      # Обрезанный аудио файл
+            '-c:v', 'copy',        # Копирование видео без изменений
+            '-c:a', 'aac',         # Используем кодек AAC для аудио
+            '-strict', 'experimental',  # Для использования нестандартных кодеков
+            '-y',                  # Перезаписываем файл без подтверждения
+            self.video_with_audio_path,  # Выходной файл
+        ]
+        
+        # Запускаем команду
+        subprocess.run(command)       
+                
+        
+class Subtitles:
+    """Subtitles object"""
+    
+    def __init__(self, audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size, path):
+        self.ttml_words = audio_to_time_text(audio_path, lyrics_file)
+
+        with open(lyrics_file, "r", encoding="utf-8") as f:
+            text = f.read()
+       
+        self.text_language = detect_language(text[:999:]) 
+        self.select_language = self.text_language
+
+        self.lyrics = text
+        self.translate_lyrics = ""
+        
+        self.path = path
+        self.font = font
+        self.font_path = font_path
+        self.font_color_1 = font_color_1
+        self.font_color_2 =font_color_2
+        self.font_size = font_size
+        
+
+    def create_ass(self):
+        header = f"""[Script Info]
+Title: Karaoke Lyrics
+ScriptType: v4.00+
+PlayResX: {1280}
+PlayResY: {720}
+Collisions: Normal
+PlayDepth: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,{self.font},{self.font_size},&H00{self.font_color_1},&H00{self.font_color_2},&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,3,0,2,10,10,10,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+        events = []
+        j = 0
+        lines = self.lyrics.split("\n")
+
+        if self.translate_lyrics == "":
+            for line in lines:
+                start_time, end_time = self.ttml_words[j]['start'] - 0.4, self.ttml_words[j + len(line.split()) - 1]['end']
+                duration_clip= end_time - start_time
+                    
+                karaoke_line = ""
+                for i in range(j, j + len(line.split())):
+                    if i != j:
+                        duration = (self.ttml_words[i]['end'] - self.ttml_words[i - 1]['end']) * 100  # duration in centiseconds
+                        karaoke_line += f"{{\\kf{int(duration)}}}{self.ttml_words[i]['text']} "               
+                    else:
+                        duration = (self.ttml_words[i]['end'] - start_time) * 100  # duration in centiseconds
+                        karaoke_line += f"{{\\fad(400,0)\\an2\\kf{int(duration)}}}{self.ttml_words[i]['text']} "
+        
+                events.append(f"Dialogue: 0,{format_time(start_time)},{format_time(end_time)},Default,,0,0,0,,{karaoke_line.strip()}")
+                j += len(line.split())
+        
+            with open(self.path, "w", encoding="utf-8") as f:
+                f.write(header + "\n".join(events))
+
+        else:
+            print(self.translate_lyrics)
+            translate_lyrics = self.translate_lyrics.split('\n')
+            effects = [apply_fade_in, apply_scale_up, apply_word_fade_in, apply_word_fly_in, apply_letter_fly_in]  # Список эффектов
+            
+            for i, line in enumerate(lines):
+                start_time, end_time = self.ttml_words[j]['start'] - 0.4, self.ttml_words[j + len(line.split()) - 1]['end'] - 0.2
+                effect_func = random.choice(effects)  # Выбираем случайный эффект
+                effect_text = effect_func(translate_lyrics[i], self.font_size, self.font_path, start_time, end_time)  # Применяем эффект
+                events.append(f"{effect_text}")
+                j += len(line.split())
+        
+            with open(self.path, "w", encoding="utf-8") as f:
+                f.write(header + "\n".join(events))
+
+                
+    def create_srt(self):
+        # Вспомогательная функция для форматирования времени в формат .srt
+        def format_srt_time(seconds):
+            hours = int(seconds // 3600)
+            minutes = int((seconds % 3600) // 60)
+            secs = int(seconds % 60)
+            millis = int((seconds - int(seconds)) * 1000)
+            return f"{hours:02}:{minutes:02}:{secs:02},{millis:03}"
+    
+        # Разделяем оригинальные тексты на строки
+        original_lines = self.lyrics.split("\n")
+        
+        # Если есть переведённые тексты, используем их; иначе используем оригинальные
+        if self.translate_lyrics != "":
+            translated_lines = self.translate_lyrics.split("\n")
+        else:
+            translated_lines = original_lines
+    
+        # Инициализируем переменные
+        subtitle_number = 1  # Порядковый номер субтитра
+        j = 0  # Индекс слова в self.ttml_words
+        srt_entries = []  # Список записей .srt
+    
+        # Проходим по каждой строке оригинальных текстов
+        for i, line in enumerate(original_lines):
+            print(line)
+            words = line.split()  # Разделяем строку на слова
+            num_words = len(words)
+    
+            # Время начала — время первого слова, время конца — время последнего слова
+            start_time = self.ttml_words[j]['start']
+            end_time = self.ttml_words[j + num_words - 1]['end']
+            
+            # Текст субтитра: берём переведённую строку, если есть, иначе оригинальную
+            subtitle_text = translated_lines[i].strip()  # Убираем лишние пробелы
+    
+            # Форматируем время
+            start_str = format_srt_time(start_time)
+            end_str = format_srt_time(end_time)
+    
+            # Создаём запись в формате .srt
+            srt_entry = f"{subtitle_number}\n{start_str} --> {end_str}\n{subtitle_text}\n"
+            srt_entries.append(srt_entry)
+    
+            # Увеличиваем счётчики
+            subtitle_number += 1
+            j += num_words
+    
+        # Записываем все записи в файл
+        with open(self.path, "w", encoding="utf-8") as f:
+            f.write("\n".join(srt_entries))
+                
+
+    def translate(self, language):
+        self.translate_lyrics = translate_text(self.lyrics, language)
+        self.select_language = language
+        
+class Audio:
+    """Audio object"""
+    
+    def __init__(self, path):
+        self.path = path
+
+
+
+
