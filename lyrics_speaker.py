@@ -54,13 +54,13 @@ def parse_srt(file_path):
 
     return lyrics
 
-def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOLD", stroke_width=2, stroke_color=BLACK):
+def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOLD", stroke_width=2, stroke_color=BLACK, font=""):
     """
     Принимает текст, разбивает его на строки с учетом max_width,
     и увеличивает масштаб каждой строки, если она меньше target_width.
     Возвращает VGroup с отмасштабированными строками.
     """
-    text_obj = Text(text, weight=weight, color=color).scale(1.0)
+    text_obj = Text(text, weight=weight, color=color, font=font).scale(1.0)
     
     if text_obj.width > max_width:
         words = text.split()
@@ -69,7 +69,7 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
         current_width = 0
         
         for word in words:
-            word_obj = Text(word, weight=weight, color=color).scale(1.0)
+            word_obj = Text(word, weight=weight, color=color, font=font).scale(1.0)
             if current_width + word_obj.width + 0.2 > max_width:
                 lines.append(current_line.rstrip())
                 current_line = word + " "
@@ -83,7 +83,7 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
 
     line_objects = []
     for i, line in enumerate(lines):
-        line_obj = Text(line, weight=weight,color=color).scale(1.0)
+        line_obj = Text(line, weight=weight,color=color, font=font).scale(1.0)
         if line_obj.width < target_width and line_obj.width != 0:
             scale_factor = target_width / line_obj.width
             line_obj.scale(scale_factor)
@@ -323,7 +323,9 @@ class LyricsSpeakerBox(ThreeDScene):
         self.set_camera_orientation(gamma=0 * DEGREES, phi=0 * DEGREES, theta=-90 * DEGREES)
 
         # Получаем путь к .srt из аргументов командной строки
-        srt_file_path = sys.argv[2]  # Первый аргумент после имени скрипта
+        srt_file_path = sys.argv[3]  # Первый аргумент после имени скрипта
+        font = sys.argv[4]  
+        
         print(srt_file_path)
         lyrics = parse_srt(srt_file_path)
 
@@ -336,7 +338,7 @@ class LyricsSpeakerBox(ThreeDScene):
             if line_text == "-":
                 text_objs.append(None)
             else:
-                adjusted_text = adjust_text_to_width(line_text, max_width, target_width, color=WHITE, weight="LIGHT")
+                adjusted_text = adjust_text_to_width(line_text, max_width, target_width, color=WHITE, weight="LIGHT", font=font)
                 text_objs.append(adjusted_text)
 
         current_time = 0.0

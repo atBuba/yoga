@@ -54,6 +54,8 @@ def translate_text(texts: str, language : str) -> str:
         json=body,
         headers=headers
     )
+    print(response.json())
+    sleep(10)
 
     return response.json()['translations'][0]['text']
 

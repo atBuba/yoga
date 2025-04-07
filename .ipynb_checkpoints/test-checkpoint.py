@@ -254,21 +254,24 @@ def button_create_videos(prompts_data, selected_images, font, font_path, font_co
     save_state(st.session_state, project_folder=st.session_state["project_folder"])
     return final_video_path
 
+
+
+
 # Логика страниц
 if st.session_state["project_folder"] is None:
     st.warning("Пожалуйста, выберите проект или создайте новый в боковой панели.")
 else:
-    if st.session_state["current_page"] == "main":
+    if  st.session_state["current_page"] == "main":
 
         video_type = st.selectbox(
-            "Выбирите вид Lyrics-виде",
-            ("с изоражениями", "без изображений"),
+            "Выберите вид Lyrics-видео",
+            ("с изображениями", "без изображений"),
         )
-
+    
         if video_type == "без изображений":
             st.session_state["current_page"] = "only-text"
             st.rerun()
-        
+                
         st.title("Создание слайд-шоу для песни")
         
         mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
@@ -519,24 +522,27 @@ else:
             st.rerun()
 
 
-    elif st.session_state["current_page"] == "only-text":
-        video_type = st.selectbox(
-            "Выбирите вид Lyrics-виде",
-            ("с изоражениями", "без изображений"),
-        )
+    elif st.session_state["current_page"] == "only-text": 
 
-        if video_type == "c изображений":
+        video_type = st.selectbox(
+            "Выберите вид Lyrics-видео",
+            ("с изображениями", "без изображений"),
+        )
+    
+        if video_type == "с изображениями":
             st.session_state["current_page"] = "main"
             st.rerun()
-        
-        st.title("Создание слайд-шоу для песни")
-        
+
+        # Общие настройки видео 
+        # Загрузка аудио
         mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
+        audio_path = os.path.join("/yoga", st.session_state["project_folder"], "audio/mp3_file.mp3")
         if mp3_file is not None:
-            audio_path = os.path.join(st.session_state["project_folder"], "audio/mp3_file.mp3")
+            
             with open(audio_path, "wb") as f:
                 f.write(mp3_file.read())
-                
+        
+        # Загрзука текста песни         
         txt_file = st.file_uploader("Upload a TXT file with lyrics", type=["txt"])
         if txt_file is not None:
             text = txt_file.read().decode("utf-8")
@@ -553,7 +559,6 @@ else:
             
             lyrics = ""
             
-            # Вывод результата
             for i, item in enumerate(parsed_lyrics):
                 if i + 1 != len(parsed_lyrics):
                     lyrics += item["text"] + "\n"
@@ -578,20 +583,25 @@ else:
             'Английский': 'en',
             'Китайский': 'zh',
         }
-        
-        phonograms = ['Плюс-фонограмма', 'Минус-фонограмма']
 
+        backgrounds = {
+            "синий" : "/yoga/background_video/vecteezy_concept-1lt-deep-blue-gradient-light-abstract-background_10884978.mov",
+            "красный" : "/yoga/background_video/vecteezy_red-gradient-liquid-smoke-background-water-surface-and_6422172.mp4" ,
+            "черный" :  "/yoga/background_video/vecteezy_4k-elegant-black-gradient-smooth-animation-background-black_32509833-1080p.mp4"
+        }
+
+        # Выбор я зыка субтитров
         language = st.selectbox('Выберите язык субтитров', list(languages.keys()))
         language = languages[language]
 
+        # Выбор отдельного вида шррифта для китайского языка 
         if language == 'zh':
             font = st.selectbox("Выберите шрифт:", list({'Huiwen ZhengKai Font (китайский шрифт)': 'font/Huiwen-ZhengKai-Font.ttf'}.keys()))
         else:
             font = st.selectbox("Выберите шрифт:", list(fonts_path.keys()))
         font_path = fonts_path.get(font)
-
-        audio_type = st.selectbox("Выберите вид фонограммы:", phonograms)
-
+            
+        # Вывод того как выглядят субтитры 
         if font_path:
             sample_text = "Съешь ещё этих мягких французских булок, да выпей чаю"
             img = create_text_image(sample_text, font_path)
@@ -599,12 +609,19 @@ else:
         else:
             st.error("Шрифт не найден!")
 
+        #выбор цвета заднего фона 
+        background_video = st.selectbox('Выберит цвет заднего фона', list(backgrounds.keys()))
+        background_video = backgrounds[background_video]
+
+        # настройки шрифта по умодлчанию 
         font_color_1 = "#FFFFFF"
         font_color_2 = "#FFFFFF" 
         font_size = 48
 
+        # Определения пути до файла с субтитрами, файла .srt
         subtitels_path = os.path.join(st.session_state["project_folder"], "subtitles.srt")
-                
+        
+        # Кнопка создать файл с субтитрами, создет субьтитры расширения .srt        
         if st.button("Создать файл с субтитрами") and mp3_file and txt_file:
             subtitels = Subtitles(audio_path, lyrics_file, font, font_path, font_color_1, font_color_2, font_size, subtitels_path)
             if language != subtitels.text_language:
@@ -612,6 +629,7 @@ else:
                 
             subtitels.create_srt()
 
+        # Создание окна для редоктирования субтитров 
         if os.path.exists(subtitels_path):
             # Чтение содержимого файла
             with open(subtitels_path, "r", encoding="utf-8") as f:
@@ -625,26 +643,92 @@ else:
                 with open(subtitels_path, "w", encoding="utf-8") as f:
                     f.write(edited_srt)
 
+        # Кнопка создания видео 
         if st.button("Создать видео"):
-            manim_script_path = "/yoga/lyrics_speaker.py"  # Укажите путь к вашему Manim-скрипту
-            video_output_path = os.path.join(st.session_state["project_folder"], "video.mp4")
-            print(subtitels_path)
-            # Запускаем Manim для создания видео
-            try:
-                subprocess.run([
-                    "manim", manim_script_path, subtitels_path,
-                    # "-o", video_output_path,
-                    # "--format=mp4"
-                ], check=True)
+            manim_script_path = "/yoga/lyrics_speaker.py"  # путь к Manim-скрипту
+            source_path = "/yoga/media/videos/lyrics_speaker/1080p60/LyricsSpeakerBox.mov" # Путь к видео сохраненным manim 
+            video_without_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_without_background.mov") # Путь для сохранения в папке проеекта 
+
+            video_with_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background.mp4") # Путь к видео с задним фоном 
+            video_with_background_with_audio = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background_with_audio.mp4") # Путь к видео с адио 
+
+            # Создание видео в manim
+            subprocess.run([
+                "manim", "-t", manim_script_path, subtitels_path, font,
+                # "-o", video_output_path,
+                # "--format=mp4"
+            ], check=True)
+
+            
+            # Проверяем, создано ли видео
+            if os.path.exists(source_path):
+                shutil.move(source_path, video_without_background)
         
-                # Проверяем, создано ли видео
-                if os.path.exists(video_output_path):
-                    st.success("Видео успешно создано!")
-                    st.video(video_output_path)
-                else:
-                    st.error("Не удалось создать видео.")
-            except subprocess.CalledProcessError:
-                st.error("Ошибка при запуске Manim. Убедитесь, что Manim установлен и путь к скрипту верный.")
+                background_duration = get_video_duration(background_video)  # Длительность фона в секундах
+                subtitels_duration = get_video_duration(video_without_background)  # Длительность субтитров
+                single_cycle_duration = background_duration * 2  # Один цикл: прямое + реверс
+                num_cycles = max(1, int(subtitels_duration / single_cycle_duration) + 1)  # Количество циклов (прямое + реверс)
+        
+                # Формируем фильтр для чередования прямого и обратного воспроизведения
+                filter_complex_parts = []
+                for i in range(num_cycles):
+                    # Прямое воспроизведение
+                    filter_complex_parts.append(
+                        f"[0:v]trim=0:{background_duration},setpts=PTS-STARTPTS[v{i*2}];"
+                    )
+                    # Обратное воспроизведение
+                    filter_complex_parts.append(
+                        f"[0:v]trim=0:{background_duration},reverse,setpts=PTS-STARTPTS[v{i*2+1}];"
+                    )
+        
+                # Объединяем все сегменты в один поток
+                concat_input = "".join([f"[v{i}]" for i in range(num_cycles * 2)])
+                filter_complex_parts.append(
+                    f"{concat_input}concat=n={num_cycles*2}:v=1:a=0[bg];"
+                    "[1:v]format=argb,colorchannelmixer=aa=1.0[fg];"
+                    "[bg][fg]overlay=format=auto[v]"
+                )
+        
+                ffmpeg_command = [
+                    "ffmpeg",
+                    "-i", background_video,        # Входной фон
+                    "-i", video_without_background, # Видео с субтитрами
+                    "-filter_complex",
+                    "".join(filter_complex_parts),  # Объединяем фильтры в одну строку
+                    "-map", "[v]",                 # Выбираем итоговый видеопоток
+                    "-c:v", "libx264",
+                    "-pix_fmt", "yuv420p",
+                    "-crf", "18",
+                    "-preset", "medium",
+                    "-r", "30",                    # Устанавливаем 30 FPS
+                    "-y",
+                    video_with_background
+                ]
+                
+                subprocess.run(ffmpeg_command, check=True)
+
+                # Добавляем аудио на видео 
+                command = [
+                    "ffmpeg",
+                    "-i", video_with_background,
+                    "-i", audio_path,
+                    "-c:v", "copy",        # Копирование видео
+                    "-c:a", "aac",         # Кодирование аудио в AAC
+                    "-b:a", "192k",        # Битрейт аудио
+                    "-map", "0:v:0",       # Видео из первого входа
+                    "-map", "1:a:0",       # Аудио из второго входа
+                    "-shortest",           # Обрезать по самому короткому потоку
+                    "-y",
+                    video_with_background_with_audio
+                ]
+
+                # Запускаем команду
+                subprocess.run(command)      
+                
+                st.video(video_with_background_with_audio)
+            else:
+                st.error("Не удалось создать видео.")
+        
        
 
 # Кнопки в sidebar

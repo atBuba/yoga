@@ -43,6 +43,12 @@ def align_audio_text():
         language = data.get("language", "iso")
         print(audio_path, text_path, language)
 
+        
+        output_folder = "separated/mdx_extra_q/mp3_file"
+        
+        vocal_path =  os.path.join(folder_name, "vocal.mp3")
+        no_vocal_path = os.path.join(folder_name, "no_vocal.mp3")
+
         # demucs.separate.main([
         #     "--mp3", "--two-stems", "vocals",
         #     "-n", "mdx_extra_q",
@@ -51,15 +57,7 @@ def align_audio_text():
         #     "--device", "cuda",
         #     audio_path
         # ])
-
         
-        # Пути к входным и выходным файлам
-        output_folder = "separated/mdx_extra_q/mp3_file"
-        
-        vocal_path =  os.path.join(folder_name, "vocal.mp3")
-        no_vocal_path = os.path.join(folder_name, "no_vocal.mp3")
-        
-        # Перемещение файлов
         # shutil.move(os.path.join(output_folder, "vocals.mp3"), vocal_path)
         # shutil.move(os.path.join(output_folder, "no_vocals.mp3"), no_vocal_path) 
         
@@ -68,7 +66,7 @@ def align_audio_text():
         # Загружаем аудио и текст
         audio_waveform = load_audio(vocal_path, alignment_model.dtype, alignment_model.device)
 
-        audio_waveform = F.gain(audio_waveform, gain_db=20.0)  # Увеличиваем громкость на 5 dB
+        audio_waveform = F.gain(audio_waveform, gain_db=5.0)  # Увеличиваем громкость на 5 dB
         
         with open(text_path, "r", encoding="utf-8") as f:
             text = f.read().replace("\n", " ").strip()
@@ -84,7 +82,7 @@ def align_audio_text():
         tokens_starred, text_starred = preprocess_text(
             text,
             romanize=True,
-            language='rus',
+            language=language,
         )
 
         # Получение выравниваний
