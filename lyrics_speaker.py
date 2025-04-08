@@ -104,7 +104,7 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
     return text_group
 
 class LyricsSpeakerBox(ThreeDScene):
-    def _move_1(self, text, duration, appearance_duration=1.0, remove_duration=0.75):
+    def _move_1(self, text, duration, appearance_duration=1.0, remove_duration=0.5):
         
         if duration < appearance_duration + remove_duration:
             appearance_duration = 0.25 * duration
@@ -147,20 +147,17 @@ class LyricsSpeakerBox(ThreeDScene):
             rate_func=rate_functions.linear
         )
 
-        self.add(square)
-        
-        self.play(
-            # FadeOut(chars_start),
-            square.animate.move_to([0, 0, 0]),
-            chars_start.animate.set_opacity(0.0),
-            run_time=remove_duration/2,
-            rate_func=smooth
-        )
+        animations_remove = []
+        for i, char in enumerate(chars_start):
+            z_offset = random.uniform(-30, -80)  
+            remove_positions = char.get_center() + OUT * z_offset  
+            animations_remove.append(
+                char.animate.move_to(remove_positions).set_opacity(0)  
+            )
 
         self.play(
-            # FadeOut(chars_start),
-            square.animate.move_to([0, -13, 0]),
-            run_time=remove_duration/2,
+            *animations_remove,
+            run_time=remove_duration,
             rate_func=smooth
         )
 
@@ -329,7 +326,7 @@ class LyricsSpeakerBox(ThreeDScene):
 
     def construct(self):
         self.camera.background_opacity = 0.0
-        self.camera.background_color = "#5eb7cd"
+        # self.camera.background_color = "#5eb7cd"
         self.set_camera_orientation(gamma=0 * DEGREES, phi=0 * DEGREES, theta=-90 * DEGREES)
     
         # Получаем путь к .srt и шрифт из аргументов командной строки
