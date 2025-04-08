@@ -8,7 +8,7 @@ EFFECTS = [
     lambda s, line, duration: s._move_2(line, duration),
     lambda s, line, duration: s._move_3(line, duration),
     lambda s, line, duration: s._move_4(line, duration),
-    lambda s, line, duration: s._move_5(line, duration),
+    # lambda s, line, duration: s._move_5(line, duration),
 ]
 
 def parse_srt(file_path):
@@ -58,7 +58,7 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
     """
     Принимает текст, разбивает его на строки с учетом max_width,
     и увеличивает масштаб каждой строки, если она меньше target_width.
-    Возвращает VGroup с отмасштабированными строками.
+    Возвращает VGroup с отмасштабированными строками, отступы зависят от высоты строк.
     """
     text_obj = Text(text, weight=weight, color=color, font=font).scale(1.0)
     
@@ -82,15 +82,24 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
         lines = [text]
 
     line_objects = []
+    total_height = 0  # Суммарная высота для центрирования
     for i, line in enumerate(lines):
-        line_obj = Text(line, weight=weight,color=color, font=font).scale(1.0)
+        line_obj = Text(line, weight=weight, color=color, font=font).scale(1.0)
         if line_obj.width < target_width and line_obj.width != 0:
             scale_factor = target_width / line_obj.width
             line_obj.scale(scale_factor)
-        line_obj.shift(UP * (len(lines) / 2 - i) * 1.2)
         line_objects.append(line_obj)
+        total_height += line_obj.height  # Суммируем высоту каждой строки
 
-    text_group = VGroup(*line_objects, color=color)
+    # Вычисляем позиции строк с учетом их высоты
+    current_y = total_height / 2  # Начинаем с верхней позиции
+    for i, line_obj in enumerate(line_objects):
+        # Смещаем строку вниз от текущей позиции на половину её высоты
+        current_y -= line_obj.height / 2  # Центр текущей строки
+        line_obj.shift(UP * current_y)
+        current_y -= (line_obj.height / 2 + 0.1)# Переход к следующей строке с учетом её высоты
+
+    text_group = VGroup(*line_objects)
     text_group.move_to(ORIGIN)
     return text_group
 
@@ -104,7 +113,8 @@ class LyricsSpeakerBox(ThreeDScene):
         text.move_to([0, 0, 21])
         chars_start = VGroup(*[char for line in text for char in line]) 
 
-        square_color = text.get_color()
+        # square_color = text.get_color()
+        square_color = "#000000"
         square = Square(side_length=16, stroke_color=square_color, fill_color=square_color,fill_opacity=1).move_to([0, 14, 0])
 
         current_char = 0
@@ -142,10 +152,10 @@ class LyricsSpeakerBox(ThreeDScene):
         self.play(
             # FadeOut(chars_start),
             square.animate.move_to([0, 0, 0]),
+            chars_start.animate.set_opacity(0.0),
             run_time=remove_duration/2,
             rate_func=smooth
         )
-        chars_start.set_opacity(0.0)
 
         self.play(
             # FadeOut(chars_start),
@@ -321,17 +331,16 @@ class LyricsSpeakerBox(ThreeDScene):
         self.camera.background_opacity = 0.0
         self.camera.background_color = "#5eb7cd"
         self.set_camera_orientation(gamma=0 * DEGREES, phi=0 * DEGREES, theta=-90 * DEGREES)
-
-        # Получаем путь к .srt из аргументов командной строки
+    
+        # Получаем путь к .srt и шрифт из аргументов командной строки
         srt_file_path = sys.argv[3]  # Первый аргумент после имени скрипта
         font = sys.argv[4]  
-        
         print(srt_file_path)
         lyrics = parse_srt(srt_file_path)
-
+    
         max_width = 6
         target_width = 6
-
+    
         text_objs = []
         for line in lyrics:
             line_text = line['text'].strip()
@@ -340,25 +349,26 @@ class LyricsSpeakerBox(ThreeDScene):
             else:
                 adjusted_text = adjust_text_to_width(line_text, max_width, target_width, color=WHITE, weight="LIGHT", font=font)
                 text_objs.append(adjusted_text)
-
+    
         current_time = 0.0
         for i in range(len(text_objs)):
             text = text_objs[i]
             start_time = lyrics[i]['start_time']
             end_time = lyrics[i]['end_time']
-            duration = end_time - start_time
-
-            if start_time > current_time:
-                self.wait(start_time - current_time)
-
-            effect = random.choice(EFFECTS)
-            if text is not None:
+            duration = end_time - current_time
+    
+            # Обрабатываем паузу перед текущей строкой
+            if start_time > current_time + 0.5:
+                pause_duration = start_time - current_time - 0.5
+                duration -= pause_duration
+                self.wait(pause_duration)
+    
+            if text:  
+                # Применяем эффект к тексту
+                effect = random.choice(EFFECTS)
                 text = effect(self, text, duration=duration)
                 self.remove(*text)
-            else:
-                self.wait(duration)
-
-            current_time = end_time
+                current_time = end_time  # Обновляем текущее время после текста
 
 
 if __name__ == "__main__":
