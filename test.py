@@ -655,7 +655,7 @@ else:
         
             # Создание видео в manim
             subprocess.run([
-                "manim", "-t", manim_script_path, subtitels_path, font,
+                "manim", "-t", manim_script_path, subtitels_path, font, audio_path,
                 # "-o", video_output_path,
                 # "--format=mp4"
             ], check=True)

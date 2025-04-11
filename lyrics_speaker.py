@@ -2,6 +2,8 @@ from manim import *
 import random
 import numpy as np
 import sys
+import librosa
+import matplotlib.cm as cm
 
 EFFECTS = [
     lambda s, line, duration: s._move_1(line, duration),
@@ -102,6 +104,8 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
     text_group = VGroup(*line_objects)
     text_group.move_to(ORIGIN)
     return text_group
+
+
 
 class LyricsSpeakerBox(ThreeDScene):
     def _move_1(self, text, duration, appearance_duration=1.0, remove_duration=0.5):
@@ -323,21 +327,104 @@ class LyricsSpeakerBox(ThreeDScene):
         
         return text 
 
+    def create_equalizer(self, start_time, end_tima, audio_path, appearance_duration=0.5, remove_duration=0.2):
+        # Параметры
+        N_BINS = 11  # Количество частотных бинов
+        FPS = 30     # Частота кадров
+        DURATION = end_tima - start_time - remove_duration # Длительность в секундах
+        
+        # Загрузка аудиофайла
+        y, sr = librosa.load(audio_path, offset=start_time - 0.5)
+        
+        # Спектрограмма
+        hop_length = int(sr / FPS)  # Длина шага для соответствия FPS
+        S = librosa.stft(y, hop_length=hop_length)
+        S_dB = librosa.amplitude_to_db(np.abs(S), ref=np.max)
+        
+        num_frames = S_dB.shape[1]  # Количество кадров
+        freq_bins = S_dB.shape[0]   # Количество частотных бинов
+        
+        # Группировка в N_BINS
+        bin_indices = np.linspace(0, freq_bins, N_BINS + 1, dtype=int)
+        bin_powers = np.array([
+            np.mean(S_dB[bin_indices[i]:bin_indices[i + 1], :], axis=0)
+            for i in range(N_BINS)
+        ])
+        
+        # Нормализация всех мощностей сразу
+        min_power = np.min(bin_powers)
+        max_power = np.max(bin_powers)
+        normalized_powers = (bin_powers - min_power) / (max_power - min_power)
+        
+        # Цветовая карта
+        cmap = cm.get_cmap('Reds')
+        
+        # Функция для создания симметричного распределения высот
+        def apply_symmetric_weights(powers, n_bins=N_BINS):
+            center = (n_bins - 1) / 2
+            weights = np.array([1.0 - 0.8 * abs(i - center) / center for i in range(n_bins)])
+            return powers * weights
+
+        bars = VGroup(*[
+            Rectangle(width=0.5, height=0.1, fill_opacity=0.7, stroke_width=0)
+            for _ in range(N_BINS)
+        ])
+        bars.arrange(RIGHT, buff=0.1)  # Расположение баров горизонтально с промежутком
+        bars.move_to(ORIGIN)  # Центрирование группы
+        base_positions = [bar.get_bottom() for bar in bars]  # Сохранение нижних точек
+        self.add(bars)  # Добавление баров в сцену
+
+        # Функция обновления высоты и цвета баров
+        def update_bars(obj, dt):
+            frame_index = int(self.renderer.time * FPS) % num_frames
+            frame_powers = normalized_powers[:, frame_index]
+            symmetric_powers = apply_symmetric_weights(frame_powers)
+            colors = [cmap(p) for p in symmetric_powers]
+
+            for bar, height, color, base_pos in zip(obj, symmetric_powers, colors, base_positions):
+                new_height = height * 10
+                if new_height < 0.1:
+                    new_height = 0.1
+                bar.stretch(new_height / bar.get_height(), dim=1)
+                # bar.move_to(base_pos, aligned_edge=DOWN)
+                bar.set_color(rgb_to_color(color[:3]))
+
+        # Привязка обновления к группе баров
+        bars.add_updater(update_bars)
+
+        # Установка длительности сцены
+        self.wait(DURATION)
+
+        # Остановка обновления после завершения
+        bars.clear_updaters()
+        
+        self.play(
+            FadeOut(bars),
+            run_time=remove_duration,
+            rate_func=rate_functions.linear
+        )
+
+        self.remove(*bars)
+
 
     def construct(self):
         self.camera.background_opacity = 0.0
         # self.camera.background_color = "#5eb7cd"
+        self.camera.background_color = None
         self.set_camera_orientation(gamma=0 * DEGREES, phi=0 * DEGREES, theta=-90 * DEGREES)
     
         # Получаем путь к .srt и шрифт из аргументов командной строки
         srt_file_path = sys.argv[3]  # Первый аргумент после имени скрипта
         font = sys.argv[4]  
-        print(srt_file_path)
+        audio_path = sys.argv[5] 
+        print(audio_path)
         lyrics = parse_srt(srt_file_path)
     
         max_width = 6
         target_width = 6
-    
+
+        previous_effect = None
+        
         text_objs = []
         for line in lyrics:
             line_text = line['text'].strip()
@@ -355,7 +442,10 @@ class LyricsSpeakerBox(ThreeDScene):
             duration = end_time - current_time
     
             # Обрабатываем паузу перед текущей строкой
-            if start_time > current_time + 0.5:
+            if start_time - (current_time + 0.5)> 5.0:
+                self.create_equalizer(current_time + 0.5, start_time, audio_path)
+                duration -= (start_time - current_time - 0.5)
+            elif start_time >  current_time + 0.5:
                 pause_duration = start_time - current_time - 0.5
                 duration -= pause_duration
                 self.wait(pause_duration)
@@ -363,6 +453,9 @@ class LyricsSpeakerBox(ThreeDScene):
             if text:  
                 # Применяем эффект к тексту
                 effect = random.choice(EFFECTS)
+                while (effect == previous_effect):
+                    effect = random.choice(EFFECTS)
+                previous_effect = effect
                 text = effect(self, text, duration=duration)
                 self.remove(*text)
                 current_time = end_time  # Обновляем текущее время после текста

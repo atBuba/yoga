@@ -49,17 +49,17 @@ def align_audio_text():
         vocal_path =  os.path.join(folder_name, "vocal.mp3")
         no_vocal_path = os.path.join(folder_name, "no_vocal.mp3")
 
-        # demucs.separate.main([
-        #     "--mp3", "--two-stems", "vocals",
-        #     "-n", "mdx_extra_q",
-        #     "--overlap", "0.8",
-        #     "--shifts", "1",
-        #     "--device", "cuda",
-        #     audio_path
-        # ])
+        demucs.separate.main([
+            "--mp3", "--two-stems", "vocals",
+            "-n", "mdx_extra_q",
+            "--overlap", "0.8",
+            "--shifts", "1",
+            "--device", "cuda",
+            audio_path
+        ])
         
-        # shutil.move(os.path.join(output_folder, "vocals.mp3"), vocal_path)
-        # shutil.move(os.path.join(output_folder, "no_vocals.mp3"), no_vocal_path) 
+        shutil.move(os.path.join(output_folder, "vocals.mp3"), vocal_path)
+        shutil.move(os.path.join(output_folder, "no_vocals.mp3"), no_vocal_path) 
         
 
 

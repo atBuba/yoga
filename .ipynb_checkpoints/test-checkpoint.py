@@ -643,18 +643,19 @@ else:
                 with open(subtitels_path, "w", encoding="utf-8") as f:
                     f.write(edited_srt)
 
+        manim_script_path = "/yoga/lyrics_speaker.py"  # путь к Manim-скрипту
+        source_path = "/yoga/media/videos/lyrics_speaker/1080p60/LyricsSpeakerBox.mov" # Путь к видео сохраненным manim 
+        video_without_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_without_background.mov") # Путь для сохранения в папке проеекта 
+
+        video_with_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background.mp4") # Путь к видео с задним фоном 
+        video_with_background_with_audio = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background_with_audio.mp4") # Путь к видео с адио 
+        
         # Кнопка создания видео 
         if st.button("Создать видео"):
-            manim_script_path = "/yoga/lyrics_speaker.py"  # путь к Manim-скрипту
-            source_path = "/yoga/media/videos/lyrics_speaker/1080p60/LyricsSpeakerBox.mov" # Путь к видео сохраненным manim 
-            video_without_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_without_background.mov") # Путь для сохранения в папке проеекта 
-
-            video_with_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background.mp4") # Путь к видео с задним фоном 
-            video_with_background_with_audio = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background_with_audio.mp4") # Путь к видео с адио 
-
+        
             # Создание видео в manim
             subprocess.run([
-                "manim", "-t", manim_script_path, subtitels_path, font,
+                "manim", "-t", manim_script_path, subtitels_path, font, audio_path,
                 # "-o", video_output_path,
                 # "--format=mp4"
             ], check=True)
@@ -725,9 +726,11 @@ else:
                 # Запускаем команду
                 subprocess.run(command)      
                 
-                st.video(video_with_background_with_audio)
             else:
                 st.error("Не удалось создать видео.")
+
+        if os.path.exists(video_with_background_with_audio):
+            st.video(video_with_background_with_audio)
         
        
 
