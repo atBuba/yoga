@@ -99,17 +99,13 @@ def adjust_text_to_width(text, max_width, target_width, color=WHITE, weight="BOL
         # Смещаем строку вниз от текущей позиции на половину её высоты
         current_y -= line_obj.height / 2  # Центр текущей строки
         line_obj.shift(UP * current_y)
-        current_y -= (line_obj.height / 2 + 0.1)# Переход к следующей строке с учетом её высоты
-
+        current_y -= (line_obj.height / 2 + 0.1)  # Переход к следующей строке
     text_group = VGroup(*line_objects)
     text_group.move_to(ORIGIN)
     return text_group
 
-
-
 class LyricsSpeakerBox(ThreeDScene):
     def _move_1(self, text, duration, appearance_duration=1.0, remove_duration=0.5):
-        
         if duration < appearance_duration + remove_duration:
             appearance_duration = 0.25 * duration
             remove_duration = 0.25 * duration
@@ -117,9 +113,8 @@ class LyricsSpeakerBox(ThreeDScene):
         text.move_to([0, 0, 21])
         chars_start = VGroup(*[char for line in text for char in line]) 
 
-        # square_color = text.get_color()
         square_color = "#000000"
-        square = Square(side_length=16, stroke_color=square_color, fill_color=square_color,fill_opacity=1).move_to([0, 14, 0])
+        square = Square(side_length=16, stroke_color=square_color, fill_color=square_color, fill_opacity=1).move_to([0, 14, 0])
 
         current_char = 0
         for _, line in enumerate(chars_start):
@@ -144,7 +139,6 @@ class LyricsSpeakerBox(ThreeDScene):
         speed = -1
         distance = [0, 0, speed * (duration - appearance_duration - remove_duration)]
 
-        # Ждем оставшееся время
         self.play(
             chars_start.animate.move_to(distance),
             run_time=duration - appearance_duration - remove_duration,
@@ -167,9 +161,7 @@ class LyricsSpeakerBox(ThreeDScene):
 
         return chars_start 
     
-    
     def _move_2(self, text, duration, appearance_duration=0.75, remove_duration=0.5):
-
         if duration < appearance_duration + remove_duration:
             appearance_duration = 0.25 * duration
             remove_duration = 0.25 * duration
@@ -197,11 +189,9 @@ class LyricsSpeakerBox(ThreeDScene):
             rate_func=rate_functions.ease_out_expo
         )
 
-        # Ждем оставшееся время
         speed = 1
         distance = [0, 0, speed * (duration - appearance_duration - remove_duration)]
 
-        # Ждем оставшееся время
         self.play(
             chars_start.animate.move_to(distance),
             run_time=duration - appearance_duration - remove_duration,
@@ -224,7 +214,6 @@ class LyricsSpeakerBox(ThreeDScene):
 
         return chars_start 
     
-
     def _move_3(self, text, duration, appearance_duration=1, remove_duration=0.5, square_animation=0.4):
         text = text.rotate(PI/10)
         text.move_to([0, 0, 25])
@@ -232,17 +221,13 @@ class LyricsSpeakerBox(ThreeDScene):
         if duration < appearance_duration + remove_duration:
             appearance_duration = 0.25 * duration
             remove_duration = 0.25 * duration
-
             if duration - appearance_duration - remove_duration < square_animation:
                 square_animation = duration
         
         square_color = text.get_color()
-
-        # Создаем квадратную рамку на заднем плане
         square = Square(side_length=2, fill_opacity=0, stroke_width=20, stroke_color=square_color)
         square.move_to(ORIGIN).rotate(PI/4) 
 
-    
         self.play(
             text.animate.move_to(ORIGIN),  
             run_time=appearance_duration,               
@@ -253,14 +238,12 @@ class LyricsSpeakerBox(ThreeDScene):
         distance = [0, 0, speed * (duration - appearance_duration - remove_duration)]
 
         self.play(
-            text.animate(run_time=duration - appearance_duration - remove_duration,).move_to(distance),
+            text.animate(run_time=duration - appearance_duration - remove_duration).move_to(distance),
             square.animate(run_time=square_animation).scale(3.0).set_stroke(width=2).set_opacity(0),     
             rate_func=rate_functions.linear
         )
 
         self.remove(square)
-
-        # self.wait(duration - appearance_duration - remove_duration - square_animation)
 
         self.play(
             ShrinkToCenter(text),
@@ -271,11 +254,9 @@ class LyricsSpeakerBox(ThreeDScene):
         return text
 
     def _move_4(self, text, duration, appearance_duration=1.0, remove_duration=0.75):
-
         if duration < appearance_duration + remove_duration:
             appearance_duration = 0.25 * duration
             remove_duration = 0.25 * duration
-
         
         about_point = [0, -8, 0]
         angle = PI / 2
@@ -286,7 +267,6 @@ class LyricsSpeakerBox(ThreeDScene):
             AnimationGroup(*[FadeIn(char, shift=DOWN) for char in text], lag_ratio=0.5, run_time=appearance_duration),
         )
 
-        # Ждем оставшееся время
         self.wait(duration - appearance_duration - remove_duration)
 
         self.play(
@@ -294,14 +274,13 @@ class LyricsSpeakerBox(ThreeDScene):
                 text, 
                 angle=angle,
                 about_point=about_point
-                ),
+            ),
             run_time=remove_duration,
             rate_func=rate_functions.ease_in_out_cubic,
         )
         return text 
     
     def _move_5(self, text, duration, appearance_duration=0.75, remove_duration=0.75):
-
         if duration < appearance_duration + remove_duration:
             appearance_duration = 0.25 * duration
             remove_duration = 0.25 * duration
@@ -327,14 +306,25 @@ class LyricsSpeakerBox(ThreeDScene):
         
         return text 
 
-    def create_equalizer(self, start_time, end_tima, audio_path, appearance_duration=0.5, remove_duration=0.2):
+    def create_equalizer(self, start_time, end_time, audio_path, appearance_duration=0.5, remove_duration=0.2):
         # Параметры
         N_BINS = 11  # Количество частотных бинов
         FPS = 30     # Частота кадров
-        DURATION = end_tima - start_time - remove_duration # Длительность в секундах
+        DURATION = end_time - start_time - remove_duration  # Длительность в секундах
+        MAX_HEIGHT = 5  # Максимальная высота столбца
+        SEGMENT_HEIGHT = 0.15  # Высота одного маленького прямоугольника
+        MAX_SEGMENTS = int(MAX_HEIGHT / SEGMENT_HEIGHT)  # Максимальное количество сегментов
+        bar_width = 0.6
+        bars_bottom = DOWN * 1.5
         
         # Загрузка аудиофайла
-        y, sr = librosa.load(audio_path, offset=start_time - 0.5)
+        print(f"Loading audio from {start_time - 0.5} to {end_time}")
+        y, sr = librosa.load(audio_path, offset=start_time - 0.5, duration=end_time - (start_time - 0.5) + 0.5)
+        if len(y) == 0:
+            print(f"Warning: Empty audio segment at {start_time}")
+            return
+        
+        print(f"Audio length: {len(y) / sr} сек, samples: {len(y)}, sr: {sr}")
         
         # Спектрограмма
         hop_length = int(sr / FPS)  # Длина шага для соответствия FPS
@@ -343,6 +333,7 @@ class LyricsSpeakerBox(ThreeDScene):
         
         num_frames = S_dB.shape[1]  # Количество кадров
         freq_bins = S_dB.shape[0]   # Количество частотных бинов
+        print(f"Num frames: {num_frames}, freq bins: {freq_bins}")
         
         # Группировка в N_BINS
         bin_indices = np.linspace(0, freq_bins, N_BINS + 1, dtype=int)
@@ -351,13 +342,14 @@ class LyricsSpeakerBox(ThreeDScene):
             for i in range(N_BINS)
         ])
         
-        # Нормализация всех мощностей сразу
+        # Нормализация всех мощностей
         min_power = np.min(bin_powers)
         max_power = np.max(bin_powers)
-        normalized_powers = (bin_powers - min_power) / (max_power - min_power)
-        
-        # Цветовая карта
-        cmap = cm.get_cmap('Reds')
+        if max_power == min_power:
+            print("Warning: max_power equals min_power, setting default powers")
+            normalized_powers = np.ones_like(bin_powers) * 0.5
+        else:
+            normalized_powers = (bin_powers - min_power) / (max_power - min_power)
         
         # Функция для создания симметричного распределения высот
         def apply_symmetric_weights(powers, n_bins=N_BINS):
@@ -365,29 +357,59 @@ class LyricsSpeakerBox(ThreeDScene):
             weights = np.array([1.0 - 0.8 * abs(i - center) / center for i in range(n_bins)])
             return powers * weights
 
-        bars = VGroup(*[
-            Rectangle(width=0.5, height=0.1, fill_opacity=0.7, stroke_width=0)
-            for _ in range(N_BINS)
-        ])
-        bars.arrange(RIGHT, buff=0.1)  # Расположение баров горизонтально с промежутком
-        bars.move_to(ORIGIN)  # Центрирование группы
-        base_positions = [bar.get_bottom() for bar in bars]  # Сохранение нижних точек
-        self.add(bars)  # Добавление баров в сцену
+        # Создание столбцов из маленьких прямоугольников
+        bars = VGroup()
+        bar_groups = []  # Для хранения групп прямоугольников каждого столбца
+        base_positions = []  # Для хранения базовых позиций столбцов
+        
+        for i in range(N_BINS):
+            bar_group = VGroup()
+            base_x = (i - (N_BINS - 1) / 2) * (bar_width)  # Центрирование столбцов
+            base_positions.append([base_x, -MAX_HEIGHT / 2, 0])  # Нижняя точка столбца
+            bar_groups.append(bar_group)
+            bars.add(bar_group)
+        
+        bars.move_to(bars_bottom)  # Центрирование всей группы
+        self.add(bars)
 
         # Функция обновления высоты и цвета баров
         def update_bars(obj, dt):
-            frame_index = int(self.renderer.time * FPS) % num_frames
-            frame_powers = normalized_powers[:, frame_index]
+            frame_index = self.renderer.time * FPS
+            floor_index = int(frame_index)
+            frac = frame_index - floor_index
+            print(f"Frame index: {frame_index}, num_frames: {num_frames}")
+            
+            if floor_index + 1 >= num_frames:
+                return  # Прекращаем обновление, если вышли за пределы
+            
+            # Линейная интерполяция между кадрами
+            frame_powers = (1 - frac) * normalized_powers[:, floor_index] + \
+                          frac * normalized_powers[:, min(floor_index + 1, num_frames - 1)]
             symmetric_powers = apply_symmetric_weights(frame_powers)
-            colors = [cmap(p) for p in symmetric_powers]
 
-            for bar, height, color, base_pos in zip(obj, symmetric_powers, colors, base_positions):
-                new_height = height * 10
-                if new_height < 0.1:
-                    new_height = 0.1
-                bar.stretch(new_height / bar.get_height(), dim=1)
-                # bar.move_to(base_pos, aligned_edge=DOWN)
-                bar.set_color(rgb_to_color(color[:3]))
+            for i, (bar_group, height, base_pos) in enumerate(zip(bar_groups, symmetric_powers, base_positions)):
+                # Очищаем предыдущие прямоугольники
+                bar_group.remove(*bar_group.submobjects)
+                
+                # Вычисляем количество сегментов
+                total_height = height * MAX_HEIGHT
+                num_segments = max(2, min(int(total_height / SEGMENT_HEIGHT), MAX_SEGMENTS))
+                
+                # Создаём новые прямоугольники
+                for j in range(num_segments):
+                    segment = Rectangle(
+                        width=bar_width,
+                        height=SEGMENT_HEIGHT,
+                        fill_opacity=1.0,
+                        stroke_color=BLACK,
+                        stroke_width=5
+                    )
+                    # Устанавливаем белый цвет заливки
+                    segment.set_fill(WHITE)
+                    # Позиционирование сегмента
+                    y_pos = bars_bottom[1] + (j + 0.5) * SEGMENT_HEIGHT
+                    segment.move_to([base_pos[0], y_pos, 0])
+                    bar_group.add(segment)
 
         # Привязка обновления к группе баров
         bars.add_updater(update_bars)
@@ -404,12 +426,11 @@ class LyricsSpeakerBox(ThreeDScene):
             rate_func=rate_functions.linear
         )
 
-        self.remove(*bars)
-
+        self.remove(bars)
+        bars.submobjects.clear()
 
     def construct(self):
         self.camera.background_opacity = 0.0
-        # self.camera.background_color = "#5eb7cd"
         self.camera.background_color = None
         self.set_camera_orientation(gamma=0 * DEGREES, phi=0 * DEGREES, theta=-90 * DEGREES)
     
@@ -442,24 +463,26 @@ class LyricsSpeakerBox(ThreeDScene):
             duration = end_time - current_time
     
             # Обрабатываем паузу перед текущей строкой
-            if start_time - (current_time + 0.5)> 5.0:
+            if start_time - (current_time + 0.5) > 5.0:
+                print(f"Creating equalizer from {current_time + 0.5} to {start_time}")
+                self.renderer.time = 0  # Сбрасываем время рендера
                 self.create_equalizer(current_time + 0.5, start_time, audio_path)
                 duration -= (start_time - current_time - 0.5)
-            elif start_time >  current_time + 0.5:
+            elif start_time > current_time + 0.5:
                 pause_duration = start_time - current_time - 0.5
+                print(f"Pausing for {pause_duration} seconds (start: {start_time}, current: {current_time})")
                 duration -= pause_duration
                 self.wait(pause_duration)
     
             if text:  
                 # Применяем эффект к тексту
                 effect = random.choice(EFFECTS)
-                while (effect == previous_effect):
+                while effect == previous_effect:
                     effect = random.choice(EFFECTS)
                 previous_effect = effect
                 text = effect(self, text, duration=duration)
                 self.remove(*text)
                 current_time = end_time  # Обновляем текущее время после текста
-
 
 if __name__ == "__main__":
     config["output_file"] = "output_video.mp4"
