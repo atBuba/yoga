@@ -306,25 +306,23 @@ class LyricsSpeakerBox(ThreeDScene):
         
         return text 
 
-    def create_equalizer(self, start_time, end_time, audio_path, appearance_duration=0.5, remove_duration=0.2):
+    def create_equalizer(self, start_time, end_time, audio_path, appearance_duration=0.5, remove_duration=0.5):
         # Параметры
         N_BINS = 11  # Количество частотных бинов
         FPS = 30     # Частота кадров
-        DURATION = end_time - start_time - remove_duration  # Длительность в секундах
+        DURATION = end_time - start_time - appearance_duration - remove_duration  # Длительность в секундах
         MAX_HEIGHT = 5  # Максимальная высота столбца
         SEGMENT_HEIGHT = 0.15  # Высота одного маленького прямоугольника
         MAX_SEGMENTS = int(MAX_HEIGHT / SEGMENT_HEIGHT)  # Максимальное количество сегментов
         bar_width = 0.6
-        bars_bottom = DOWN * 1.5
+        bars_bottom = DOWN * 2.5
+        bars_indent = 0.1 
         
         # Загрузка аудиофайла
-        print(f"Loading audio from {start_time - 0.5} to {end_time}")
-        y, sr = librosa.load(audio_path, offset=start_time - 0.5, duration=end_time - (start_time - 0.5) + 0.5)
+        y, sr = librosa.load(audio_path, offset=start_time - 0.5, duration=end_time - (start_time - 0.5))
         if len(y) == 0:
             print(f"Warning: Empty audio segment at {start_time}")
             return
-        
-        print(f"Audio length: {len(y) / sr} сек, samples: {len(y)}, sr: {sr}")
         
         # Спектрограмма
         hop_length = int(sr / FPS)  # Длина шага для соответствия FPS
@@ -333,7 +331,6 @@ class LyricsSpeakerBox(ThreeDScene):
         
         num_frames = S_dB.shape[1]  # Количество кадров
         freq_bins = S_dB.shape[0]   # Количество частотных бинов
-        print(f"Num frames: {num_frames}, freq bins: {freq_bins}")
         
         # Группировка в N_BINS
         bin_indices = np.linspace(0, freq_bins, N_BINS + 1, dtype=int)
@@ -361,26 +358,62 @@ class LyricsSpeakerBox(ThreeDScene):
         bars = VGroup()
         bar_groups = []  # Для хранения групп прямоугольников каждого столбца
         base_positions = []  # Для хранения базовых позиций столбцов
+        initial_segments = []  # Для хранения начального количества сегментов
+        
+        # Начальные высоты для первого кадра
+        frame_powers = normalized_powers[:, 0]
+        symmetric_powers = apply_symmetric_weights(frame_powers)
         
         for i in range(N_BINS):
             bar_group = VGroup()
-            base_x = (i - (N_BINS - 1) / 2) * (bar_width)  # Центрирование столбцов
-            base_positions.append([base_x, -MAX_HEIGHT / 2, 0])  # Нижняя точка столбца
+            base_x = (i - (N_BINS - 1) / 2) * (bar_width + bars_indent)  # Центрирование столбцов
+            total_height = symmetric_powers[i] * MAX_HEIGHT
+            num_segments = max(2, min(int(total_height / SEGMENT_HEIGHT), MAX_SEGMENTS))
+            initial_segments.append(num_segments)
+            
+            for j in range(num_segments):
+                segment = Rectangle(
+                    width=bar_width,
+                    height=SEGMENT_HEIGHT,
+                    fill_opacity=1.0,
+                )
+                segment.set_fill(WHITE)
+                y_pos = bars_bottom[1] + (j + 0.5) * (SEGMENT_HEIGHT + bars_indent)
+                # Начальная позиция с случайным z_offset, как в _move_1
+                z_offset = 40 + random.uniform(-15, 15)
+                segment.move_to([base_x, y_pos, z_offset])
+                bar_group.add(segment)
+            
+            base_positions.append([base_x, -MAX_HEIGHT / 2, 0])
             bar_groups.append(bar_group)
             bars.add(bar_group)
         
-        bars.move_to(bars_bottom)  # Центрирование всей группы
+        # bars.move_to(bars_bottom + [0, 0, 0])  # Центрирование всей группы
         self.add(bars)
 
-        # Функция обновления высоты и цвета баров
+        # Анимация появления, как в _move_1
+        animations = []
+        for bar_group in bar_groups:
+            for segment in bar_group:
+                target_pos = segment.get_center() - OUT * segment.get_center()[2]  # z=0
+                animations.append(
+                    segment.animate.move_to(target_pos)
+                )
+
+        self.play(
+            *animations,
+            run_time=appearance_duration,
+            rate_func=rate_functions.ease_out_expo
+        )
+
+        # Функция обновления высоты баров
         def update_bars(obj, dt):
             frame_index = self.renderer.time * FPS
             floor_index = int(frame_index)
             frac = frame_index - floor_index
-            print(f"Frame index: {frame_index}, num_frames: {num_frames}")
             
             if floor_index + 1 >= num_frames:
-                return  # Прекращаем обновление, если вышли за пределы
+                return
             
             # Линейная интерполяция между кадрами
             frame_powers = (1 - frac) * normalized_powers[:, floor_index] + \
@@ -388,42 +421,44 @@ class LyricsSpeakerBox(ThreeDScene):
             symmetric_powers = apply_symmetric_weights(frame_powers)
 
             for i, (bar_group, height, base_pos) in enumerate(zip(bar_groups, symmetric_powers, base_positions)):
-                # Очищаем предыдущие прямоугольники
                 bar_group.remove(*bar_group.submobjects)
-                
-                # Вычисляем количество сегментов
                 total_height = height * MAX_HEIGHT
                 num_segments = max(2, min(int(total_height / SEGMENT_HEIGHT), MAX_SEGMENTS))
                 
-                # Создаём новые прямоугольники
                 for j in range(num_segments):
                     segment = Rectangle(
                         width=bar_width,
                         height=SEGMENT_HEIGHT,
                         fill_opacity=1.0,
-                        stroke_color=BLACK,
-                        stroke_width=5
                     )
-                    # Устанавливаем белый цвет заливки
                     segment.set_fill(WHITE)
-                    # Позиционирование сегмента
-                    y_pos = bars_bottom[1] + (j + 0.5) * SEGMENT_HEIGHT
-                    segment.move_to([base_pos[0], y_pos, 0])
+                    y_pos = bars_bottom[1] + (j + 0.5) * (SEGMENT_HEIGHT + bars_indent)
+                    segment.move_to([base_pos[0], y_pos, 0])  # Остаёмся в z=0
                     bar_group.add(segment)
 
-        # Привязка обновления к группе баров
+        # Привязка обновления
         bars.add_updater(update_bars)
 
         # Установка длительности сцены
         self.wait(DURATION)
 
-        # Остановка обновления после завершения
+        # Остановка обновления
         bars.clear_updaters()
-        
+
+        # Анимация исчезновения, как в _move_2
+        animations_remove = []
+        for bar_group in bar_groups:
+            for segment in bar_group:
+                z_offset = random.uniform(10, 40)  # За камеру
+                remove_pos = segment.get_center() + OUT * z_offset
+                animations_remove.append(
+                    segment.animate.move_to(remove_pos).set_opacity(0)
+                )
+
         self.play(
-            FadeOut(bars),
+            *animations_remove,
             run_time=remove_duration,
-            rate_func=rate_functions.linear
+            rate_func=smooth
         )
 
         self.remove(bars)
@@ -441,8 +476,8 @@ class LyricsSpeakerBox(ThreeDScene):
         print(audio_path)
         lyrics = parse_srt(srt_file_path)
     
-        max_width = 6
-        target_width = 6
+        max_width = 6.0
+        target_width = 6.0
 
         previous_effect = None
         
