@@ -306,7 +306,7 @@ class LyricsSpeakerBox(ThreeDScene):
         
         return text 
 
-    def create_equalizer(self, start_time, end_time, audio_path, appearance_duration=0.5, remove_duration=0.5):
+    def create_equalizer(self, start_time, end_time, audio_path, appearance_duration=1.0, remove_duration=1.0):
         # Параметры
         N_BINS = 11  # Количество частотных бинов
         FPS = 30     # Частота кадров
@@ -319,7 +319,7 @@ class LyricsSpeakerBox(ThreeDScene):
         bars_indent = 0.1 
         
         # Загрузка аудиофайла
-        y, sr = librosa.load(audio_path, offset=start_time - 0.5, duration=end_time - (start_time - 0.5))
+        y, sr = librosa.load(audio_path, offset=start_time + appearance_duration, duration=DURATION)
         if len(y) == 0:
             print(f"Warning: Empty audio segment at {start_time}")
             return
@@ -339,14 +339,8 @@ class LyricsSpeakerBox(ThreeDScene):
             for i in range(N_BINS)
         ])
         
-        # Нормализация всех мощностей
-        min_power = np.min(bin_powers)
-        max_power = np.max(bin_powers)
-        if max_power == min_power:
-            print("Warning: max_power equals min_power, setting default powers")
-            normalized_powers = np.ones_like(bin_powers) * 0.5
-        else:
-            normalized_powers = (bin_powers - min_power) / (max_power - min_power)
+        # Сохраняем bin_powers для update_bars
+        global_bin_powers = bin_powers.copy()
         
         # Функция для создания симметричного распределения высот
         def apply_symmetric_weights(powers, n_bins=N_BINS):
@@ -360,9 +354,12 @@ class LyricsSpeakerBox(ThreeDScene):
         base_positions = []  # Для хранения базовых позиций столбцов
         initial_segments = []  # Для хранения начального количества сегментов
         
-        # Начальные высоты для первого кадра
-        frame_powers = normalized_powers[:, 0]
-        symmetric_powers = apply_symmetric_weights(frame_powers)
+        # Начальные высоты для первого кадра с нормализацией
+        frame_powers = bin_powers[:, 0]
+        min_power = np.min(frame_powers)
+        max_power = np.max(frame_powers) if np.max(frame_powers) > min_power else min_power + 1.
+        normalized_frame_powers = (frame_powers - min_power) / (max_power - min_power)
+        symmetric_powers = apply_symmetric_weights(normalized_frame_powers)
         
         for i in range(N_BINS):
             bar_group = VGroup()
@@ -379,7 +376,7 @@ class LyricsSpeakerBox(ThreeDScene):
                 )
                 segment.set_fill(WHITE)
                 y_pos = bars_bottom[1] + (j + 0.5) * (SEGMENT_HEIGHT + bars_indent)
-                # Начальная позиция с случайным z_offset, как в _move_1
+                # Начальная позиция с z_offset, как в _move_1
                 z_offset = 40 + random.uniform(-15, 15)
                 segment.move_to([base_x, y_pos, z_offset])
                 bar_group.add(segment)
@@ -388,7 +385,6 @@ class LyricsSpeakerBox(ThreeDScene):
             bar_groups.append(bar_group)
             bars.add(bar_group)
         
-        # bars.move_to(bars_bottom + [0, 0, 0])  # Центрирование всей группы
         self.add(bars)
 
         # Анимация появления, как в _move_1
@@ -406,25 +402,40 @@ class LyricsSpeakerBox(ThreeDScene):
             rate_func=rate_functions.ease_out_expo
         )
 
-        # Функция обновления высоты баров
+        # Сброс времени рендера
+        self.renderer.time = 0
+
+        # Функция обновления высоты баров с динамической нормализацией
         def update_bars(obj, dt):
             frame_index = self.renderer.time * FPS
             floor_index = int(frame_index)
             frac = frame_index - floor_index
+
+            if frame_index == 0:
+                for bar_group in bar_groups:
+                    bar_group.remove(*bar_group[2:].submobjects) 
+                return
             
-            if floor_index + 1 >= num_frames:
+            if floor_index >= num_frames:
                 return
             
             # Линейная интерполяция между кадрами
-            frame_powers = (1 - frac) * normalized_powers[:, floor_index] + \
-                          frac * normalized_powers[:, min(floor_index + 1, num_frames - 1)]
-            symmetric_powers = apply_symmetric_weights(frame_powers)
+            frame_powers = (1 - frac) * global_bin_powers[:, floor_index] + \
+                          frac * global_bin_powers[:, min(floor_index + 1, num_frames - 1)]
+            
+            # Динамическая нормализация для текущего кадра
+            min_power = np.min(frame_powers)
+            max_power = np.max(frame_powers) if np.max(frame_powers) > min_power else min_power + 1
+            normalized_powers = (frame_powers - min_power) / (max_power - min_power)
+            symmetric_powers = apply_symmetric_weights(normalized_powers)
 
             for i, (bar_group, height, base_pos) in enumerate(zip(bar_groups, symmetric_powers, base_positions)):
+                # Очищаем старые прямоугольники
                 bar_group.remove(*bar_group.submobjects)
                 total_height = height * MAX_HEIGHT
                 num_segments = max(2, min(int(total_height / SEGMENT_HEIGHT), MAX_SEGMENTS))
                 
+                # Создаём новые прямоугольники
                 for j in range(num_segments):
                     segment = Rectangle(
                         width=bar_width,
@@ -435,6 +446,8 @@ class LyricsSpeakerBox(ThreeDScene):
                     y_pos = bars_bottom[1] + (j + 0.5) * (SEGMENT_HEIGHT + bars_indent)
                     segment.move_to([base_pos[0], y_pos, 0])  # Остаёмся в z=0
                     bar_group.add(segment)
+
+            
 
         # Привязка обновления
         bars.add_updater(update_bars)
@@ -461,7 +474,13 @@ class LyricsSpeakerBox(ThreeDScene):
             rate_func=smooth
         )
 
+        # Полная очистка объектов
+        for bar_group in bar_groups:
+            bar_group.remove(*bar_group.submobjects)
+            bars.remove(bar_group)
+        bars.remove(*bars.submobjects)
         self.remove(bars)
+        bar_groups.clear()
         bars.submobjects.clear()
 
     def construct(self):
@@ -499,9 +518,8 @@ class LyricsSpeakerBox(ThreeDScene):
     
             # Обрабатываем паузу перед текущей строкой
             if start_time - (current_time + 0.5) > 5.0:
-                print(f"Creating equalizer from {current_time + 0.5} to {start_time}")
-                self.renderer.time = 0  # Сбрасываем время рендера
-                self.create_equalizer(current_time + 0.5, start_time, audio_path)
+                print(f"Creating equalizer from {current_time} to {start_time - 0.5}")
+                self.create_equalizer(current_time, start_time - 0.5, audio_path)
                 duration -= (start_time - current_time - 0.5)
             elif start_time > current_time + 0.5:
                 pause_duration = start_time - current_time - 0.5
