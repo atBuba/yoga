@@ -276,6 +276,7 @@ else:
         
         mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
         if mp3_file is not None:
+            print(st.session_state["project_folder"])
             audio_path = os.path.join(st.session_state["project_folder"], "audio/mp3_file.mp3")
             with open(audio_path, "wb") as f:
                 f.write(mp3_file.read())
@@ -536,7 +537,7 @@ else:
         # Общие настройки видео 
         # Загрузка аудио
         mp3_file = st.file_uploader("Upload an MP3 file", type=["mp3"])
-        audio_path = os.path.join("/yoga", st.session_state["project_folder"], "audio/mp3_file.mp3")
+        audio_path = os.path.join("/workspace/yoga", st.session_state["project_folder"], "audio/mp3_file.mp3")
         if mp3_file is not None:
             
             with open(audio_path, "wb") as f:
@@ -585,9 +586,9 @@ else:
         }
 
         backgrounds = {
-            "синий" : "/yoga/background_video/vecteezy_concept-1lt-deep-blue-gradient-light-abstract-background_10884978.mov",
-            "красный" : "/yoga/background_video/vecteezy_red-gradient-liquid-smoke-background-water-surface-and_6422172.mp4" ,
-            "черный" :  "/yoga/background_video/vecteezy_4k-elegant-black-gradient-smooth-animation-background-black_32509833-1080p.mp4"
+            "синий" : "/workspace/yoga/background_video/vecteezy_concept-1lt-deep-blue-gradient-light-abstract-background_10884978.mov",
+            "красный" : "/workspace/yoga/background_video/vecteezy_red-gradient-liquid-smoke-background-water-surface-and_6422172.mp4" ,
+            "черный" :  "/workspace/yoga/background_video/vecteezy_4k-elegant-black-gradient-smooth-animation-background-black_32509833-1080p.mp4"
         }
 
         # Выбор я зыка субтитров
@@ -643,12 +644,12 @@ else:
                 with open(subtitels_path, "w", encoding="utf-8") as f:
                     f.write(edited_srt)
 
-        manim_script_path = "/yoga/lyrics_speaker.py"  # путь к Manim-скрипту
-        source_path = "/yoga/media/videos/lyrics_speaker/1080p60/LyricsSpeakerBox.mov" # Путь к видео сохраненным manim 
-        video_without_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_without_background.mov") # Путь для сохранения в папке проеекта 
+        manim_script_path = "/workspace/yoga/lyrics_speaker.py"  # путь к Manim-скрипту
+        source_path = "/workspace/yoga/media/videos/lyrics_speaker/1080p60/LyricsSpeakerBox.mov" # Путь к видео сохраненным manim 
+        video_without_background = os.path.join("/workspace/yoga", st.session_state["project_folder"], "video/video_without_background.mov") # Путь для сохранения в папке проеекта 
 
-        video_with_background = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background.mp4") # Путь к видео с задним фоном 
-        video_with_background_with_audio = os.path.join("/yoga", st.session_state["project_folder"], "video/video_with_background_with_audio.mp4") # Путь к видео с адио 
+        video_with_background = os.path.join("/workspace/yoga", st.session_state["project_folder"], "video/video_with_background.mp4") # Путь к видео с задним фоном 
+        video_with_background_with_audio = os.path.join("/workspace/yoga", st.session_state["project_folder"], "video/video_with_background_with_audio.mp4") # Путь к видео с адио 
         
         # Кнопка создания видео 
         if st.button("Создать видео"):
